@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-08-16.
-" @Revision:    2698
+" @Last Change: 2010-08-30.
+" @Revision:    2699
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -33,10 +33,10 @@
 if &cp || exists("loaded_viki") "{{{2
     finish
 endif
-if !exists('g:loaded_tlib') || g:loaded_tlib < 32
+if !exists('g:loaded_tlib') || g:loaded_tlib < 39
     runtime plugin/02tlib.vim
-    if !exists('g:loaded_tlib') || g:loaded_tlib < 32
-        echoerr 'tlib >= 0.32 is required'
+    if !exists('g:loaded_tlib') || g:loaded_tlib < 39
+        echoerr 'tlib >= 0.39 is required'
         finish
     endif
 endif
@@ -716,6 +716,7 @@ VikiDefine()) in order to reduce startup time
 :VikiEdit with a bang will open the file in vim regardless of whether 
 it's special; it will always be opened from the global homepage
 - Register the mhtml suffix as special file
+- Require tlib 0.39
 
 
 " vim: ff=unix

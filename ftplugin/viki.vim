@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2010-03-12.
-" @Revision: 429
+" @Last Change: 2010-08-30.
+" @Revision: 431
 
 " if !g:vikiEnabled
 "     finish
@@ -55,9 +55,8 @@ setlocal expandtab
 setlocal iskeyword+={
 setlocal iskeyword-=_
 
-if has('balloon_eval') && has('balloon_multiline') && empty(&balloonexpr)
-    setlocal ballooneval
-    setlocal balloonexpr=viki#Balloon()
+if has('balloon_multiline')
+    call tlib#balloon#Register('viki#Balloon()')
 endif
 
 let &include='\(^\s*#INC.\{-}\(\sfile=\|:\)\)'
