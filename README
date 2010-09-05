@@ -1,6 +1,6 @@
 viki (VIM plugin) -- Viki - A Pseudo Local Wiki Tool
 
-Status:  Experimental
+Status:  Works for me (there may be some minor quirks)
 Dependencies:
   tlib :: http://github.com/tomtom/tlib_vim
       > git clone git://github.com/tomtom/tlib_vim.git
