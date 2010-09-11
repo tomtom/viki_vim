@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-08-20.
-" @Revision:    0.668
+" @Last Change: 2010-09-10.
+" @Revision:    0.675
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -2209,9 +2209,11 @@ function! viki#Edit(name, ...) "{{{3
     if winNr != 0
         exec winNr .'wincmd w'
     endif
-    if !viki#HomePage(winNr)
-        call tlib#notify#Echo('VIKI: Please set g:vikiHomePage', 'WarningMsg')
-        call s:EditWrapper('buffer', 1)
+    if exists('b:vikiEnabled') 
+        if !viki#HomePage(winNr)
+            call tlib#notify#Echo('VIKI: Please set g:vikiHomePage', 'WarningMsg')
+            call s:EditWrapper('buffer', 1)
+        endif
     endif
     if a:name == '*'
         let name = g:vikiHomePage

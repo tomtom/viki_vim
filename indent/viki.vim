@@ -1,10 +1,10 @@
 " viki.vim -- viki indentation
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
-" @Website:     http://members.a1.net/t.link/
+" @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     16-Jän-2004.
-" @Last Change: 2009-02-15.
-" @Revision: 0.264
+" @Last Change: 2010-09-05.
+" @Revision: 0.265
 
 if !g:vikiEnabled
     finish
