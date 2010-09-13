@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-09-10.
-" @Revision:    0.675
+" @Last Change: 2010-09-13.
+" @Revision:    0.676
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -222,6 +222,8 @@ if !exists("g:vikiBalloonLines")    | let g:vikiBalloonLines = '&lines / 3' | en
 " If true, show some line of the target file in a balloon tooltip 
 " window.
 if !exists("g:vikiBalloon")         | let g:vikiBalloon = 1 | endif "{{{2
+
+if !exists("g:vikiBalloonEncoding") | let g:vikiBalloonEncoding = &enc | endif "{{{2
 
 
 " A list of files that contain special viki names
@@ -2898,8 +2900,12 @@ function! viki#Balloon() "{{{3
         " TLogVAR v_dest
         if !viki#IsSpecial(v_dest) 
             try
-                let text = readfile(v_dest)[0 : eval(g:vikiBalloonLines)]
-                return join(text, "\n")
+                let lines = readfile(v_dest)[0 : eval(g:vikiBalloonLines)]
+                let text  = join(lines, "\n")
+                if &fenc != g:vikiBalloonEncoding && has('iconv')
+                    let text = iconv(text, &fenc, g:vikiBalloonEncoding)
+                endif
+                return text
             catch
             endtry
         endif
