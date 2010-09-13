@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2010-09-13.
-" @Revision:    0.676
+" @Revision:    0.678
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -258,6 +258,7 @@ if !exists("g:vikiMapFunctionalityMinor") "{{{2
     let g:vikiMapFunctionalityMinor = 'f b p mf mb tF c q e'
 endif
 
+let g:viki#quit = 0
 
 let s:positions = {}
 let s:InterVikiRx = '^\(['. g:vikiUpperCharacters .']\+\)::\(.*\)$'
@@ -965,7 +966,7 @@ endf
 " The function called from autocommands: re-check for inexistent names 
 " when re-entering a buffer.
 function! viki#CheckInexistent() "{{{3
-    if g:vikiEnabled && exists("b:vikiCheckInexistent") && b:vikiCheckInexistent > 0
+    if !g:viki#quit && exists("b:vikiCheckInexistent") && b:vikiCheckInexistent > 0
         call viki#MarkInexistentInRange(b:vikiCheckInexistent, b:vikiCheckInexistent)
     endif
 endf
@@ -988,7 +989,7 @@ function! viki#SetBufferVar(name, ...) "{{{3
                 let i = i + 1
             endwh
             throw 'VikiSetBuffer: Couldn't set '. a:name
-        else
+        elseif exists('g:'. a:name)
             exe 'let b:'.a:name.' = g:'.a:name
         endif
     endif

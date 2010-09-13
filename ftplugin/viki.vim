@@ -2,12 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2010-08-30.
-" @Revision: 431
-
-" if !g:vikiEnabled
-"     finish
-" endif
+" @Last Change: 2010-09-13.
+" @Revision: 432
 
 if exists("b:did_ftplugin") "{{{2
     finish

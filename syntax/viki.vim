@@ -2,12 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2010-05-14.
-" @Revision: 0.947
-
-if !exists('g:vikiEnabled') || !g:vikiEnabled
-    finish
-endif
+" @Last Change: 2010-09-13.
+" @Revision: 0.950
 
 if version < 600
     syntax clear

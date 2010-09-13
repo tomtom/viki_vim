@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-09-12.
-" @Revision:    2700
+" @Last Change: 2010-09-13.
+" @Revision:    2703
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -44,11 +44,6 @@ let loaded_viki = 319
 
 
 " Configuration {{{1
-" If zero, viki is disabled, though the code is loaded.
-if !exists("g:vikiEnabled") "{{{2
-    let g:vikiEnabled = 1
-endif
-
 " Support for the taglist plugin.
 if !exists("tlist_viki_settings") "{{{2
     let tlist_viki_settings="deplate;s:structure"
@@ -192,10 +187,10 @@ command! VIKI :call viki#Edit('*')
 augroup viki
     au!
     autocmd BufEnter * if exists("b:vikiEnabled") && b:vikiEnabled == 1 | call viki#MinorModeReset() | endif
-    autocmd BufEnter * if exists("b:vikiEnabled") && g:vikiEnabled && exists("b:vikiCheckInexistent") && b:vikiCheckInexistent > 0 | call viki#CheckInexistent() | endif
+    autocmd BufEnter * if exists("b:vikiEnabled") && b:vikiEnabled && exists("b:vikiCheckInexistent") && b:vikiCheckInexistent > 0 | call viki#CheckInexistent() | endif
     autocmd BufLeave * if &filetype == 'viki' | let b:vikiCheckInexistent = line(".") | endif
     autocmd BufWritePost,BufUnload * if &filetype == 'viki' | call viki#SaveCache() | endif
-    autocmd VimLeavePre * let g:vikiEnabled = 0
+    autocmd VimLeavePre * let g:viki#quit = 1
     if g:vikiSaveHistory
         if has('vim_starting')
             autocmd VimEnter * if exists('VIKIBACKREFS_STRING') | exec 'let g:VIKIBACKREFS = '. VIKIBACKREFS_STRING | unlet VIKIBACKREFS_STRING | endif

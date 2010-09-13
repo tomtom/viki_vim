@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2010-06-20.
-" @Revision:    0.0.128
+" @Last Change: 2010-09-13.
+" @Revision:    0.0.129
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -17,9 +17,6 @@ set cpo&vim
 " This also sets up the rx for the different viki name types.
 " viki_viki#SetupBuffer(state, ?dontSetup='')
 function! viki_viki#SetupBuffer(state, ...) "{{{3
-    if !g:vikiEnabled
-        return
-    endif
     " TLogDBG expand('%') .': '. (exists('b:vikiFamily') ? b:vikiFamily : 'default')
 
     let dontSetup = a:0 > 0 ? a:1 : ""
@@ -373,9 +370,6 @@ endf
 " Initialize viki as minor mode (add-on to some buffer filetype)
 "state ... no-op:0, minor:1, major:2
 function! viki_viki#MinorMode(state) "{{{3
-    if !g:vikiEnabled
-        return 0
-    endif
     if a:state == 0
         return 0
     endif
