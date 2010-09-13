@@ -5,7 +5,7 @@
 " @Last Change: 2010-05-14.
 " @Revision: 0.947
 
-if !g:vikiEnabled
+if !exists('g:vikiEnabled') || !g:vikiEnabled
     finish
 endif
 
