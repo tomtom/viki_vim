@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-09-13.
-" @Revision:    0.678
+" @Last Change: 2010-09-14.
+" @Revision:    0.679
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -2223,6 +2223,9 @@ function! viki#Edit(name, ...) "{{{3
     else
         let name = a:name
     end
+    if empty(name)
+        return
+    endif
     let name = substitute(name, '\\', '/', 'g')
     if !exists('b:vikiNameTypes')
         call viki#SetBufferVar('vikiNameTypes')

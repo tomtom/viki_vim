@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-09-13.
-" @Revision:    2703
+" @Last Change: 2010-09-14.
+" @Revision:    2705
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -180,8 +180,8 @@ command! -nargs=? -bar VikiModeMaybe echom "Deprecated command: VikiModeMaybe: P
 
 command! -nargs=1 -complete=customlist,viki#BrowseComplete VikiBrowse :call viki#Browse(<q-args>)
 
-command! VikiHome :call viki#Edit('*')
-command! VIKI :call viki#Edit('*')
+command! VikiHome :call viki#HomePage()
+command! VIKI :call viki#HomePage()
 
 
 augroup viki
