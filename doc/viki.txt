@@ -1,12 +1,5 @@
 *viki.txt*              Viki - A Pseudo Local Wiki Tool
-
-                        Viki MANUAL
                         Thomas Link (micathom AT gmail com?subject=vim)
-
-
-================================================================================
-                                                    *viki-description*
-Description~
 
 This plugin adds wiki-like hypertext capabilities to Vim. You can use viki as 
 a "minor" mode (i.e., as an add-on to any other mode) or as a full-fledged 
@@ -53,11 +46,11 @@ Wikis also come with a rather subtle markup. Here is a simple comparison of
 two examples of LaTeX and viki markup so that you get the idea of what it 
 looks like:
 
-LaTeX: \section{Title}
-Viki:  * Title
+    LaTeX: \section{Title}
+    Viki:  * Title
 
-LaTeX: \emph{text}
-Viki:  __text__
+    LaTeX: \emph{text}
+    Viki:  __text__
 
 And some wikis provide tools for translating this markup to other formats 
 (like viki does in the form of the "deplate" program, which can translate viki 
