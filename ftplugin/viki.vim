@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2010-09-13.
-" @Revision: 432
+" @Last Change: 2010-10-26.
+" @Revision: 433
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -161,7 +161,7 @@ if g:vikiFoldMethodVersion == 7
         endif
     endf
 
-elseif g:vikiFoldMethodVersion == 7
+elseif g:vikiFoldMethodVersion == 6
 
     " Fold paragraphs (see :help fold-expr)
     function VikiFoldLevel(lnum)

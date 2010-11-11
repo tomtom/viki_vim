@@ -956,6 +956,13 @@ Etc:
           |vikiFoldBodyLevel| is set to 0.
         s :: ???
 
+- g:vikiFoldMethodVersion                           *g:vikiFoldMethodVersion*
+    Viki supports several methods (1..7) for defining folds. If you find that 
+    text entry is slowed down it is probably due to the chosen fold method. 
+    You could try to use another method (see ../ftplugin/viki.vim for 
+    alternative methods) or check out this vim tip:
+    http://vim.wikia.com/wiki/Keep_folds_closed_while_inserting_text
+
 - b:vikiNoSimpleNames                               *b:vikiNoSimpleNames*
     Default: 0
     If non-nil, simple viki names are disabled.
