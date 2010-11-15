@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2010-09-13.
-" @Revision: 0.950
+" @Last Change: 2010-11-15.
+" @Revision: 0.966
 
 if version < 600
     syntax clear
@@ -139,12 +139,22 @@ syn region vikiFilesRegion matchgroup=vikiMacroDelim
 
 
 if g:vikiHighlightMath == 'latex'
-    syn region vikiTexFormula matchgroup=Comment
-                \ start=/\z(\$\$\?\)/ end=/\z1/
-                \ contains=@texmathMath
+    " if has('conceal')
+    "     syn match vikiTexDollar /\$/ conceal
+    "     syn region vikiTexFormula matchgroup=Comment
+    "                 \ start=/\z(\$\$\?\)/ end=/\z1/
+    "                 \ contains=vikiTexDollar,@texmathMath
+    " else
+        syn region vikiTexFormula matchgroup=Comment
+                    \ start=/\z(\$\$\?\)/ end=/\z1/
+                    \ contains=@texmathMath
+    " endif
     syn sync match vikiTexFormula grouphere NONE /^\s*$/
 endif
 
+syn region vikiTexMathMacro matchgroup=vikiMacroDelim
+            \ start=/{\(math\>\|\$\)\([^:{}]*:\)\?/ end=/}/ 
+            \ transparent contains=vikiMacroNames,@texmathMath
 syn region vikiTexRegion matchgroup=vikiMacroDelim
             \ start=/^[[:blank:]]*#Ltx\>\(\\\n\|.\)\{-}<<\z(.*\)$/ 
             \ end=/^[[:blank:]]*\z1[[:blank:]]*$/ 
@@ -152,9 +162,7 @@ syn region vikiTexRegion matchgroup=vikiMacroDelim
 syn region vikiTexMacro matchgroup=vikiMacroDelim
             \ start=/{\(ltx\)\([^:{}]*:\)\?/ end=/}/ 
             \ transparent contains=vikiMacroNames,@texmath
-syn region vikiTexMathMacro matchgroup=vikiMacroDelim
-            \ start=/{\(math\>\|\$\)\([^:{}]*:\)\?/ end=/}/ 
-            \ transparent contains=vikiMacroNames,@texmathMath
+
 
 syn match vikiList /^[[:blank:]]\+\([-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\)\ze[[:blank:]]/
 syn match vikiDescription /^[[:blank:]]\+\(\\\n\|.\)\{-1,}[[:blank:]]::\ze[[:blank:]]/ contains=@vikiHyperLinks,vikiEscapedChar,vikiComment
