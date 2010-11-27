@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-09-14.
-" @Revision:    0.679
+" @Last Change: 2010-11-26.
+" @Revision:    0.680
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -1460,7 +1460,7 @@ function! viki#SetAnchorMarks() "{{{3
     " call setpos('.', pos)
     call winrestview(view)
     if exists('*QuickfixsignsSet')
-        call QuickfixsignsSet('')
+        call QuickfixsignsSet('', ['marks'])
     endif
 endf
 
