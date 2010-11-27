@@ -235,12 +235,10 @@ and set it to whatever you want.
 
 
 ===============================================================================
-                                                    *viki-requirements*
-Optional Enhancements~
+                                                    *viki-related-plugins*
+Related plugins & Optional Enhancements~
 
-- genutils.vim (vimscript #197 for saving back references; but see 
-  |g:vikiSaveHistory|)
-- imaps.vim (vimscript #244 or #475 for |:VimQuote|)
+- vxfold (vimscript #3004): Provides org-mode like fold cycling
 - kpsewhich (not a vim plugin :-) for LaTeX support
 
 
