@@ -57,6 +57,16 @@ And some wikis provide tools for translating this markup to other formats
 markup to LaTeX, HTML, and Docbook). Unfortunately, about every wiki has its 
 own markup. 
 
+                                                    *viki-support*
+VIKI Forum (questions, feature requests):
+http://sourceforge.net/projects/deplate/forums/forum/700962
+
+Bug tracker:
+http://sourceforge.net/tracker/?group_id=108085&atid=649488
+
+Demo:
+http://vimsomnia.blogspot.com/2010/11/vikitasks-viki-demonstration-personal.html 
+
 
 ================================================================================
                                                     *viki-installation*
@@ -236,8 +246,11 @@ and set it to whatever you want.
 
 ===============================================================================
                                                     *viki-related-plugins*
-Related plugins & Optional Enhancements~
+Requirements:
+- tlib (vimscript #1863)
 
+Optional enhancements:
+- hookcursormoved (vimscript #2037): Enhanced detection of hyperlinks to inexistent destinations.
 - vxfold (vimscript #3004): Provides org-mode like fold cycling
 - kpsewhich (not a vim plugin :-) for LaTeX support
 
