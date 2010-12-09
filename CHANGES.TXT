@@ -1,0 +1,50 @@
+version: "3.19"
+  - Use tlib#balloon#Register() if available
+  - viki#Edit(): Switch to homepage only if we are in a viki-enabled buffer
+  - Run VimEnter command immediately if !has('vim_starting')
+  - Transcode balloon text (guess the file encoding based on the value of &fenc)
+  - Don't rely on g:vikiEnabled to be set when loading syntax/viki.vim
+  - Removed g:vikiEnabled variable (use g:viki#quit for checking when to quit)
+  - Act more graciously if g:vikiHomePage is empty
+  MD5 checksum: 64ebd14609764e98b91f1e233e121e32
+
+version: "3.19"
+  - Use tlib#balloon#Register() if available
+  - viki#Edit(): Switch to homepage only if we are in a viki-enabled buffer
+  - Run VimEnter command immediately if !has('vim_starting')
+  - Transcode balloon text (guess the file encoding based on the value of &fenc)
+  - Don't rely on g:vikiEnabled to be set when loading syntax/viki.vim
+  - Removed g:vikiEnabled variable (use g:viki#quit for checking when to quit)
+  - Act more graciously if g:vikiHomePage is empty
+  MD5 checksum: 64ebd14609764e98b91f1e233e121e32
+
+version: "3.19"
+  - Use tlib#balloon#Register() if available
+  - viki#Edit(): Switch to homepage only if we are in a viki-enabled buffer
+  - Run VimEnter command immediately if !has('vim_starting')
+  - Transcode balloon text (guess the file encoding based on the value of &fenc)
+  - Don't rely on g:vikiEnabled to be set when loading syntax/viki.vim
+  - Removed g:vikiEnabled variable (use g:viki#quit for checking when to quit)
+  - Act more graciously if g:vikiHomePage is empty
+  MD5 checksum: 64ebd14609764e98b91f1e233e121e32
+
+version: "3.19"
+  - Use tlib#balloon#Register() if available
+  - viki#Edit(): Switch to homepage only if we are in a viki-enabled buffer
+  - Run VimEnter command immediately if !has('vim_starting')
+  - Transcode balloon text (guess the file encoding based on the value of &fenc)
+  - Don't rely on g:vikiEnabled to be set when loading syntax/viki.vim
+  - Removed g:vikiEnabled variable (use g:viki#quit for checking when to quit)
+  - Act more graciously if g:vikiHomePage is empty
+  MD5 checksum: 64ebd14609764e98b91f1e233e121e32
+
+version: "3.19"
+  - Use tlib#balloon#Register() if available
+  - viki#Edit(): Switch to homepage only if we are in a viki-enabled buffer
+  - Run VimEnter command immediately if !has('vim_starting')
+  - Transcode balloon text (guess the file encoding based on the value of &fenc)
+  - Don't rely on g:vikiEnabled to be set when loading syntax/viki.vim
+  - Removed g:vikiEnabled variable (use g:viki#quit for checking when to quit)
+  - Act more graciously if g:vikiHomePage is empty
+  MD5 checksum: 64ebd14609764e98b91f1e233e121e32
+
