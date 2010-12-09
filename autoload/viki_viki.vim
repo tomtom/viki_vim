@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2010-09-13.
-" @Revision:    0.0.129
+" @Last Change: 2010-12-03.
+" @Revision:    0.0.131
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -171,12 +171,14 @@ function! viki_viki#SetupBuffer(state, ...) "{{{3
     
     if viki#IsSupportedType("e") && !(dontSetup =~# "e")
         let b:vikiExtendedNameRx = 
-                    \ '\[\[\(\('.b:vikiSpecialProtocols.'\)://[^]]\+\|[^]#]\+\)\?'.
-                    \ '\(#\([^]]*\)\)\?\]\(\[\([^]]\+\)\]\)\?\([!~*$\-]*\)\]'
+                    \ '\[\[\(\('.b:vikiSpecialProtocols.'\)://[^]]\+\|.\{-}\)\?'.
+                    \ '\(#\(.\{-}\)\)\?\]\(\[\([^]]\+\)\]\)\?\([!~*$\-]*\)\]'
                     " \ '\(#\('. b:vikiAnchorNameRx .'\)\)\?\]\(\[\([^]]\+\)\]\)\?[!~*\-]*\]'
+                    " \ '\[\[\(\('.b:vikiSpecialProtocols.'\)://[^]]\+\|[^]#]\+\)\?'.
         let b:vikiExtendedNameSimpleRx = 
-                    \ '\[\[\('. b:vikiSpecialProtocols .'://[^]]\+\|[^]#]\+\)\?'.
-                    \ '\(#[^]]*\)\?\]\(\[[^]]\+\]\)\?[!~*$\-]*\]'
+                    \ '\[\[\('. b:vikiSpecialProtocols .'://[^]]\+\|.\{-}\)\?'.
+                    \ '\(#.\{-}\)\?\]\(\[[^]]\+\]\)\?[!~*$\-]*\]'
+                    " \ '\[\[\('. b:vikiSpecialProtocols .'://[^]]\+\|[^]#]\+\)\?'.
                     " \ '\(#'. b:vikiAnchorNameRx .'\)\?\]\(\[[^]]\+\]\)\?[!~*\-]*\]'
         let b:vikiExtendedNameNameIdx   = 6
         let b:vikiExtendedNameModIdx    = 7
