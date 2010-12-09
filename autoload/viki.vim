@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-11-26.
-" @Revision:    0.680
+" @Last Change: 2010-12-09.
+" @Revision:    0.682
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -65,6 +65,7 @@ if !exists("g:vikiSpecialFiles") "{{{2
                 \ 'bmp',
                 \ 'dia',
                 \ 'doc',
+                \ 'docx',
                 \ 'dvi',
                 \ 'eml',
                 \ 'eps',
@@ -88,6 +89,7 @@ if !exists("g:vikiSpecialFiles") "{{{2
                 \ 'pdf',
                 \ 'png',
                 \ 'ppt',
+                \ 'pptx',
                 \ 'ps',
                 \ 'rtf',
                 \ 'voc',
@@ -97,6 +99,7 @@ if !exists("g:vikiSpecialFiles") "{{{2
                 \ 'wmv',
                 \ 'xhtml',
                 \ 'xls',
+                \ 'xlsx',
                 \ 'xmind',
                 \ ]
 endif
