@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     25-Apr-2004.
-" @Last Change: 2009-02-15.
-" @Revision:    0.43
+" @Last Change: 2011-01-12.
+" @Revision:    0.46
 " 
 " Description:
 " Use deplate as the "compiler" for viki files.
@@ -23,11 +23,11 @@ set cpo&vim
 
 fun! DeplateCompilerSet(options)
     if exists("b:deplatePrg")
-        exec "CompilerSet makeprg=".escape(b:deplatePrg ." ". a:options, " ")."\\ $*\\ %"
+        exec 'CompilerSet makeprg='.escape(b:deplatePrg .' '. a:options, ' ').'\ $*\ %'
     elseif exists("g:deplatePrg")
-        exec "CompilerSet makeprg=".escape(g:deplatePrg ." ". a:options, " ")."\\ $*\\ %"
+        exec 'CompilerSet makeprg='.escape(g:deplatePrg .' '. a:options, ' ').'\ $*\ %'
     else
-        exec "CompilerSet makeprg=deplate ".escape(a:options, " ")."\\ $*\\ %"
+        exec 'CompilerSet makeprg=deplate\ '.escape(a:options, " ").'\ $*\ %'
         " CompilerSet makeprg=deplate\ $*\ %
     endif
 endf
