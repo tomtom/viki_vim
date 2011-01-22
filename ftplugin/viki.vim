@@ -43,9 +43,11 @@ exec "setlocal commentstring=". substitute(b:vikiCommentStart, "%", "%%", "g")
             \ ."%s". substitute(b:vikiCommentEnd, "%", "%%", "g")
 exec "setlocal comments=fb:-,fb:+,fb:*,fb:#,fb:?,fb:@,:". b:vikiCommentStart
 
-setlocal foldmethod=expr
-setlocal foldexpr=VikiFoldLevel(v:lnum)
-setlocal foldtext=VikiFoldText()
+if g:vikiFoldMethodVersion > 0
+  setlocal foldmethod=expr
+  setlocal foldexpr=VikiFoldLevel(v:lnum)
+  setlocal foldtext=VikiFoldText()
+endif
 setlocal expandtab
 " setlocal iskeyword+=#,{
 setlocal iskeyword+={
