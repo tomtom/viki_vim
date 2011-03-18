@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2010-12-09.
-" @Revision:    2706
+" @Last Change: 2011-03-17.
+" @Revision:    2707
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -192,11 +192,7 @@ augroup viki
     autocmd BufWritePost,BufUnload * if &filetype == 'viki' | call viki#SaveCache() | endif
     autocmd VimLeavePre * let g:viki#quit = 1
     if g:vikiSaveHistory
-        if has('vim_starting')
-            autocmd VimEnter * if exists('VIKIBACKREFS_STRING') | exec 'let g:VIKIBACKREFS = '. VIKIBACKREFS_STRING | unlet VIKIBACKREFS_STRING | endif
-        else
-            if exists('VIKIBACKREFS_STRING') | exec 'let g:VIKIBACKREFS = '. VIKIBACKREFS_STRING | unlet VIKIBACKREFS_STRING | endif
-        endif
+        autocmd VimEnter * if exists('VIKIBACKREFS_STRING') | exec 'let g:VIKIBACKREFS = '. VIKIBACKREFS_STRING | unlet VIKIBACKREFS_STRING | endif
         autocmd VimLeavePre * let VIKIBACKREFS_STRING = string(g:VIKIBACKREFS)
     endif
     " As viki uses its own styles, we have to reset &filetype.
