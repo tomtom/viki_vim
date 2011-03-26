@@ -252,6 +252,7 @@ Requirements:
 Optional enhancements:
 - hookcursormoved (vimscript #2037): Enhanced detection of hyperlinks to inexistent destinations.
 - vxfold (vimscript #3004): Provides org-mode like fold cycling
+- VOoM (vimscript #2657): A two-pane outliner with support for viki
 - kpsewhich (not a vim plugin :-) for LaTeX support
 
 
