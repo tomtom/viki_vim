@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2010-10-26.
-" @Revision: 433
+" @Last Change: 2011-04-03.
+" @Revision: 435
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -318,13 +318,13 @@ else
                     endif
                 endif
                 if vikiFolds =~# 'l' 
-                    let list = s:MatchList(a:lnum)
+                    let list = viki#MatchList(a:lnum)
                     if list > 0
                         call s:SetHeadingMaxLevel(1)
                         " TLogVAR list
                         " return '>'. (b:vikiHeadingMaxLevel + (list / &sw))
                         return (b:vikiHeadingMaxLevel + (list / &sw))
-                    elseif getline(a:lnum) !~ '^[[:blank:]]' && s:MatchList(a:lnum - 1) > 0
+                    elseif getline(a:lnum) !~ '^[[:blank:]]' && viki#MatchList(a:lnum - 1) > 0
                         let fl = s:ScanHeading(a:lnum - 1, 1, vikiFolds)
                         if fl != ''
                             if fl[0] == '>'
@@ -453,9 +453,5 @@ else
         return matchend(getline(a:lnum), '\V\^'. b:vikiHeadingStart .'\+\ze\s')
     endf
 
-    function! s:MatchList(lnum) "{{{3
-        let rx = '^[[:blank:]]\+\ze\(#[A-F]\d\?\|#\d[A-F]\?\|[-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\|.\{-1,}[[:blank:]]::\)[[:blank:]]'
-        return matchend(getline(a:lnum), rx)
-    endf
-
 endif
+

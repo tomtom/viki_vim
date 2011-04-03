@@ -2920,3 +2920,9 @@ function! viki#Balloon() "{{{3
     return ''
 endf
 
+
+function! viki#MatchList(lnum) "{{{3
+    let rx = '^[[:blank:]]\+\ze\(#[A-Z]\d\?\|#\d[A-Z]\?\|[-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\|.\{-1,}[[:blank:]]::\)[[:blank:]]'
+    return matchend(getline(a:lnum), rx)
+endf
+
