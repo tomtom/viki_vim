@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2010-12-09.
-" @Revision:    0.682
+" @Last Change: 2011-04-03.
+" @Revision:    0.746
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -2925,4 +2925,105 @@ function! viki#MatchList(lnum) "{{{3
     let rx = '^[[:blank:]]\+\ze\(#[A-Z]\d\?\|#\d[A-Z]\?\|[-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\|.\{-1,}[[:blank:]]::\)[[:blank:]]'
     return matchend(getline(a:lnum), rx)
 endf
+
+
+" Visually select the list item at line lnum.
+function! viki#SelectListItem(lnum) "{{{3
+    let lnum = line(a:lnum)
+    if lnum == 0
+        let lnum = a:lnum
+    endif
+    let lbeg = lnum
+    let item_indent = -1
+    " TLogVAR lbeg, indent(lbeg)
+    while lbeg > 1 && indent(lbeg) > 0
+        " TLogVAR lbeg
+        let item_indent = viki#MatchList(lbeg)
+        if item_indent > 0
+            break
+        endif
+        let lbeg -= 1
+    endwh
+    " TLogVAR item_indent
+    if item_indent > 0
+        let lend = lnum
+        let lmax = line('$')
+        " TLogVAR lend, lmax
+        while lend < lmax && indent(lend + 1) > item_indent
+            " TLogVAR lend
+            let lend += 1
+        endwh
+        exec printf('norm! %dggV%dgg', lbeg, lend)
+        return item_indent
+    else
+        return -1
+    endif
+endf
+
+
+" :doc:
+" The following two functions can be used with the tinymode plugin to 
+" move around list items. 
+"
+" Example configuration: >
+"
+"   call tinymode#EnterMap("listitem_move", "gl")
+"   call tinymode#ModeMsg("listitem_move", "Move list item: h/j/k/l")
+"   call tinymode#Map("listitem_move", "h", "silent call viki#ShiftListItem('<')")
+"   call tinymode#Map("listitem_move", "l", "silent call viki#ShiftListItem('>')")
+"   call tinymode#Map("listitem_move", "j", "silent call viki#MoveListItem('down')")
+"   call tinymode#Map("listitem_move", "k", "silent call viki#MoveListItem('up')")
+
+
+function! viki#ShiftListItem(direction) "{{{3
+    call viki#SelectListItem('.')
+    exec 'norm!' a:direction
+endf
+
+
+function! viki#MoveListItem(direction) "{{{3
+    let t = @t
+    try
+        let item_indent = viki#SelectListItem('.')
+        if item_indent > 0
+            " TLogVAR 1, line('.')
+            norm! "td
+            let lnum = line('.')
+            if a:direction == 'up'
+                let lmove = -1
+                let lnum -= 1
+            else
+                let lmove = 1
+            endif
+            let lmax = line('$')
+            while lnum > 0 && lnum <= lmax && (indent(lnum) > item_indent || getline(lnum) !~ '\S')
+                let lnum += lmove
+            endwh
+            if lnum == 0 || lnum > lmax
+                norm! u
+            else
+                exec lnum
+                if viki#SelectListItem('.') > 0
+                    " TLogVAR 2, line('.')
+                    exec "norm! \<Esc>"
+                    if a:direction == 'up'
+                        exec line("'<")
+                        " TLogVAR 3, line('.')
+                        norm! "tP
+                    else
+                        exec line("'>")
+                        " TLogVAR 3, line('.')
+                        norm! "tp
+                    endif
+                    " TLogVAR 4, line('.')
+                else
+                    norm! u
+                endif
+            endif
+        endif
+    finally
+        let @t = t
+    endtry
+endf
+
 
