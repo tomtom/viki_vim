@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2011-04-03.
-" @Revision: 435
+" @Last Change: 2011-04-21.
+" @Revision: 448
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -14,27 +14,64 @@ let b:did_ftplugin = 1
 " endif
 " let b:did_viki_ftplugin = 1
 
-let b:vikiCommentStart = "%"
-let b:vikiCommentEnd   = ""
-let b:vikiHeadingMaxLevel = -1
+" Defines the prefix of comments when in "full" viki mode.
+" In minor mode this variable is set to either:
+"     - b:commentStart
+"     - b:ECcommentOpen
+"     - matchstr(&commentstring, "^\\zs.*\\ze%s")
+let b:vikiCommentStart = "%" "{{{2
+let b:vikiCommentEnd   = "" "{{{2
+let b:vikiHeadingMaxLevel = -1 "{{{2
 
 
-if !exists("b:vikiMaxFoldLevel") | let b:vikiMaxFoldLevel = 5 | endif "{{{2
-if !exists("b:vikiInverseFold")  | let b:vikiInverseFold  = 0 | endif "{{{2
-" Consider fold levels bigger that this as text body, levels smaller 
-" than this as headings
-" This variable is only used if g:vikiFoldMethodVersion is 1.
-if !exists("g:vikiFoldBodyLevel")   | let g:vikiFoldBodyLevel = 6        | endif "{{{2
+if !exists("g:vikiFoldMethodVersion")
+    " Choose folding method version
+    " Viki supports several methods (1..7) for defining folds. If you 
+    " find that text entry is slowed down it is probably due to the 
+    " chosen fold method. You could try to use another method (see 
+    " ../ftplugin/viki.vim for alternative methods) or check out this 
+    " vim tip:
+    " http://vim.wikia.com/wiki/Keep_folds_closed_while_inserting_text
+    let g:vikiFoldMethodVersion = 7 "{{{2
+endif
 
-" Choose folding method version
-if !exists("g:vikiFoldMethodVersion") | let g:vikiFoldMethodVersion = 7  | endif "{{{2
+if !exists("b:vikiMaxFoldLevel")
+    let b:vikiMaxFoldLevel = 5 "{{{2
+endif
+if !exists("b:vikiInverseFold")
+    " If set, the section headings' levels are folded in reversed order 
+    " so that |b:vikiMaxFoldLevel| corresponds to the top level and 1 to 
+    " the lowest level. This is useful when maintaining a file with a 
+    " fixed structure where the important things happen in subsections 
+    " while the top sections change little.
+    let b:vikiInverseFold  = 0 "{{{2
+endif
+if !exists("g:vikiFoldBodyLevel")
+    " Consider fold levels bigger that this as text body, levels smaller 
+    " than this as headings
+    " This variable is only used if |g:vikiFoldMethodVersion| is 1.
+    " If set to 0, the "b" mode in |vikiFolds| will set the body level 
+    " depending on the headings used in the current buffer. Otherwise 
+    " |b:vikiHeadingMaxLevel| + 1 will be used.
+    let g:vikiFoldBodyLevel = 6 "{{{2
+endif
 
-" What is considered for folding.
-" This variable is only used if g:vikiFoldMethodVersion is 1.
-if !exists("g:vikiFolds")           | let g:vikiFolds = 'hf'             | endif "{{{2
+if !exists("g:vikiFolds")
+    " Define which elements should be folded:
+    "     h :: Heading
+    "     H :: Headings (but inverse folding)
+    "     l :: Lists
+    "     b :: The body has max heading level + 1. This is slightly faster 
+    "       than the other version as vim never has to scan the text; but 
+    "       the behaviour may vary depending on the sequence of headings if 
+    "       |vikiFoldBodyLevel| is set to 0.
+    "     s :: ???
+    " This variable is only used if |g:vikiFoldMethodVersion| is 1.
+    let g:vikiFolds = 'hf' "{{{2
+endif
 
-" Context lines for folds
 if !exists("g:vikiFoldsContext") "{{{2
+    " Context lines for folds
     let g:vikiFoldsContext = [2, 2, 2, 2]
 endif
 
@@ -44,9 +81,9 @@ exec "setlocal commentstring=". substitute(b:vikiCommentStart, "%", "%%", "g")
 exec "setlocal comments=fb:-,fb:+,fb:*,fb:#,fb:?,fb:@,:". b:vikiCommentStart
 
 if g:vikiFoldMethodVersion > 0
-  setlocal foldmethod=expr
-  setlocal foldexpr=VikiFoldLevel(v:lnum)
-  setlocal foldtext=VikiFoldText()
+    setlocal foldmethod=expr
+    setlocal foldexpr=VikiFoldLevel(v:lnum)
+    setlocal foldtext=VikiFoldText()
 endif
 setlocal expandtab
 " setlocal iskeyword+=#,{
@@ -58,21 +95,7 @@ if has('balloon_multiline')
 endif
 
 let &include='\(^\s*#INC.\{-}\(\sfile=\|:\)\)'
-" let &include='\(^\s*#INC.\{-}\(\sfile=\|:\)\|\[\[\)'
-" set includeexpr=substitute(v:fname,'\].*$','','')
-
 let &define='^\s*\(#Def.\{-}id=\|#\(Fn\|Footnote\).\{-}\(:\|id=\)\|#VAR.\{-}\s\)'
-
-" if !exists('b:vikiHideBody') | let b:vikiHideBody = 0 | endif
-
-" if !hasmapto(":VikiFind")
-"     nnoremap <buffer> <c-tab>   :VikiFindNext<cr>
-"     nnoremap <buffer> <LocalLeader>vn :VikiFindNext<cr>
-"     nnoremap <buffer> <c-s-tab> :VikiFindPrev<cr>
-"     nnoremap <buffer> <LocalLeader>vN :VikiFindPrev<cr>
-" endif
-
-" compiler deplate
 
 map <buffer> <silent> [[ :call viki#FindPrevHeading()<cr>
 map <buffer> <silent> ][ :call viki#FindNextHeading()<cr>

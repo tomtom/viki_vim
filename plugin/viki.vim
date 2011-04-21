@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2011-03-17.
-" @Revision:    2707
+" @Last Change: 2011-04-21.
+" @Revision:    2721
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -30,7 +30,7 @@
 " TODO: don't know how to deal with viki names that span several lines 
 " (e.g.  in LaTeX mode)
 
-if &cp || exists("loaded_viki") "{{{2
+if &cp || exists("loaded_viki")
     finish
 endif
 if !exists('g:loaded_tlib') || g:loaded_tlib < 39
@@ -43,48 +43,73 @@ endif
 let loaded_viki = 319
 
 
-" Configuration {{{1
-" Support for the taglist plugin.
-if !exists("tlist_viki_settings") "{{{2
-    let tlist_viki_settings="deplate;s:structure"
+if !exists("tlist_viki_settings")
+    " Support for the taglist plugin.
+    let tlist_viki_settings = "deplate;s:structure" "{{{2
 endif
 
-" The prefix for the menu of intervikis. Set to '' in order to remove the 
-" menu.
-if !exists("g:vikiMenuPrefix") "{{{2
-    let g:vikiMenuPrefix = "Plugin.Viki."
+if !exists("g:vikiMenuPrefix")
+    " The prefix for the menu of intervikis. Set to '' in order to remove the 
+    " menu.
+    let g:vikiMenuPrefix = "Plugin.Viki." "{{{2
 endif
 
-" Make submenus for N letters of the interviki names.
 if !exists('g:vikiMenuLevel')
-    let g:vikiMenuLevel = 1   "{{{2
+    " Make submenus for N letters of the interviki names.
+    let g:vikiMenuLevel = 1 "{{{2
 endif
 
-" if !exists("g:vikiBasicSyntax")     | let g:vikiBasicSyntax = 0          | endif "{{{2
-" If non-nil, display headings of different levels in different colors
-if !exists("g:vikiFancyHeadings")   | let g:vikiFancyHeadings = 0        | endif "{{{2
+if !exists("g:vikiFancyHeadings")
+    " If non-nil, display headings of different levels in different colors
+    let g:vikiFancyHeadings = 0 "{{{2
+endif
 
-" Mark up inexistent names.
-if !exists("g:vikiMarkInexistent")  | let g:vikiMarkInexistent = 1       | endif "{{{2
+if !exists("g:vikiMarkInexistent")
+    " If non-zero, highligh links to existent or inexistent files in 
+    " different colours.
+    let g:vikiMarkInexistent = 1 "{{{2
+endif
 
-" if !exists("g:vikiOpenInWindow")    | let g:vikiOpenInWindow = ''        | endif "{{{2
-if !exists("g:vikiHighlightMath")   | let g:vikiHighlightMath = ''       | endif "{{{2
+if !exists("g:vikiHighlightMath")
+    let g:vikiHighlightMath = '' "{{{2
+endif
 
-" Default file suffix (including the optional period, e.g. '.txt').
-if !exists("g:vikiNameSuffix")      | let g:vikiNameSuffix = ""          | endif "{{{2
+if !exists("g:vikiNameSuffix")
+    " Default file suffix (including the optional period, e.g. '.txt' or 
+    " '.viki').
+    " Can also be buffer-local.
+    let g:vikiNameSuffix = "" "{{{2
+endif
 
-" The default filename for an interviki's index name
-if !exists("g:vikiIndex")           | let g:vikiIndex = 'index'          | endif "{{{2
+if !exists("g:vikiIndex")
+    " The default filename for an interviki's index name
+    let g:vikiIndex = 'index' "{{{2
+endif
 
-" Definition of intervikis. (This variable won't be evaluated until 
-" autoload/viki.vim is loaded).
 if !exists('g:viki_intervikis')
+    " Definition of intervikis. (This variable won't be evaluated until 
+    " autoload/viki.vim is loaded).
     let g:viki_intervikis = {}   "{{{2
 endif
 
-" If non-nil, cache back-links information
-if !exists("g:vikiSaveHistory")     | let g:vikiSaveHistory = 0          | endif "{{{2
+if !exists("g:vikiSaveHistory")
+    " If non-nil, cache back-links information
+    let g:vikiSaveHistory = 0 "{{{2
+endif
 
+
+" -1 ... open all links in a new windows
+" -2 ... open all links in a new windows but split vertically
+" Any positive number ... open always in this window
+" Can also be buffer-local.
+" :read: let g:vikiSplit = NO DEFAULT
+
+" If non-nil, simple viki names are disabled.
+" :read: let b:vikiNoSimpleNames = 0 "{{{2
+
+" Disable certain viki name types (see |vikiNameTypes|).
+" E.g., in order to disable CamelCase names only, set this variable to 'c'.
+" :read: let b:vikiDisableType = "" "{{{2
 
 if g:vikiMenuPrefix != '' "{{{2
     exec 'amenu '. g:vikiMenuPrefix .'Home :VikiHome<cr>'
@@ -167,20 +192,31 @@ for [s:iname, s:idef] in items(g:viki_intervikis)
 endfor
 
 
+" :display: VikiDefine NAME BASE ?SUFFIX
+" Define an interviki. See also |VikiDefine()|.
 command! -nargs=+ VikiDefine call VikiDefine(<f-args>)
 
+" NOTE: Be aware that we cannot highlight a reference if the text is embedded 
+" in syntax group that doesn't allow inclusion of arbitrary syntax elemtents.
 command! -nargs=? -bar VikiMinorMode call viki#DispatchOnFamily('MinorMode', empty(<q-args>) && exists('b:vikiFamily') ? b:vikiFamily : <q-args>, 1)
 command! -nargs=? -bar VikiMinorModeMaybe echom "Deprecated command: VikiMinorModeMaybe" | VikiMinorMode <q-args>
 command! VikiMinorModeViki call viki_viki#MinorMode(1)
 command! VikiMinorModeLaTeX call viki_latex#MinorMode(1)
 command! VikiMinorModeAnyWord call viki_anyword#MinorMode(1)
 
+" Basically the same as: >
+"     set ft=viki
+" < The main difference between these two is that VikiMode unlets 
+" b:did_ftplugin to make sure that the ftplugin gets loaded.
 command! -nargs=? -bar VikiMode call viki#Mode(<q-args>)
 command! -nargs=? -bar VikiModeMaybe echom "Deprecated command: VikiModeMaybe: Please use 'set ft=viki' instead" | call viki#Mode(<q-args>)
 
 command! -nargs=1 -complete=customlist,viki#BrowseComplete VikiBrowse :call viki#Browse(<q-args>)
 
+" Open the |viki-homepage|.
 command! VikiHome :call viki#HomePage()
+
+" Open the |viki-homepage|.
 command! VIKI :call viki#HomePage()
 
 

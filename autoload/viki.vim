@@ -3,10 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2011-04-03.
-" @Revision:    0.746
-
-" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+" @Last Change: 2011-04-21.
+" @Revision:    0.820
 
 
 """ General {{{1
@@ -21,16 +19,38 @@ let g:vikiDefSep  = "\n"
 " document. This is likely to go away.
 let g:vikiSelfRef = '.'
 
-" A simple viki name is made from a series of upper and lower characters 
-" (i.e. CamelCase-names). These two variables define what is considered as 
-" upper and lower-case characters. We don't rely on the builtin 
-" functionality for this.
-if !exists("g:vikiUpperCharacters") "{{{2
-    let g:vikiUpperCharacters = "A-Z"
+
+" :doc:
+" Simple Viki Names [2]:                              *viki-vars-simple-names*
+
+if !exists("g:vikiUpperCharacters")
+    " A simple viki name is made from a series of upper and lower characters 
+    " (i.e. CamelCase-names). These two variables define what is considered as 
+    " upper and lower-case characters. We don't rely on the builtin 
+    " functionality for this.
+    let g:vikiUpperCharacters = "A-Z" "{{{2
 endif
-if !exists("g:vikiLowerCharacters") "{{{2
-    let g:vikiLowerCharacters = "a-z"
+if !exists("g:vikiLowerCharacters")
+    let g:vikiLowerCharacters = "a-z" "{{{2
 endif
+
+" :doc:
+" Extended Viki Names [2]:                            *viki-vars-ext-names*
+" - b:vikiExtendedNameRx, b:vikiExtendedNameSimpleRx[1]
+" - b:vikiExtendedNameNameIdx, b:vikiExtendedNameDestIdx, 
+"   b:vikiExtendedNameAnchorIdx
+" 
+" URLs [2]:                                           *viki-vars-urls*
+" - b:vikiUrlRx, b:vikiUrlSimpleRx[1]
+" - b:vikiUrlNameIdx, b:vikiUrlDestIdx, b:vikiUrlAnchorIdx
+" 
+" NOTE: [1] The same as *Rx variables but with less groups.
+" NOTE: [2] These variables are defined by |VikiSetupBuffer()|.
+" 
+" - b:vikiAnchorRx                                    *b:vikiAnchorRx*
+"     If this variable exists, the string "%{ANCHOR}" will be replaced with the 
+"     search text. The expression has to conform to the very nomagic |/\V| 
+"     syntax.
 
 " Characters allowed in anchors
 " Defaults to:
@@ -44,18 +64,21 @@ if !exists('g:vikiUrlRestRx')
 endif
 
 
-" URLs matching these protocols are handled by VikiOpenSpecialProtocol()
-if !exists("g:vikiSpecialProtocols") "{{{2
-    let g:vikiSpecialProtocols = 'https\?\|ftps\?\|nntp\|mailto\|mailbox\|file'
+if !exists("g:vikiSpecialProtocols")
+    " URLs matching these protocols are handled by |VikiOpenSpecialProtocol()|.
+    " Can also be buffer-local.
+    let g:vikiSpecialProtocols = 'https\?\|ftps\?\|nntp\|mailto\|mailbox\|file' "{{{2
 endif
 
-" Exceptions from g:vikiSpecialProtocols
-if !exists("g:vikiSpecialProtocolsExceptions") "{{{2
-    let g:vikiSpecialProtocolsExceptions = ""
+if !exists("g:vikiSpecialProtocolsExceptions")
+    " Exceptions from g:vikiSpecialProtocols
+    let g:vikiSpecialProtocolsExceptions = "" "{{{2
 endif
 
 if !exists("g:vikiSpecialFiles") "{{{2
-    " Files matching these suffixes are handled by viki#OpenSpecialFile()
+    " Files matching these suffixes are handled by |viki#OpenSpecialFile()|.
+    " Can also be buffer-local.
+    " :read: let g:vikiSpecialFiles = [...] "{{{2
     let g:vikiSpecialFiles = [
                 \ 'aac',
                 \ 'aif',
@@ -104,133 +127,205 @@ if !exists("g:vikiSpecialFiles") "{{{2
                 \ ]
 endif
 
-" Exceptions from g:vikiSpecialFiles
-if !exists("g:vikiSpecialFilesExceptions") "{{{2
-    let g:vikiSpecialFilesExceptions = ""
+if !exists("g:vikiSpecialFilesExceptions")
+    " Exceptions from g:vikiSpecialFiles
+    let g:vikiSpecialFilesExceptions = "" "{{{2
 endif
 
-if !exists('g:viki_highlight_hyperlink_light') "{{{2
-    " let g:viki_highlight_hyperlink_light = 'term=bold,underline cterm=bold,underline gui=bold,underline ctermfg=DarkBlue guifg=DarkBlue'
-    let g:viki_highlight_hyperlink_light = 'term=underline cterm=underline gui=underline ctermfg=DarkBlue guifg=DarkBlue'
+if !exists('g:viki_highlight_hyperlink_light')
+    let g:viki_highlight_hyperlink_light = 'term=underline cterm=underline gui=underline ctermfg=DarkBlue guifg=DarkBlue' "{{{2
 endif
-if !exists('g:viki_highlight_hyperlink_dark') "{{{2
-    " let g:viki_highlight_hyperlink_dark = 'term=bold,underline cterm=bold,underline gui=bold,underline ctermfg=DarkBlue guifg=LightBlue'
-    let g:viki_highlight_hyperlink_dark = 'term=underline cterm=underline gui=underline ctermfg=LightBlue guifg=#bfbfff'
+if !exists('g:viki_highlight_hyperlink_dark')
+    let g:viki_highlight_hyperlink_dark = 'term=underline cterm=underline gui=underline ctermfg=LightBlue guifg=#bfbfff' "{{{2
 endif
 
-if !exists('g:viki_highlight_inexistent_light') "{{{2
-    " let g:viki_highlight_inexistent_light = 'term=bold,underline cterm=bold,underline gui=bold,underline ctermfg=DarkRed guifg=DarkRed'
-    let g:viki_highlight_inexistent_light = 'term=underline cterm=underline gui=underline ctermfg=DarkRed guifg=DarkRed'
+if !exists('g:viki_highlight_inexistent_light')
+    let g:viki_highlight_inexistent_light = 'term=underline cterm=underline gui=underline ctermfg=DarkRed guifg=DarkRed' "{{{2
 endif
-if !exists('g:viki_highlight_inexistent_dark') "{{{2
-    " let g:viki_highlight_inexistent_dark = 'term=bold,underline cterm=bold,underline gui=bold,underline ctermfg=Red guifg=Red'
-    let g:viki_highlight_inexistent_dark = 'term=underline cterm=underline gui=underline ctermfg=Red guifg=Red'
+if !exists('g:viki_highlight_inexistent_dark')
+    let g:viki_highlight_inexistent_dark = 'term=underline cterm=underline gui=underline ctermfg=Red guifg=Red' "{{{2
 endif
 
-" If set to true, any files loaded by viki will become viki enabled (in 
-" minor mode); this was the default behaviour in earlier versions
-if !exists('g:vikiPromote') "{{{2
-    let g:vikiPromote = 0
+if !exists('g:vikiPromote')
+    " If set to true, any files loaded by viki will become viki enabled (in 
+    " minor mode); this was the default behaviour in earlier versions
+    let g:vikiPromote = 0 "{{{2
 endif
 
-" If non-nil, use the parent document's suffix.
-if !exists("g:vikiUseParentSuffix") | let g:vikiUseParentSuffix = 0      | endif "{{{2
-
-" Prefix for anchors
-if !exists("g:vikiAnchorMarker")    | let g:vikiAnchorMarker = "#"       | endif "{{{2
-
-" If non-nil, search anchors anywhere in the text too (without special 
-" markup)
-if !exists("g:vikiFreeMarker")      | let g:vikiFreeMarker = 0           | endif "{{{2
-
-if !exists('g:vikiPostFindAnchor') "{{{2
-    let g:vikiPostFindAnchor = 'norm! zz'
+if !exists("g:vikiUseParentSuffix")
+    " If non-nil, use the parent document's suffix.
+    " If true, always append the "parent" file's suffix to the 
+    " destination file name. I.e. if the current file is "ThisIdea.txt" 
+    " the the viki name "OtherIdea" will refer to the file 
+    " "OtherIdea.txt".
+    let g:vikiUseParentSuffix = 0 "{{{2
 endif
 
-" List of enabled viki name types
-" c ... Camel case
-" s ... Simple names
-" S ... Quoted simple names
-" e ... Extended names
-" u ... URLs
-" i ... Intervikis
-" x ... Commands
-" w ... "hyperwords"
-" f ... Filenames as "hyperwords"
-if !exists("g:vikiNameTypes")       | let g:vikiNameTypes = "csSeuixwf"  | endif "{{{2
-
-" Which directory explorer to use to edit directories
-if !exists("g:vikiExplorer")        | let g:vikiExplorer = "Sexplore"    | endif "{{{2
-" if !exists("g:vikiExplorer")        | let g:vikiExplorer = "split"    | endif "{{{2
-" if !exists("g:vikiExplorer")        | let g:vikiExplorer = "edit"          | endif "{{{2
-"
-" If hide or update: use the respective command when leaving a buffer
-if !exists("g:vikiHide")            | let g:vikiHide = ''                | endif "{{{2
-
-" Don't use g:vikiHide for commands matching this rx
-if !exists("g:vikiNoWrapper")       | let g:vikiNoWrapper = '\cexplore'  | endif "{{{2
-
-" Cache information about a document's inexistent names
-if !exists("g:vikiCacheInexistent") | let g:vikiCacheInexistent = 0      | endif "{{{2
-
-" If non-nil, map keys that trigger the evaluation of inexistent names
-if !exists("g:vikiMapInexistent")   | let g:vikiMapInexistent = 1        | endif "{{{2
-
-" Map these keys for g:vikiMapInexistent to LineQuick
-if !exists("g:vikiMapKeys")         | let g:vikiMapKeys = "]).,;:!?\"' " | endif "{{{2
-
-" Map these keys for g:vikiMapInexistent to ParagraphVisible
-if !exists("g:vikiMapQParaKeys")    | let g:vikiMapQParaKeys = "\n"      | endif "{{{2
-
-" Install hooks for these conditions (requires hookcursormoved to be 
-" installed)
-" "linechange" could cause some slowdown.
-if !exists("g:vikiHCM") "{{{2
-    let g:vikiHCM = ['syntaxleave_oneline']
+if !exists("g:vikiAnchorMarker")
+    " Prefix for anchors
+    let g:vikiAnchorMarker = "#" "{{{2
 endif
 
-" Check the viki name before inserting this character
-if !exists("g:vikiMapBeforeKeys")   | let g:vikiMapBeforeKeys = ']'      | endif "{{{2
+if !exists("g:vikiFreeMarker")
+    " If true and an explicitly marked anchor isn't found, search for the anchor 
+    " text as such. This search will be case-insensitive. deplate won't be able 
+    " to deal with such pseudo-references, of course.
+    let g:vikiFreeMarker = 0 "{{{2
+endif
 
-" Some functions a gathered in families/classes. See vikiLatex.vim for 
-" an example.
-if !exists("g:vikiFamily")          | let g:vikiFamily = ""              | endif "{{{2
+if !exists('g:vikiPostFindAnchor')
+    let g:vikiPostFindAnchor = 'norm! zz' "{{{2
+endif
 
-" The directory separator
-if !exists("g:vikiDirSeparator")    | let g:vikiDirSeparator = "/"       | endif "{{{2
+if !exists("g:vikiNameTypes")
+    " Disable certain types of viki names globally or for a single buffer.
+    " (experimental, doesn't fully work yet)
+    " List of enabled viki name types:
+    "     s ... Simple viki name 
+    "         c ... CamelCase 
+    "         S ... simple, quoted viki name
+    "         i ... |interviki|
+    "         w ... Hyperwords
+    "             f ... file-bases hyperwords
+    "     e ... Extended viki name
+    "     u ... URL
+    "     x ... Directives (some commands, regions ...)
+    let g:vikiNameTypes = "csSeuixwf" "{{{2
+endif
 
-" The version of Deplate markup
-if !exists("g:vikiTextstylesVer")   | let g:vikiTextstylesVer = 2        | endif "{{{2
+if !exists("g:vikiExplorer")
+    " Which directory explorer to use to edit directories
+    let g:vikiExplorer = "Sexplore" "{{{2
+endif
 
-" The default viki page (as absolute filename)
-if !exists("g:vikiHomePage")        | let g:vikiHomePage = ''            | endif "{{{2
+if !exists("g:vikiHide")
+    " If hide or update: use the respective command when leaving a buffer
+    " If a dirty buffers gets hidden, vim usually complains. This can be 
+    " tiresome -- depending on your editing habits. When this variable is set to 
+    " "hide", vim won't complain. If you set it to "update", a viki buffer will 
+    " be automatically updated before editing a different file.  If you leave 
+    " this empty (""), the default behaviour is in effect. See also |hidden|.
+    let g:vikiHide = '' "{{{2
+endif
 
-" How often the feedback is changed when marking inexisting links
-if !exists("g:vikiFeedbackMin")     | let g:vikiFeedbackMin = &lines     | endif "{{{2
+if !exists("g:vikiNoWrapper")
+    " Don't use g:vikiHide for commands matching this rx
+    let g:vikiNoWrapper = '\cexplore' "{{{2
+endif
 
-" The map leader for most viki key maps.
-if !exists("g:vikiMapLeader")       | let g:vikiMapLeader = '<LocalLeader>v' | endif "{{{2
+if !exists("g:vikiCacheInexistent")
+    " Cache information about a document's inexistent names
+    " If non-zero, save patterns for |g:vikiMarkInexistent| for later 
+    " re-use using |tlib#cache#Filename()|. You might want to delete old 
+    " files from the |g:tlib_cache| directory from time to time.
+    let g:vikiCacheInexistent = 0 "{{{2
+endif
 
-" If non-nil, anchors like #mX are turned into vim marks
-if !exists("g:vikiAutoMarks")       | let g:vikiAutoMarks = 1            | endif "{{{2
+if !exists("g:vikiMapInexistent")
+    " If non-nil, map keys that trigger the evaluation of inexistent names
+    let g:vikiMapInexistent = 1 "{{{2
+endif
 
-" The variable that keeps back-links information
-if !exists("g:VIKIBACKREFS")        | let g:VIKIBACKREFS = {}            | endif "{{{2
+if !exists("g:vikiMapKeys")
+    " Map these keys for g:vikiMapInexistent to LineQuick
+    let g:vikiMapKeys = "]).,;:!?\"' " "{{{2
+endif
 
-" An expression that evaluates to the number of lines that should be 
-" included in the balloon tooltop text if &ballonexpr is set to 
-" viki#Balloon().
-if !exists("g:vikiBalloonLines")    | let g:vikiBalloonLines = '&lines / 3' | endif "{{{2
+if !exists("g:vikiMapQParaKeys")
+    " Map these keys for g:vikiMapInexistent to ParagraphVisible
+    let g:vikiMapQParaKeys = "\n" "{{{2
+endif
 
-" If true, show some line of the target file in a balloon tooltip 
-" window.
-if !exists("g:vikiBalloon")         | let g:vikiBalloon = 1 | endif "{{{2
+if !exists("g:vikiHCM")
+    " Install hooks for these conditions (requires hookcursormoved to be 
+    " installed)
+    " "linechange" could cause some slowdown.
+    let g:vikiHCM = ['syntaxleave_oneline'] "{{{2
+endif
 
-if !exists("g:vikiBalloonEncoding") | let g:vikiBalloonEncoding = &enc | endif "{{{2
+if !exists("g:vikiMapBeforeKeys")
+    " Check the viki name before inserting this character
+    let g:vikiMapBeforeKeys = ']' "{{{2
+endif
+
+if !exists("g:vikiFamily")
+    " Some functions a gathered in families/classes. See vikiLatex.vim for 
+    " an example.
+    " By defining this variable, family specific functions will be called for:
+    "     - viki#{b:vikiFamily}#SetupBuffer(state)
+    "     - viki#{b:vikiFamily}#DefineMarkup(state)
+    "     - viki#{b:vikiFamily}#DefineHighlighting(state)
+    "     - viki#{b:vikiFamily}#CompleteSimpleNameDef(def)
+    "     - viki#{b:vikiFamily}#CompleteExtendedNameDef(def)
+    "     - viki#{b:vikiFamily}#FindAnchor(anchor)
+    " If one of these functions is undefined for a "viki family", then the
+    " default one is called.
+    " 
+    " Apart from the default behaviour the following families are defined:
+    "     - latex (see |viki-latex|)
+    "     - anyword (see |viki-anyword|)
+    let g:vikiFamily = "" "{{{2
+endif
+
+if !exists("g:vikiDirSeparator")
+    " The directory separator
+    let g:vikiDirSeparator = "/" "{{{2
+endif
+
+if !exists("g:vikiTextstylesVer")
+    " The version of Deplate markup.
+    " Defines the markup of |viki-textstyles| like emphasized or code.
+    let g:vikiTextstylesVer = 2 "{{{2
+endif
+
+if !exists("g:vikiHomePage")
+    " The default viki page (as absolute filename).
+    " An absolute filename that is the general viki homepage (see also 
+    " |:VikiEdit| and |:VikiHome|).
+    let g:vikiHomePage = '' "{{{2
+endif 
+
+if !exists("g:vikiFeedbackMin")
+    " How often the feedback is changed when marking inexisting links
+    let g:vikiFeedbackMin = &lines "{{{2
+endif
+
+if !exists("g:vikiMapLeader")
+    " The map leader for most viki key maps.
+    let g:vikiMapLeader = '<LocalLeader>v' "{{{2
+endif
+
+if !exists("g:vikiAutoMarks")
+    " If non-nil, anchors like #mX are turned into vim marks
+    let g:vikiAutoMarks = 1 "{{{2
+endif
+
+if !exists("g:VIKIBACKREFS")
+    " The variable that keeps back-links information
+    let g:VIKIBACKREFS = {} "{{{2
+endif
+
+if !exists("g:vikiBalloonLines")
+    " An expression that evaluates to the number of lines that should be 
+    " included in the balloon tooltop text if &ballonexpr is set to 
+    " viki#Balloon().
+    let g:vikiBalloonLines = '&lines / 3' "{{{2
+endif
+
+if !exists("g:vikiBalloon")
+    " If true, show some line of the target file in a balloon tooltip 
+    " window.
+    let g:vikiBalloon = 1 "{{{2
+endif
+
+if !exists("g:vikiBalloonEncoding")
+    let g:vikiBalloonEncoding = &enc "{{{2
+endif
 
 
-" A list of files that contain special viki names
-if v:version >= 700 && !exists("g:vikiHyperWordsFiles") "{{{2
+if v:version >= 700 && !exists("g:vikiHyperWordsFiles")
+    " A list of files that contain special viki names
+    " :read: let g:vikiHyperWordsFiles = [...] "{{{2
     let g:vikiHyperWordsFiles = [
                 \ get(split(&rtp, ','), 0).'/vikiWords.txt',
                 \ './.vikiWords',
@@ -238,8 +333,8 @@ if v:version >= 700 && !exists("g:vikiHyperWordsFiles") "{{{2
 endif
 
 
-" Define which keys to map
-if !exists("g:vikiMapFunctionality") "{{{2
+if !exists("g:vikiMapFunctionality")
+    " Define which keys to map
     " b     ... go back
     " c     ... follow link (c-cr)
     " e     ... edit
@@ -253,12 +348,12 @@ if !exists("g:vikiMapFunctionality") "{{{2
     " tF    ... tab as find
     " Files ... #Files related
     " let g:vikiMapFunctionality      = 'mf mb tF c q e i I Files'
-    let g:vikiMapFunctionality      = 'ALL'
+    let g:vikiMapFunctionality      = 'ALL' "{{{2
 endif
-" Define which keys to map in minor mode (invoked via :VikiMinorMode)
-if !exists("g:vikiMapFunctionalityMinor") "{{{2
-    " let g:vikiMapFunctionalityMinor = 'f b p mf mb tF c q e i'
-    let g:vikiMapFunctionalityMinor = 'f b p mf mb tF c q e'
+
+if !exists("g:vikiMapFunctionalityMinor")
+    " Define which keys to map in minor mode (invoked via :VikiMinorMode)
+    let g:vikiMapFunctionalityMinor = 'f b p mf mb tF c q e' "{{{2
 endif
 
 let g:viki#quit = 0
@@ -273,18 +368,22 @@ let s:hookcursormoved_oldpos = []
 
 """ Commands {{{1
 
+" Find the next viki name or URL
 command! -count VikiFindNext call viki#DispatchOnFamily('Find', '', '',  <count>)
+" Find the previous viki name or URL
 command! -count VikiFindPrev call viki#DispatchOnFamily('Find', '', 'b', <count>)
 
-" command! -nargs=* -range=% VikiMarkInexistent
-"             \ call VikiSaveCursorPosition()
-"             \ | call <SID>VikiMarkInexistent(<line1>, <line2>, <f-args>)
-"             \ | call VikiRestoreCursorPosition()
-"             \ | call <SID>ResetSavedCursorPosition()
+
+" Update the highlighting of links to inexistent files. 
+" VikiMarkInexistent can take a range as argument.
 command! -nargs=* -range=% VikiMarkInexistent call viki#MarkInexistentInRange(<line1>, <line2>)
 
-" this requires imaps to be installed
-command! -range VikiQuote :call VEnclose("[-", "-]", "[-", "-]")
+if exists(':VEnclose')
+    " Mark selected text as a quoted simple viki name, i.e., enclose it in 
+    " [- and -].
+    " This command requires imaps to be installed.
+    command! -range VikiQuote :call VEnclose("[-", "-]", "[-", "-]")
+endif
 
 command! -narg=? VikiGoBack call viki#GoBack(<f-args>)
 
@@ -292,6 +391,33 @@ command! VikiJump call viki#MaybeFollowLink(0,1)
 
 command! VikiIndex :call viki#Index()
 
+" :display: VikiEdit[!] NAME
+" Edit the wiki page called NAME. If the NAME is '*', the |viki-homepage| will 
+" be opened. This is a convenient way to edit any wiki page from vim's command 
+" line. If you call :VikiEdit! (with bang), the homepage will be opened first, 
+" so that the homepage's customizations (and not the current buffer's one) are 
+" in effect. There are a few gotchas:
+" 
+"     1. Viki doesn't define a default directory for wiki pages. Thus a wiki page 
+"        will be looked for in the directory of the current buffer -- 
+"        whatever this is -- and the customizations of this buffer are in 
+"        effect. You can circumvent this problem by using |interviki| 
+"        names or define a |viki-homepage| and call :VikiEdit! with a 
+"        bang.
+" 
+"     2. Viki relies on some buffer local variables to be set. As customizability 
+"        is one viki's main design goal (although, one might want to 
+"        discuss whether I overdid it), there are no global settings that 
+"        would define what a valid viki name is supposed to look like. As 
+"        a consequence, if you disabled a certain type of wiki name in the 
+"        current buffer, you won't be able to edit a wiki page of this 
+"        type. E.g.: If the current buffer contains a LaTeX file, 
+"        |vikiFamily| is most likely set to "LaTeX" (see |viki-latex|). 
+"        For the LaTeX family, e.g., CamelCase and interwiki names are 
+"        disabled. Consequently, you can't do, e.g., >
+"          :VikiEdit IDEAS::WikiPage
+"<       Again, you can circumvent this problem by defining a 
+"        |viki-homepage| and call :VikiEdit! with a bang.
 command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEdit :call viki#Edit(<q-args>, !empty("<bang>"))
 command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditTab :call viki#Edit(<q-args>, !empty("<bang>"), 'tab')
 command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin1 :call viki#Edit(<q-args>, !empty("<bang>"), 1)
@@ -299,12 +425,24 @@ command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin2 :c
 command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin3 :call viki#Edit(<q-args>, !empty("<bang>"), 3)
 command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin4 :call viki#Edit(<q-args>, !empty("<bang>"), 4)
 
+" Update the current |viki-files| #Files region under the cursor.
 command! VikiFilesUpdate call viki#FilesUpdate()
+    
+" Update all |viki-files| #Files regions in the current buffer.
 command! VikiFilesUpdateAll call viki#FilesUpdateAll()
 
 command! -nargs=* -bang -complete=command VikiFileExec call viki#FilesExec(<q-args>, '<bang>', 1)
+" |:execute| a vim command after doing some replacements with the command 
+" string. For each formatted string the command is issued only once -- 
+" i.e. you can work easily with the directories. If no special formatting 
+" string is contained, the preformatted filename is appended to the command.
+"   %{FILE}  ... filename
+"   %{FFILE} ... preformatted filename (with '#%\ ' escaped)
+"   %{DIR}   ... file's directory
 command! -nargs=* -bang -complete=command VikiFilesExec call viki#FilesExec(<q-args>, '<bang>')
+" |:execute| VikiCmd_{VIKI_COMMAND_NAME} FILENAME
 command! -nargs=* -bang VikiFilesCmd call viki#FilesCmd(<q-args>, '<bang>')
+" |:call| VikiCmd_{FUNCTION_NAME}(FILENAME)
 command! -nargs=* -bang VikiFilesCall call viki#FilesCall(<q-args>, '<bang>')
 
 
@@ -313,7 +451,6 @@ command! -nargs=* -bang VikiFilesCall call viki#FilesCall(<q-args>, '<bang>')
 
 
 " This is mostly a legacy function. Using set ft=viki should work too.
-" Set filetype=viki
 function! viki#Mode(...) "{{{3
     TVarArg 'family'
     " if exists('b:vikiEnabled')
@@ -334,7 +471,7 @@ endf
 
 
 " Special file handlers {{{1
-if !exists('g:vikiOpenFileWith_ws') && exists(':WsOpen') "{{{2
+if !exists('g:vikiOpenFileWith_ws') && exists(':WsOpen')
     function! VikiOpenAsWorkspace(file)
         exec 'WsOpen '. escape(a:file, ' &!%')
         exec 'lcd '. escape(fnamemodify(a:file, ':p:h'), ' &!%')
@@ -347,9 +484,9 @@ if type(g:vikiSpecialFiles) != 3
 endif
 " TAssert IsList(g:vikiSpecialFiles)
 
-if !exists("g:vikiOpenFileWith_ANY") "{{{2
+if !exists("g:vikiOpenFileWith_ANY")
     if exists('g:netrw_browsex_viewer')
-        let g:vikiOpenFileWith_ANY = "exec 'silent !'. g:netrw_browsex_viewer .' '. shellescape('%{FILE}')"
+        let g:vikiOpenFileWith_ANY = "exec 'silent !'. g:netrw_browsex_viewer .' '. shellescape('%{FILE}')" "{{{2
     elseif has("win32") || has("win16") || has("win64")
         let g:vikiOpenFileWith_ANY = "exec 'silent ! start \"\" '. shellescape('%{FILE}')"
     elseif has("mac")
@@ -361,7 +498,18 @@ if !exists("g:vikiOpenFileWith_ANY") "{{{2
     endif
 endif
 
-if !exists('*VikiOpenSpecialFile') "{{{2
+if !exists('*VikiOpenSpecialFile')
+    " Handles filenames that match |vikiSpecialFiles|.
+    " If g:vikiOpenFileWith_{SUFFIX} is defined, it contains a command 
+    " definition for opending files of this type. "%{FILE}" is replaced with the 
+    " file name ("%%" = "%") and the resulting string is executed. Example: >
+    " 
+    "     let g:vikiOpenFileWith_html = '!firefox %{FILE}'
+    " 
+    " The contents of variable g:vikiOpenFileWith_ANY will be used as fallback
+    " command. Under Windows, g:vikiOpenFileWith_ANY defaults to "silent !cmd /c 
+    " start".
+    " All suffixes are translated to lower case.
     function! VikiOpenSpecialFile(file) "{{{3
         " TLogVAR a:file
         " let proto = tolower(matchstr(a:file, '\c\.\zs[a-z]\+$'))
@@ -386,8 +534,8 @@ endif
 
 
 " Special protocol handlers {{{1
-if !exists('g:vikiOpenUrlWith_mailbox') "{{{2
-    let g:vikiOpenUrlWith_mailbox="call VikiOpenMailbox('%{URL}')"
+if !exists('g:vikiOpenUrlWith_mailbox')
+    let g:vikiOpenUrlWith_mailbox = "call VikiOpenMailbox('%{URL}')" "{{{2
     function! VikiOpenMailbox(url) "{{{3
         exec viki#DecomposeUrl(strpart(a:url, 10))
         let idx = matchstr(args, 'number=\zs\d\+$')
@@ -399,11 +547,13 @@ if !exists('g:vikiOpenUrlWith_mailbox') "{{{2
     endf
 endif
 
-" Possible values: special*, query, normal
-if !exists("g:vikiUrlFileAs") | let g:vikiUrlFileAs = 'special' | endif "{{{2
+if !exists("g:vikiUrlFileAs")
+    " Possible values: special*, query, normal
+    let g:vikiUrlFileAs = 'special' "{{{2
+endif
 
-if !exists("g:vikiOpenUrlWith_file") "{{{2
-    let g:vikiOpenUrlWith_file="call VikiOpenFileUrl('%{URL}')"
+if !exists("g:vikiOpenUrlWith_file")
+    let g:vikiOpenUrlWith_file = "call VikiOpenFileUrl('%{URL}')" "{{{2
     function! VikiOpenFileUrl(url) "{{{3
         " TLogVAR url
         if viki#IsSpecialFile(a:url)
@@ -431,7 +581,7 @@ if !exists("g:vikiOpenUrlWith_file") "{{{2
     endf
 endif
 
-if !exists("g:vikiOpenUrlWith_ANY") "{{{2
+if !exists("g:vikiOpenUrlWith_ANY")
     " let g:vikiOpenUrlWith_ANY = "exec 'silent !". g:netrw_browsex_viewer ." '. escape('%{URL}', ' &!%')"
     if has("win32")
         " let g:vikiOpenUrlWith_ANY = "exec 'silent !rundll32 url.dll,FileProtocolHandler '. shellescape('%{URL}')"
@@ -445,7 +595,18 @@ if !exists("g:vikiOpenUrlWith_ANY") "{{{2
     endif
 endif
 
-if !exists("*VikiOpenSpecialProtocol") "{{{2
+if !exists("*VikiOpenSpecialProtocol")
+    " Handles filenames that match |vikiSpecialProtocols|.
+    " If g:vikiOpenUrlWith_{PROTOCOL} is defined, it contains a command definition 
+    " for opending urls of this type. "%{URL}" is replaced with the url ("%%" = 
+    " "%") and the resulting string is executed. Example: >
+    " 
+    "     let g:vikiOpenUrlWith_mailto = '!thunderbird -compose %{URL}'
+    " 
+    " The contents of variable g:vikiOpenUrlWith_ANY will be used as fallback
+    " command. Under Windows, g:vikiOpenUrlWith_ANY defaults to "silent 
+    " !rundll32 url.dll ...".
+    " All protocol names are translated to lower case.
     function! VikiOpenSpecialProtocol(url) "{{{3
         " TLogVAR a:url
         " TLogVAR a:url
@@ -1219,7 +1380,6 @@ function! viki#RestoreCursorPosition(...) "{{{3
 endf
 
 " Save the cursor position
-" TODO: adapt for vim7
 function! viki#SaveCursorPosition() "{{{3
     let ve = &virtualedit
     set virtualedit=all
@@ -1339,7 +1499,9 @@ function! s:GetBackRef()
     endif
 endf
 
-" Jump to the parent buffer (or go back in history)
+" Jump to the parent buffer (or go back in history).
+" If b:vikiParent is defined, open this viki name, otherwise use 
+" |viki#GoBack()|.
 function! viki#GoParent() "{{{3
     if exists('b:vikiParent')
         call viki#Edit(b:vikiParent)
@@ -1348,7 +1510,14 @@ function! viki#GoParent() "{{{3
     endif
 endf
 
-" Go back in history
+" Go back in history.
+" Viki keeps record about the "source" files from where a viki page was 
+" entered.  Calling this function jumps back to the "source" file (if only 
+" one such back reference is known) or let's you select from a list of 
+" "source" files. The information is stored in buffer variables -- i.e., 
+" it gets lost after closing the buffer. Care was taken to reduce 
+" information clutter, which is why the number of possible back references 
+" per "source" file was limited to one.
 function! viki#GoBack(...) "{{{3
     let s  = (a:0 >= 1) ? a:1 : -1
     let br = s:SelectBackRef(s)
@@ -1399,9 +1568,9 @@ function! viki#SubstituteArgs(str, ...) "{{{3
     return rv
 endf
 
-" Handle special anchors in extented viki names
-" Example: [[index#l=10]]
-if !exists('*VikiAnchor_l') "{{{2
+if !exists('*VikiAnchor_l')
+    " Handle special anchors in extented viki names
+    " Example: [[index#l=10]]
     function! VikiAnchor_l(arg) "{{{3
         if a:arg =~ '^\d\+$'
             exec a:arg
@@ -1409,23 +1578,23 @@ if !exists('*VikiAnchor_l') "{{{2
     endf
 endif
 
-" Example: [[index#line=10]]
-if !exists('*VikiAnchor_line') "{{{2
+if !exists('*VikiAnchor_line')
+    " Example: [[index#line=10]]
     function! VikiAnchor_line(arg) "{{{3
         call VikiAnchor_l(a:arg)
     endf
 endif
 
-" Example: [[index#rx=foo]]
-if !exists('*VikiAnchor_rx') "{{{2
+if !exists('*VikiAnchor_rx')
+    " Example: [[index#rx=foo]]
     function! VikiAnchor_rx(arg) "{{{3
         let arg = escape(s:StripBackslash(a:arg), '/')
         exec 'keepjumps norm! gg/'. arg .''
     endf
 endif
 
-" Example: [[index#vim=/foo]]
-if !exists('*VikiAnchor_vim') "{{{2
+if !exists('*VikiAnchor_vim')
+    " Example: [[index#vim=/foo]]
     function! VikiAnchor_vim(arg) "{{{3
         exec s:StripBackslash(a:arg)
     endf
@@ -1749,7 +1918,6 @@ function! s:GuessInterViki(def) "{{{3
 endf
 
 " Somewhat pointless legacy function
-" TODO: adapt for vim7
 function! s:MakeVikiDefPart(txt) "{{{3
     if a:txt == ''
         return g:vikiDefNil
@@ -1758,7 +1926,6 @@ function! s:MakeVikiDefPart(txt) "{{{3
     endif
 endf
 
-" TODO: adapt for vim7
 " Return a structure or whatever describing a viki name/link
 function! viki#MakeDef(v_name, v_dest, v_anchor, v_part, v_type) "{{{3
     let arr = map([a:v_name, a:v_dest, a:v_anchor, a:v_part, a:v_type, 0], 's:MakeVikiDefPart(v:val)')
@@ -1767,7 +1934,6 @@ function! viki#MakeDef(v_name, v_dest, v_anchor, v_part, v_type) "{{{3
 endf
 
 " Legacy function: Today we would use dictionaries for this
-" TODO: adapt for vim7
 " Return vimscript code that defines a set of variables on the basis of a 
 " viki name definition
 function! viki#SplitDef(def) "{{{3
@@ -1786,21 +1952,6 @@ function! viki#SplitDef(def) "{{{3
     endif
     return rv
 endf
-
-" Get a viki name's/link's name, destination, or anchor
-" function! s:GetVikiNamePart(txt, erx, idx, errorMsg) "{{{3
-"     if a:idx
-"         " let rv = substitute(a:txt, '^\C'. a:erx ."$", '\'.a:idx, "")
-"         let rv = matchlist(a:txt, '^\C'. a:erx ."$")[a:idx]
-"         if rv == ''
-"             return g:vikiDefNil
-"         else
-"             return rv
-"         endif
-"     else
-"         return g:vikiDefNil
-"     endif
-" endf
 
 function! s:ExtractMatch(match, idx, default) "{{{3
     if a:idx > 0
@@ -2164,9 +2315,16 @@ function! viki#GetLink(ignoreSyntax, ...) "{{{3
     return []
 endf
 
+" :display: viki#MaybeFollowLink(oldmap, ignoreSyntax, ?winNr=0)
 " Follow a viki name if any or complain about not having found a valid 
 " viki name under the cursor.
-" viki#MaybeFollowLink(oldmap, ignoreSyntax, ?winNr=0)
+" oldmap: If there isn't a viki link under the cursor:
+"     ""       ... throw error 
+"     1        ... return \<c-cr>
+"  	whatever ... return whatever
+" ignoreSyntax: If there isn't a viki syntax group under the cursor:
+"     0 ... no viki name found
+"     1 ... look if there is a viki name under cursor anyways
 function! viki#MaybeFollowLink(oldmap, ignoreSyntax, ...) "{{{3
     let winNr = a:0 >= 1 ? a:1 : 0
     " TLogVAR winNr
@@ -2207,8 +2365,8 @@ function! viki#HomePage(...) "{{{3
 endf
 
 
+" :display: viki#Edit(name, ?ìgnoreSpecial=0, ?winNr=0)
 " Edit a vikiname
-" viki#Edit(name, ?ìgnoreSpecial=0, ?winNr=0)
 function! viki#Edit(name, ...) "{{{3
     TVarArg ['ignoreSpecial', 0], ['winNr', 0]
     " TLogVAR a:name
@@ -2339,7 +2497,7 @@ function! s:EditCompleteMapAgent1(val, sfx, iv, rx) "{{{3
     endif
 endf
 
-" Command line completion of :VikiEdit
+" Command line completion of |:VikiEdit|
 function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
     " TLogVAR a:ArgLead, a:CmdLine, a:CursorPos
     " let arglead = a:ArgLead
@@ -2423,7 +2581,7 @@ fun! viki#FindNextRegion(name) "{{{3
 endf
 
 
-""" indent {{{1
+" Indentation
 fun! viki#GetIndent()
     let lr = &lazyredraw
     set lazyredraw
@@ -2567,7 +2725,9 @@ function! viki#ExecExternal(cmd) "{{{3
 endf
 
 
-""" #Files related stuff {{{1
+" :doc:
+" #Files related stuff
+
 fun! viki#FilesUpdateAll() "{{{3
     " let p = getpos('.')
     let view = winsaveview()
@@ -2718,10 +2878,6 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
         endtry
     endif
 endf
-
-" fun! VikiGetDirListing_ls(files)
-"     return a:files
-" endf
 
 fun! s:GetFileEntry(file, list) "{{{3
     " let prefix = substitute(a:file, '[^/]', '', 'g')
@@ -2927,7 +3083,33 @@ function! viki#MatchList(lnum) "{{{3
 endf
 
 
+"                                                     *viki-text-objects* *ii*
+" Create a new text-object ii that works on a inner list item. Once the 
+" maps are enabled, users may, e.g., visually select an item in a list 
+" by typing vii. See |viki#SelectListItem()| for a definition of what is 
+" considered a list item.
+
+" The maps are local to the current buffer. Add this line to your 
+" |vimrc| file in order to enable the ii text-object for all viki 
+" buffers:>
+"   au FileType viki call viki#MapListItemTextObject()
+function! viki#MapListItemTextObject() "{{{3
+    vnoremap <buffer> ii :<c-u>silent! call viki#SelectListItem('.')<cr>
+    omap <buffer> ii :normal Vii<cr>
+endf
+
+
 " Visually select the list item at line lnum.
+" A list item also contains all its child items. E.g. in a list like:>
+"
+"   1. Venenatis diam dignissim dui. Praesent risus.
+"   2. Tincidunt facilisis, est nisi pellentesque ligula.
+"       a. Adipiscing dui non quam.
+"       b. Duis posuere tortor.
+"   3. Massa lorem, dignissim at, vehicula et.
+"
+" If the cursor is placed on item #2, this function also selects the 
+" items a and b.
 function! viki#SelectListItem(lnum) "{{{3
     let lnum = line(a:lnum)
     if lnum == 0

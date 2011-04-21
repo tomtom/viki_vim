@@ -1,5 +1,5 @@
-*viki.txt*              Viki - A Pseudo Local Wiki Tool
-                        Thomas Link (micathom AT gmail com?subject=vim)
+*viki.txt*          A personal wiki for vim
+                    Author: Tom Link, micathom at gmail com
 
 This plugin adds wiki-like hypertext capabilities to Vim. You can use viki as 
 a "minor" mode (i.e., as an add-on to any other mode) or as a full-fledged 
@@ -68,21 +68,34 @@ Demo:
 http://vimsomnia.blogspot.com/2010/11/vikitasks-viki-demonstration-personal.html 
 
 
-================================================================================
-                                                    *viki-installation*
-Installation~
+-----------------------------------------------------------------------
+Install~
 
-Edit the vba file and type: >
+In order to install the vba, open the vba file in VIM and type: >
 
     :so %
 
-See :help vimball for details. If you have difficulties or use vim 7.0, 
-please make sure, you have the current version of vimball (vimscript 
-#1502) installed.
+See :help vimball for details.
 
 This script requires tlib (vimscript #1863) to be installed.
 
-Viki requires: >
+Also available via git: http://github.com/tomtom/viki_vim/
+
+                                                    *viki-requirements*
+Requirements:
+- tlib (vimscript #1863)
+
+                                                    *viki-related-plugins*
+Optional enhancements:
+- hookcursormoved (vimscript #2037): Enhanced detection of hyperlinks to inexistent destinations.
+- vxfold (vimscript #3004): Provides org-mode like fold cycling
+- VOoM (vimscript #2657): A two-pane outliner with support for viki
+- kpsewhich (not a vim plugin :-) for LaTeX support
+
+
+Post-Install~
+
+Viki requires the following minimal lines to be added to |vimrc|: >
 
     :set nocompatible
     :filetype plugin indent on
@@ -113,8 +126,8 @@ It's probably a good idea to check the values of the following variables:
       languages you probably prefer to use quoted viki names anyway): >
 
         " this is in iso-latin-1
-        let g:vikiLowerCharacters = "a-z‰ˆ¸ﬂ·‡ÈËÌÏÛÚÁÒ"
-        let g:vikiUpperCharacters = "A-Zƒ÷‹"
+        let g:vikiLowerCharacters = "a-z√§√∂√º√ü√°√†√©√®√≠√¨√≥√≤√ß√±"
+        let g:vikiUpperCharacters = "A-Z√Ñ√ñ√ú"
 <
     - |g:vikiUseParentSuffix| (see also |viki-names|); I personally prefer 
       this to be ON >
@@ -154,19 +167,17 @@ less about page names.
 
 There are two ways to define an interviki:
 
-                                                    *VikiDefine()*
-    1. Use VikiDefine(name, prefix, ?suffix="*", ?index="Index.${suffix}")
+    1. Use |VikiDefine()|: >
 
         call VikiDefine('SCI', $HOME."/Projects/Sci/Ideas", ".txt")
 
-       This command will automatically define a menu for each interviki 
+<      This command will automatically define a menu for each interviki 
        (unless g:vikiMenuPrefix is empty) and it will also define a command 
        with the name of the interviki that can be used to quickly access viki 
        files from the vim command line.
 
-                                                    *g:viki_intervikis*
-    2. Use g:viki_intervikis (a dictionary). The values can be either a list 
-       (arguments for |VikiDefine()|) or a string.
+    2. Use |g:viki_intervikis| (a dictionary). The values can be either a list 
+       (arguments for |VikiDefine()|) or a string. >
 
         let g:viki_intervikis['SCI']  = [$HOME."/Projects/Sci/Ideas", ".txt"]
         let g:viki_intervikis['PROJ'] = $HOME."/Projects"
@@ -244,19 +255,7 @@ In order to disable the indentation plugin, define the variable g:vikiNoIndent
 and set it to whatever you want.
 
 
-===============================================================================
-                                                    *viki-related-plugins*
-Requirements:
-- tlib (vimscript #1863)
-
-Optional enhancements:
-- hookcursormoved (vimscript #2037): Enhanced detection of hyperlinks to inexistent destinations.
-- vxfold (vimscript #3004): Provides org-mode like fold cycling
-- VOoM (vimscript #2657): A two-pane outliner with support for viki
-- kpsewhich (not a vim plugin :-) for LaTeX support
-
-
-================================================================================
+-----------------------------------------------------------------------
                                                     *viki-names*
 Viki Names~
 
@@ -387,7 +386,7 @@ written as in the LaTeX example.
 NOTE: |deplate| attaches an anchor to the previous element (e.g. |viki-tables|).
 
 
-================================================================================
+-----------------------------------------------------------------------
                                                     *viki-markup*
 Pseudo Markup~
 
@@ -614,7 +613,7 @@ Backslashes~
 \_nounderline_, \NoVikiName
 
 
-================================================================================
+-----------------------------------------------------------------------
                                                     *viki-key-bindings*
 Default Key Binding~
 
@@ -650,349 +649,6 @@ Additional Key Binding In Full Viki Mode
 
 <c-tab>, <LocalLeader>vn   ... |:VikiFindNext|
 <s-c-tab>, <LocalLeader>vN ... |:VikiFindPrev|
-
-
-================================================================================
-                                                    *viki-commands*
-Commands~
-
-                                                    *:VikiMinorMode*
-- VikiMinorMode
-  NOTE: Be aware that we cannot highlight a reference if the text is embedded 
-  in syntax group that doesn't allow inclusion of arbitrary syntax elemtents.
-
-                                                    *:VikiMode*
-- VikiMode (do additional highlighting)
-  Basically the same as: >
-    set ft=viki
-< The main difference between these two is that VikiMode unlets 
-  b:did_ftplugin to make sure that the ftplugin gets loaded.
-
-                                                    *:VikiFind*
-                                                    *:VikiFindNext* *:VikiFindPrev*
-- VikiFindNext, VikiFindPrev (find the next/previous viki name or URL)
-
-                                                    *:VikiMarkInexistent*
-                                                    *:VikiMarkInexistentInParagraph*
-- VikiMarkInexistent, VikiMarkInexistentInParagraph
-  Update the highlighting of links to inexistent files. VikiMarkInexistent 
-  can take a range as argument.
-
-- VikiQuote                                         *:VikiQuote*
-  Mark selected text as a quoted simple viki name, i.e., enclose it in 
-  [- and -].
-
-- VikiEdit[!] NAME                                     *:VikiEdit*
-  Edit the wiki page called NAME. If the NAME is '*', the |viki-homepage| will 
-  be opened. This is a convenient way to edit any wiki page from vim's command 
-  line. If you call :VikiEdit! (with bang), the homepage will be opened first, 
-  so that the homepage's customizations (and not the current buffer's one) are 
-  in effect. There are a few gotchas:
-
-  1. Viki doesn't define a default directory for wiki pages. Thus a wiki page 
-  will be looked for in the directory of the current buffer -- whatever this 
-  is -- and the customizations of this buffer are in effect. You can 
-  circumvent this problem by using |interviki| names or define a 
-  |viki-homepage| and call :VikiEdit! with a bang.
-
-  2. Viki relies on some buffer local variables to be set. As customizability 
-  is one viki's main design goal (although, one might want to discuss whether 
-  I overdid it), there are no global settings that would define what a valid 
-  viki name is supposed to look like. As a consequence, if you disabled a 
-  certain type of wiki name in the current buffer, you won't be able to edit a 
-  wiki page of this type. E.g.: If the current buffer contains a LaTeX file, 
-  |vikiFamily| is most likely set to "LaTeX" (see |viki-latex|). For the LaTeX 
-  family, e.g., CamelCase and interwiki names are disabled. Consequently, you 
-  can't do, e.g., ":VikiEdit IDEAS::WikiPage". Again, you can circumvent this 
-  problem by defining a |viki-homepage| and call :VikiEdit! with a bang.
-
-- VikiHome                                          *:VikiHome*
-  Open the |viki-homepage|.
-
-- VikiDefine NAME BASE ?SUFFIX                      *:VikiDefine*
-    Define an interviki. See also |VikiDefine()|.
-
-================================================================================
-                                                    *viki-functions*
-Functions~
-
-- VikiMinorMode(state)                              *VikiMinorMode()*
-
-- VikiMode(family)                                  *VikiMode()*
-
-- viki#MaybeFollowLink(oldmap, ignoreSyntax)         *viki#MaybeFollowLink()*
-    oldmap: If there isn't a viki link under the cursor:
-        ""       ... throw error 
-        1        ... return \<c-cr>
-     	whatever ... return whatever
-    ignoreSyntax: If there isn't a viki syntax group under the cursor:
-        0 ... no viki name found
-        1 ... look if there is a viki name under cursor anyways
-
-- viki#FindAnchor(anchor)                            *viki#FindAnchor()*
-
-                                                    *b:vikiParent*
-- viki#GoParent()                                    *viki#GoParent()* 
-    If b:vikiParent is defined, open this viki name, otherwise use 
-    |viki#GoBack()|.
-
-- viki#GoBack()                                      *viki#GoBack()*
-    Viki keeps record about the "source" files from where a viki page was 
-    entered.  Calling this function jumps back to the "source" file (if only 
-    one such back reference is known) or let's you select from a list of 
-    "source" files. The information is stored in buffer variables -- i.e., it 
-    gets lost after closing the buffer. Care was taken to reduce information 
-    clutter, which is why the number of possible back references per "source" 
-    file was limited to one.
-
-- VikiOpenSpecialFile(filename)                     *VikiOpenSpecialFile()*
-    Handles filenames that match |vikiSpecialFiles|.
-    If g:vikiOpenFileWith_{SUFFIX} is defined, it contains a command 
-    definition for opending files of this type. "%{FILE}" is replaced with the 
-    file name ("%%" = "%") and the resulting string is executed. Example: >
-
-        let g:vikiOpenFileWith_html = '!firefox %{FILE}'
-
-<   The contents of variable g:vikiOpenFileWith_ANY will be used as fallback
-    command. Under Windows, g:vikiOpenFileWith_ANY defaults to "silent !cmd /c 
-    start".
-    All suffixes are translated to lower case.
-
-- VikiOpenSpecialProtocol(url)                      *VikiOpenSpecialProtocol()*
-    Handles filenames that match |vikiSpecialProtocols|.
-    If g:vikiOpenUrlWith_{PROTOCOL} is defined, it contains a command definition 
-    for opending urls of this type. "%{URL}" is replaced with the url ("%%" = 
-    "%") and the resulting string is executed. Example: >
-
-        let g:vikiOpenUrlWith_mailto = '!thunderbird -compose %{URL}'
-
-<   The contents of variable g:vikiOpenUrlWith_ANY will be used as fallback
-    command. Under Windows, g:vikiOpenUrlWith_ANY defaults to "silent 
-    !rundll32 url.dll ...".
-    All protocol names are translated to lower case.
-
-
-================================================================================
-                                                    *viki-variables*
-Variables~
-
-Homepage:                                           *viki-homepage*
-                                                    *g:vikiHomePage*
-- g:vikiHomePage:
-    An absolute filename that is the general viki homepage (see also 
-    |:VikiEdit| and |:VikiHome|).
-
-Simple Viki Names [2]:                              *viki-vars-simple-names*
-                                                    *g:vikiLowerCharacters* 
-                                                    *g:vikiUpperCharacters*
-- g:vikiLowerCharacters, g:vikiUpperCharacters, b:vikiLowerCharacters, 
-  b:vikiUpperCharacters
-    These default to "a-z" and "A-Z" respectively; "international" users 
-    should set these variables in their |vimrc| file to fit their needs
-
-- b:vikiAnchorMarker
-
-- b:vikiSimpleNameRx, b:vikiSimpleNameSimpleRx[1]
-- b:vikiSimpleNameNameIdx, b:vikiSimpleNameDestIdx, b:vikiSimpleNameAnchorIdx
-
-Extended Viki Names [2]:                            *viki-vars-ext-names*
-- b:vikiExtendedNameRx, b:vikiExtendedNameSimpleRx[1]
-- b:vikiExtendedNameNameIdx, b:vikiExtendedNameDestIdx, 
-  b:vikiExtendedNameAnchorIdx
-
-URLs [2]:                                           *viki-vars-urls*
-- b:vikiUrlRx, b:vikiUrlSimpleRx[1]
-- b:vikiUrlNameIdx, b:vikiUrlDestIdx, b:vikiUrlAnchorIdx
-
-NOTE: [1] The same as *Rx variables but with less groups.
-NOTE: [2] These variables are defined by |VikiSetupBuffer()|.
-
-- b:vikiAnchorRx                                    *b:vikiAnchorRx*
-    If this variable exists, the string "%{ANCHOR}" will be replaced with the 
-    search text. The expression has to conform to the very nomagic |/\V| 
-    syntax.
-
-- g:vikiFreeMarker                                  *g:vikiFreeMarker*
-    If true and an explicitly marked anchor isn't found, search for the anchor 
-    text as such. This search will be case-insensitive. deplate won't be able 
-    to deal with such pseudo-references, of course.
-
-
-File handling:
-
-- g:vikiSpecialFiles, b:vikiSpecialFiles            *vikiSpecialFiles*
-    Default value: jpg\|gif\|bmp\|pdf\|dvi\|ps
-    A list of extensions for files that should be opened with 
-    |VikiOpenSpecialFile()|.
-
-- g:vikiSpecialProtocols, b:vikiSpecialProtocols    *vikiSpecialProtocols*
-    Default value: https\?\|ftps\?
-    A list of protocolls that should be opened with 
-    |VikiOpenSpecialProtocol()|.
-
-- g:vikiUseParentSuffix                             *g:vikiUseParentSuffix*
-    Default value: 0
-    If true, always append the "parent" file's suffix to the destination file 
-    name. I.e. if the current file is "ThisIdea.txt" the the viki name 
-    "OtherIdea" will refer to the file "OtherIdea.txt".
-
-- g:vikiNameSuffix b:vikiNameSuffix                 *vikiNameSuffix* *b:vikiNameSuffix*
-    Default value: ""
-    Append suffix to the destination file name.
-
-
-Markup:
-
-- g:vikiTextStyles, b:vikiTextStyles                *vikiTextStyles*
-    Default: 2
-    Defines the markup of |viki-textstyles| like emphasized or code.
-
-- g:vikiCommentStart                                *g:vikiCommentStart*
-    Default value: %
-    Defines the prefix of comments when in "full" viki mode.
-
-- b:vikiCommentStart                                *b:vikiCommentStart*
-    In minor mode this variable is set to either:
-        - b:commentStart
-        - b:ECcommentOpen
-        - matchstr(&commentstring, "^\\zs.*\\ze%s")
-    In "full" viki mode it's set to |g:vikiCommentStart|.
-
-- g:vikiTypewriterFont                              *g:vikiTypewriterFont*
-    See |viki-textstyles|.
-
-- g:vikiHeadingFont                                 *g:vikiHeadingFont*
-    See |viki-headings|.
-
-- g:vikiHyperLinkColor                              *g:vikiHyperLinkColor*
-    Default: DarkBlue or LightBlue (depending on 'background')
-    The color of hyperlinks, viki names etc.
-
-- g:vikiInexistentColor                             *g:vikiInexistentColor*
-    Default: Red
-    The color of links to inexistent files.
-
-- g:vikiFamily, b:vikiFamily                        *vikiFamily*
-    By defining this variable, family specific functions will be called for:
-        - viki#{b:vikiFamily}#SetupBuffer(state)
-        - viki#{b:vikiFamily}#DefineMarkup(state)
-        - viki#{b:vikiFamily}#DefineHighlighting(state)
-        - viki#{b:vikiFamily}#CompleteSimpleNameDef(def)
-        - viki#{b:vikiFamily}#CompleteExtendedNameDef(def)
-        - viki#{b:vikiFamily}#FindAnchor(anchor)
-    If one of these functions is undefined for a "viki family", then the
-    default one is called.
-
-    Apart from the default behaviour the following families are defined:
-        - latex (see |viki-latex|)
-        - anyword (see |viki-anyword|)
-
-
-Etc:
-
-- g:vikiMapMouse                                    *g:vikiMapMouse*
-    See |viki-key-bindings|.
-
-- b:vikiSplit, g:vikiSplit                          *vikiSplit*
-    -1 ... open all links in a new windows
-    -2 ... open all links in a new windows but split vertically
-    Any positive number ... open always in this window
-
-- b:vikiNameTypes, g:vikiNameTypes                  *vikiNameTypes*
-    Default value: "csSeuixwf"
-        s ... Simple viki name 
-            c ... CamelCase 
-            S ... simple, quoted viki name
-            i ... |interviki|
-            w ... Hyperwords
-                f ... file-bases hyperwords
-        e ... Extended viki name
-        u ... URL
-        x ... Directives (some commands, regions ...)
-    Disable certain types of viki names globally or for a single buffer.
-    (experimental, doesn't fully work yet)
-
-- g:vikiSaveHistory                                 *g:vikiSaveHistory*
-    Default value: 0
-    If genutils.vim is installed, the history data will be saved in 
-    |viminfo-file|. Like most of this plugin, this feature is _experimental_
-    and is turned off by default.
-
-- g:vikiExplorer                                    *g:vikiExplorer*
-    Default: "Sexplore"
-    If a viki name points to a directory, we use this command for viewing the 
-    directory contents.
-
-- g:vikiMarkInexistent                              *g:vikiMarkInexistent*
-    Default: 1
-    If non-zero, highligh links to existent or inexistent files in different 
-    colours.
-
-- g:vikiCacheInexistent                             *g:vikiCacheInexistent*
-    Default: 0
-    If non-zero, save patterns for |g:vikiMarkInexistent| for later re-use 
-    using |tlib#cache#Filename()|. You might want to delete old files from the 
-    |g:tlib_cache| directory from time to time.
-
-- b:vikiInverseFold                                 *b:vikiInverseFold*
-    Default: 0 == OFF
-    If set, the section headings' levels are folded in reversed order so that 
-    |b:vikiMaxFoldLevel| corresponds to the top level and 1 to the lowest 
-    level. This is useful when maintaining a file with a fixed structure where 
-    the important things happen in subsections while the top sections change 
-    little.
-
-- b:vikiMaxFoldLevel                                *b:vikiMaxFoldLevel*
-    Default: 5
-    When using |b:vikiInverseFold|, a heading of level b:vikiMaxFoldLevel 
-    corresponds to level 1, b:vikiMaxFoldLevel - 1 to level 2, 
-    b:vikiMaxFoldLevel - 2 to level 3 ...  and a top heading to level 
-    b:vikiMaxFoldLevel. I.e., if you set |foldlevel| to 1, you will see only 
-    the text at level b:vikiMaxFoldLevel.
-
-- g:vikiFoldBodyLevel, b:vikiFoldBodyLevel          *vikiFoldBodyLevel*
-    Default: 4
-    If set to 0, the "b" mode in |vikiFolds| will set the body level depending 
-    on the headings used in the current buffer. Otherwise 
-    g:vikiHeadingMaxLevel + 1 will be used.
-
-- g:vikiFolds, b:vikiFolds                          *vikiFolds*
-    Default: hl
-    Define which elements should be folded:
-        h :: Heading
-        H :: Headings (but inverse folding)
-        l :: Lists
-        b :: The body has max heading level + 1. This is slightly faster 
-          than the other version as vim never has to scan the text; but 
-          the behaviour may vary depending on the sequence of headings if 
-          |vikiFoldBodyLevel| is set to 0.
-        s :: ???
-
-- g:vikiFoldMethodVersion                           *g:vikiFoldMethodVersion*
-    Viki supports several methods (1..7) for defining folds. If you find that 
-    text entry is slowed down it is probably due to the chosen fold method. 
-    You could try to use another method (see ../ftplugin/viki.vim for 
-    alternative methods) or check out this vim tip:
-    http://vim.wikia.com/wiki/Keep_folds_closed_while_inserting_text
-
-- b:vikiNoSimpleNames                               *b:vikiNoSimpleNames*
-    Default: 0
-    If non-nil, simple viki names are disabled.
-
-- b:vikiDisableType                                 *b:vikiDisableType*
-    Disable certain viki name types (see |vikiNameTypes|).
-    E.g., in order to disable CamelCase names only, set this variable to 'c'.
-
-- g:vikiHide                                        *g:vikiHide*
-    Default: ''
-    If a dirty buffers gets hidden, vim usually complains. This can be 
-    tiresome -- depending on your editing habits. When this variable is set to 
-    "hide", vim won't complain. If you set it to "update", a viki buffer will 
-    be automatically updated before editing a different file.  If you leave 
-    this empty (""), the default behaviour is in effect. See also |hidden|.
-
-
-================================================================================
                                                     *viki-highlight*
 Highlighting~
 
@@ -1016,7 +672,7 @@ The colors are tested using color scheme with a white background.
     - vikiCommand
 
 
-================================================================================
+-----------------------------------------------------------------------
                                                     *viki-files*
 Files Region~
 
@@ -1037,36 +693,8 @@ that is restored upon automatic update.
 
 There are a few special commands to deal with this region.
 
-                                                    *:VikiFilesUpdate*
-:VikiFilesUpdate
-    - Update the current #Files region under the cursor.
-
-                                                    *:VikiFilesUpdateAll*
-:VikiFilesUpdateAll
-    - Update all #Files region in the current buffer.
-
-
 If in the following commands a "!" is added, the command works only on files 
 in the same directory or a subdirectory as the file on the current line.
-
-                                                    *:VikiFilesExec*
-:VikiFilesExec[!] FORMAT_STRING
-    - |:execute| a vim command after doing some replacements with the command 
-      string. For each formatted string the command is issued only once -- 
-      i.e. you can work easily with the directories. If no special formatting 
-      string is contained, the preformatted filename is appended to the command.
-        %{FILE}  ... filename
-        %{FFILE} ... preformatted filename (with '#%\ ' escaped)
-        %{DIR}   ... file's directory
-
-                                                    *:VikiFilesCmd*
-:VikiFilesCmd[!] VIKI_COMMAND_NAME
-    - |:execute| VikiCmd_{VIKI_COMMAND_NAME} FILENAME
-
-                                                    *:VikiFilesCall*
-:VikiFilesCall[!] FUNCTION_NAME
-    - |:call| VikiCmd_{FUNCTION_NAME}(FILENAME)
-
 
 Default Key Binding~
 <LocalLeader>vu ... :VikiFilesUpdate
@@ -1079,7 +707,7 @@ Example: >
     the same directory or a subdirectory of the current file under the cursor.
 
 
-================================================================================
+-----------------------------------------------------------------------
                                                     *viki-compile*
 Viki Compile~
 
@@ -1097,7 +725,7 @@ directory: >
     DeplateSetCompiler -d ../html
 
 
-================================================================================
+-----------------------------------------------------------------------
                                                     *viki-latex* *vikiLatex*
 Viki LaTeX~
 
@@ -1158,7 +786,7 @@ simple minded example: >
     endfun
 
 
-================================================================================
+-----------------------------------------------------------------------
                                                     *viki-anyword*
 Viki Any Word~
 
@@ -1169,7 +797,7 @@ This feature conflicts with the highlighting of links to inexistent files.
 Links to inexistent files are displayed as normal text.
 
 
-================================================================================
+-----------------------------------------------------------------------
                                                     *viki-bibtex*
 Viki BibTeX~
 
@@ -1184,7 +812,7 @@ viki names. Example: >
     would open the file monos.bib and search for the record rec02.
 
 
-================================================================================
+-----------------------------------------------------------------------
                                                     *viki-tags*
 Ctags~
 
@@ -1205,7 +833,7 @@ For use with taglist, the variable "tlist_viki_settings" is already set for
 you.
 
 
-================================================================================
+-----------------------------------------------------------------------
                                                     *deplate*
 Deplate~
 
@@ -1225,8 +853,1226 @@ expect. On the other hand, it features inclusion of LaTeX snippets, footnotes,
 references, an autogenerated index etc.
 
 
---
-(the following is adapted from latex-suite.txt)
-vim:fdm=expr:tw=78
-vim:foldexpr=getline(v\:lnum-2)=~"=\\\\{80,}"?"a1"\:(getline(v\:lnum+1)=~"=\\\\{80,}"?"s1"\:"=")
-vim:foldtext=v\:folddashes.substitute(getline(v\:foldstart),"\\\\s*\\\\*.*","","")
+-----------------------------------------------------------------------
+========================================================================
+Contents~
+
+        tlist_viki_settings ................. |tlist_viki_settings|
+        g:vikiMenuPrefix .................... |g:vikiMenuPrefix|
+        g:vikiMenuLevel ..................... |g:vikiMenuLevel|
+        g:vikiFancyHeadings ................. |g:vikiFancyHeadings|
+        g:vikiMarkInexistent ................ |g:vikiMarkInexistent|
+        g:vikiHighlightMath ................. |g:vikiHighlightMath|
+        g:vikiNameSuffix .................... |g:vikiNameSuffix|
+        g:vikiIndex ......................... |g:vikiIndex|
+        g:viki_intervikis ................... |g:viki_intervikis|
+        g:vikiSaveHistory ................... |g:vikiSaveHistory|
+        b:vikiNoSimpleNames ................. |b:vikiNoSimpleNames|
+        b:vikiDisableType ................... |b:vikiDisableType|
+        VikiMakeName ........................ |VikiMakeName()|
+        VikiDefine .......................... |VikiDefine()|
+        :VikiDefine ......................... |:VikiDefine|
+        :VikiMinorMode ...................... |:VikiMinorMode|
+        :VikiMinorModeMaybe ................. |:VikiMinorModeMaybe|
+        :VikiMinorModeViki .................. |:VikiMinorModeViki|
+        :VikiMinorModeLaTeX ................. |:VikiMinorModeLaTeX|
+        :VikiMinorModeAnyWord ............... |:VikiMinorModeAnyWord|
+        :VikiMode ........................... |:VikiMode|
+        :VikiModeMaybe ...................... |:VikiModeMaybe|
+        :VikiBrowse ......................... |:VikiBrowse|
+        :VikiHome ........................... |:VikiHome|
+        :VIKI ............................... |:VIKI|
+        g:vikiUpperCharacters ............... |g:vikiUpperCharacters|
+        g:vikiLowerCharacters ............... |g:vikiLowerCharacters|
+        g:vikiAnchorNameRx .................. |g:vikiAnchorNameRx|
+        g:vikiUrlRestRx ..................... |g:vikiUrlRestRx|
+        g:vikiSpecialProtocols .............. |g:vikiSpecialProtocols|
+        g:vikiSpecialProtocolsExceptions .... |g:vikiSpecialProtocolsExceptions|
+        g:vikiSpecialFiles .................. |g:vikiSpecialFiles|
+        g:vikiSpecialFilesExceptions ........ |g:vikiSpecialFilesExceptions|
+        g:viki_highlight_hyperlink_light .... |g:viki_highlight_hyperlink_light|
+        g:viki_highlight_hyperlink_dark ..... |g:viki_highlight_hyperlink_dark|
+        g:viki_highlight_inexistent_light ... |g:viki_highlight_inexistent_light|
+        g:viki_highlight_inexistent_dark .... |g:viki_highlight_inexistent_dark|
+        g:vikiPromote ....................... |g:vikiPromote|
+        g:vikiUseParentSuffix ............... |g:vikiUseParentSuffix|
+        g:vikiAnchorMarker .................. |g:vikiAnchorMarker|
+        g:vikiFreeMarker .................... |g:vikiFreeMarker|
+        g:vikiPostFindAnchor ................ |g:vikiPostFindAnchor|
+        g:vikiNameTypes ..................... |g:vikiNameTypes|
+        g:vikiExplorer ...................... |g:vikiExplorer|
+        g:vikiHide .......................... |g:vikiHide|
+        g:vikiNoWrapper ..................... |g:vikiNoWrapper|
+        g:vikiCacheInexistent ............... |g:vikiCacheInexistent|
+        g:vikiMapInexistent ................. |g:vikiMapInexistent|
+        g:vikiMapKeys ....................... |g:vikiMapKeys|
+        g:vikiMapQParaKeys .................. |g:vikiMapQParaKeys|
+        g:vikiHCM ........................... |g:vikiHCM|
+        g:vikiMapBeforeKeys ................. |g:vikiMapBeforeKeys|
+        g:vikiFamily ........................ |g:vikiFamily|
+        g:vikiDirSeparator .................. |g:vikiDirSeparator|
+        g:vikiTextstylesVer ................. |g:vikiTextstylesVer|
+        g:vikiHomePage ...................... |g:vikiHomePage|
+        g:vikiFeedbackMin ................... |g:vikiFeedbackMin|
+        g:vikiMapLeader ..................... |g:vikiMapLeader|
+        g:vikiAutoMarks ..................... |g:vikiAutoMarks|
+        g:VIKIBACKREFS ...................... |g:VIKIBACKREFS|
+        g:vikiBalloonLines .................. |g:vikiBalloonLines|
+        g:vikiBalloon ....................... |g:vikiBalloon|
+        g:vikiBalloonEncoding ............... |g:vikiBalloonEncoding|
+        g:vikiHyperWordsFiles ............... |g:vikiHyperWordsFiles|
+        g:vikiMapFunctionality .............. |g:vikiMapFunctionality|
+        g:vikiMapFunctionalityMinor ......... |g:vikiMapFunctionalityMinor|
+        :VikiFindNext ....................... |:VikiFindNext|
+        :VikiFindPrev ....................... |:VikiFindPrev|
+        :VikiMarkInexistent ................. |:VikiMarkInexistent|
+        :VikiQuote .......................... |:VikiQuote|
+        :VikiGoBack ......................... |:VikiGoBack|
+        :VikiJump ........................... |:VikiJump|
+        :VikiIndex .......................... |:VikiIndex|
+        :VikiEdit ........................... |:VikiEdit|
+        :VikiEditTab ........................ |:VikiEditTab|
+        :VikiEditInWin1 ..................... |:VikiEditInWin1|
+        :VikiEditInWin2 ..................... |:VikiEditInWin2|
+        :VikiEditInWin3 ..................... |:VikiEditInWin3|
+        :VikiEditInWin4 ..................... |:VikiEditInWin4|
+        :VikiFilesUpdate .................... |:VikiFilesUpdate|
+        :VikiFilesUpdateAll ................. |:VikiFilesUpdateAll|
+        :VikiFileExec ....................... |:VikiFileExec|
+        :VikiFilesExec ...................... |:VikiFilesExec|
+        :VikiFilesCmd ....................... |:VikiFilesCmd|
+        :VikiFilesCall ...................... |:VikiFilesCall|
+        viki#Mode ........................... |viki#Mode()|
+        VikiOpenAsWorkspace ................. |VikiOpenAsWorkspace()|
+        g:vikiOpenFileWith_ANY .............. |g:vikiOpenFileWith_ANY|
+        VikiOpenSpecialFile ................. |VikiOpenSpecialFile()|
+        g:vikiOpenUrlWith_mailbox ........... |g:vikiOpenUrlWith_mailbox|
+        VikiOpenMailbox ..................... |VikiOpenMailbox()|
+        g:vikiUrlFileAs ..................... |g:vikiUrlFileAs|
+        g:vikiOpenUrlWith_file .............. |g:vikiOpenUrlWith_file|
+        VikiOpenFileUrl ..................... |VikiOpenFileUrl()|
+        VikiOpenSpecialProtocol ............. |VikiOpenSpecialProtocol()|
+        viki#GetInterVikis .................. |viki#GetInterVikis()|
+        viki#GetSimpleRx4SimpleWikiName ..... |viki#GetSimpleRx4SimpleWikiName()|
+        viki#CanonicFilename ................ |viki#CanonicFilename()|
+        viki#FindRx ......................... |viki#FindRx()|
+        viki#FindPrevHeading ................ |viki#FindPrevHeading()|
+        viki#FindNextHeading ................ |viki#FindNextHeading()|
+        viki#IsSupportedType ................ |viki#IsSupportedType()|
+        viki#RxFromCollection ............... |viki#RxFromCollection()|
+        viki#HighlightInexistent ............ |viki#HighlightInexistent()|
+        viki#MarkInexistentInElement ........ |viki#MarkInexistentInElement()|
+        viki#MarkInexistentInElement ........ |viki#MarkInexistentInElement()|
+        viki#ExprMarkInexistentInElement .... |viki#ExprMarkInexistentInElement()|
+        viki#MarkInexistentInRange .......... |viki#MarkInexistentInRange()|
+        viki#MarkInexistentInitial .......... |viki#MarkInexistentInitial()|
+        viki#SaveCache ...................... |viki#SaveCache()|
+        viki#CheckInexistent ................ |viki#CheckInexistent()|
+        viki#SetBufferVar ................... |viki#SetBufferVar()|
+        viki#DispatchOnFamily ............... |viki#DispatchOnFamily()|
+        viki#IsHyperWord .................... |viki#IsHyperWord()|
+        viki#HyperWordValue ................. |viki#HyperWordValue()|
+        viki#CollectFileWords ............... |viki#CollectFileWords()|
+        viki#CollectHyperWords .............. |viki#CollectHyperWords()|
+        viki#MapMarkInexistent .............. |viki#MapMarkInexistent()|
+        viki#HookCheckPreviousPosition ...... |viki#HookCheckPreviousPosition()|
+        viki#RestoreCursorPosition .......... |viki#RestoreCursorPosition()|
+        viki#SaveCursorPosition ............. |viki#SaveCursorPosition()|
+        viki#DebugCursorPosition ............ |viki#DebugCursorPosition()|
+        viki#MapFunctionality ............... |viki#MapFunctionality()|
+        viki#MinorModeReset ................. |viki#MinorModeReset()|
+        viki#IsInRegion ..................... |viki#IsInRegion()|
+        viki#GoParent ....................... |viki#GoParent()|
+        viki#GoBack ......................... |viki#GoBack()|
+        viki#SubstituteArgs ................. |viki#SubstituteArgs()|
+        VikiAnchor_l ........................ |VikiAnchor_l()|
+        VikiAnchor_line ..................... |VikiAnchor_line()|
+        VikiAnchor_rx ....................... |VikiAnchor_rx()|
+        VikiAnchor_vim ...................... |VikiAnchor_vim()|
+        viki#GetAnchorRx .................... |viki#GetAnchorRx()|
+        viki#SetAnchorMarks ................. |viki#SetAnchorMarks()|
+        viki#GetWinNr ....................... |viki#GetWinNr()|
+        viki#SetWindow ...................... |viki#SetWindow()|
+        viki#OpenLink ....................... |viki#OpenLink()|
+        viki#Family ......................... |viki#Family()|
+        viki#DecomposeUrl ................... |viki#DecomposeUrl()|
+        viki#GetSpecialFilesSuffixes ........ |viki#GetSpecialFilesSuffixes()|
+        viki#GetSpecialFilesSuffixesRx ...... |viki#GetSpecialFilesSuffixesRx()|
+        viki#IsSpecialFile .................. |viki#IsSpecialFile()|
+        viki#IsSpecialProtocol .............. |viki#IsSpecialProtocol()|
+        viki#IsSpecial ...................... |viki#IsSpecial()|
+        viki#MakeUrl ........................ |viki#MakeUrl()|
+        viki#MakeDef ........................ |viki#MakeDef()|
+        viki#SplitDef ....................... |viki#SplitDef()|
+        viki#LinkDefinition ................. |viki#LinkDefinition()|
+        viki#WithSuffix ..................... |viki#WithSuffix()|
+        viki#ExpandSimpleName ............... |viki#ExpandSimpleName()|
+        viki#IsInterViki .................... |viki#IsInterViki()|
+        viki#InterVikiName .................. |viki#InterVikiName()|
+        viki#InterVikiPart .................. |viki#InterVikiPart()|
+        viki#InterVikiDest .................. |viki#InterVikiDest()|
+        viki#InterVikiSuffix ................ |viki#InterVikiSuffix()|
+        viki#ExtendedModifier ............... |viki#ExtendedModifier()|
+        viki#FindFileWithSuffix ............. |viki#FindFileWithSuffix()|
+        viki#GetLink ........................ |viki#GetLink()|
+        viki#MaybeFollowLink ................ |viki#MaybeFollowLink()|
+        viki#InterEditArg ................... |viki#InterEditArg()|
+        viki#HomePage ....................... |viki#HomePage()|
+        viki#Edit ........................... |viki#Edit()|
+        viki#Browse ......................... |viki#Browse()|
+        viki#BrowseComplete ................. |viki#BrowseComplete()|
+        viki#EditComplete ................... |viki#EditComplete()|
+        viki#Index .......................... |viki#Index()|
+        viki#FindNextRegion ................. |viki#FindNextRegion()|
+        viki#GetIndent ...................... |viki#GetIndent()|
+        viki#ExecExternal ................... |viki#ExecExternal()|
+        viki#FilesUpdateAll ................. |viki#FilesUpdateAll()|
+        viki#FilesExec ...................... |viki#FilesExec()|
+        viki#FilesCmd ....................... |viki#FilesCmd()|
+        viki#FilesCall ...................... |viki#FilesCall()|
+        viki#FilesUpdate .................... |viki#FilesUpdate()|
+        viki#DirListing ..................... |viki#DirListing()|
+        viki#FilesGetFilename ............... |viki#FilesGetFilename()|
+        viki#FilesGetComment ................ |viki#FilesGetComment()|
+        viki#Balloon ........................ |viki#Balloon()|
+        viki#MatchList ...................... |viki#MatchList()|
+        viki#MapListItemTextObject .......... |viki#MapListItemTextObject()|
+        v_ii ................................ |v_ii|
+        o_ii ................................ |o_ii|
+        viki#SelectListItem ................. |viki#SelectListItem()|
+        viki#ShiftListItem .................. |viki#ShiftListItem()|
+        viki#MoveListItem ................... |viki#MoveListItem()|
+        b:vikiCommentStart .................. |b:vikiCommentStart|
+        b:vikiCommentEnd .................... |b:vikiCommentEnd|
+        b:vikiHeadingMaxLevel ............... |b:vikiHeadingMaxLevel|
+        g:vikiFoldMethodVersion ............. |g:vikiFoldMethodVersion|
+        b:vikiMaxFoldLevel .................. |b:vikiMaxFoldLevel|
+        b:vikiInverseFold ................... |b:vikiInverseFold|
+        g:vikiFoldBodyLevel ................. |g:vikiFoldBodyLevel|
+        g:vikiFolds ......................... |g:vikiFolds|
+        [[ .................................. |[[|
+        ][ .................................. |][|
+        ]] .................................. |]]|
+        [] .................................. |[]|
+        VikiFoldText ........................ |VikiFoldText()|
+        VikiFoldLevel ....................... |VikiFoldLevel()|
+        VikiFoldLevel ....................... |VikiFoldLevel()|
+        VikiFoldLevel ....................... |VikiFoldLevel()|
+        VikiFoldLevel ....................... |VikiFoldLevel()|
+        VikiFoldLevel ....................... |VikiFoldLevel()|
+        VikiFoldLevel ....................... |VikiFoldLevel()|
+        VikiFoldLevel ....................... |VikiFoldLevel()|
+
+
+========================================================================
+plugin/viki.vim~
+
+                                                    *tlist_viki_settings*
+tlist_viki_settings            (default: "deplate;s:structure")
+    Support for the taglist plugin.
+
+                                                    *g:vikiMenuPrefix*
+g:vikiMenuPrefix               (default: "Plugin.Viki.")
+    The prefix for the menu of intervikis. Set to '' in order to remove the 
+    menu.
+
+                                                    *g:vikiMenuLevel*
+g:vikiMenuLevel                (default: 1)
+    Make submenus for N letters of the interviki names.
+
+                                                    *g:vikiFancyHeadings*
+g:vikiFancyHeadings            (default: 0)
+    If non-nil, display headings of different levels in different colors
+
+                                                    *g:vikiMarkInexistent*
+g:vikiMarkInexistent           (default: 1)
+    If non-zero, highligh links to existent or inexistent files in 
+    different colours.
+
+                                                    *g:vikiHighlightMath*
+g:vikiHighlightMath            (default: '')
+
+                                                    *g:vikiNameSuffix*
+g:vikiNameSuffix               (default: "")
+    Default file suffix (including the optional period, e.g. '.txt' or 
+    '.viki').
+    Can also be buffer-local.
+
+                                                    *g:vikiIndex*
+g:vikiIndex                    (default: 'index')
+    The default filename for an interviki's index name
+
+                                                    *g:viki_intervikis*
+g:viki_intervikis              (default: {})
+    Definition of intervikis. (This variable won't be evaluated until 
+    autoload/viki.vim is loaded).
+
+                                                    *g:vikiSaveHistory*
+g:vikiSaveHistory              (default: 0)
+    If non-nil, cache back-links information
+
+                                                    *b:vikiNoSimpleNames*
+b:vikiNoSimpleNames            (default: 0)
+    If non-nil, simple viki names are disabled.
+
+                                                    *b:vikiDisableType*
+b:vikiDisableType              (default: "")
+    Disable certain viki name types (see |vikiNameTypes|).
+    E.g., in order to disable CamelCase names only, set this variable to 'c'.
+
+                                                    *VikiMakeName()*
+VikiMakeName(iviki, name, ...)
+    Return a viki name for a vikiname on a specified interviki
+    VikiMakeName(iviki, name, ?quote=1)
+
+                                                    *VikiDefine()*
+VikiDefine(name, prefix, ...)
+    Define an interviki name
+    VikiDefine(name, prefix, ?suffix="*", ?index="Index.${suffix}")
+    suffix == "*" -> g:vikiNameSuffix
+
+                                                    *:VikiDefine*
+VikiDefine NAME BASE ?SUFFIX
+    Define an interviki. See also |VikiDefine()|.
+
+                                                    *:VikiMinorMode*
+:VikiMinorMode
+    NOTE: Be aware that we cannot highlight a reference if the text is embedded 
+    in syntax group that doesn't allow inclusion of arbitrary syntax elemtents.
+
+                                                    *:VikiMinorModeMaybe*
+:VikiMinorModeMaybe
+
+                                                    *:VikiMinorModeViki*
+:VikiMinorModeViki
+
+                                                    *:VikiMinorModeLaTeX*
+:VikiMinorModeLaTeX
+
+                                                    *:VikiMinorModeAnyWord*
+:VikiMinorModeAnyWord
+
+                                                    *:VikiMode*
+:VikiMode
+    Basically the same as: >
+        set ft=viki
+<   The main difference between these two is that VikiMode unlets 
+    b:did_ftplugin to make sure that the ftplugin gets loaded.
+
+                                                    *:VikiModeMaybe*
+:VikiModeMaybe
+
+                                                    *:VikiBrowse*
+:VikiBrowse
+
+                                                    *:VikiHome*
+:VikiHome
+    Open the |viki-homepage|.
+
+                                                    *:VIKI*
+:VIKI
+    Open the |viki-homepage|.
+
+
+========================================================================
+autoload/viki.vim~
+
+
+Simple Viki Names [2]:                              *viki-vars-simple-names*
+
+                                                    *g:vikiUpperCharacters*
+g:vikiUpperCharacters          (default: "A-Z")
+    A simple viki name is made from a series of upper and lower characters 
+    (i.e. CamelCase-names). These two variables define what is considered as 
+    upper and lower-case characters. We don't rely on the builtin 
+    functionality for this.
+
+                                                    *g:vikiLowerCharacters*
+g:vikiLowerCharacters          (default: "a-z")
+
+
+Extended Viki Names [2]:                            *viki-vars-ext-names*
+- b:vikiExtendedNameRx, b:vikiExtendedNameSimpleRx[1]
+- b:vikiExtendedNameNameIdx, b:vikiExtendedNameDestIdx, 
+  b:vikiExtendedNameAnchorIdx
+
+URLs [2]:                                           *viki-vars-urls*
+- b:vikiUrlRx, b:vikiUrlSimpleRx[1]
+- b:vikiUrlNameIdx, b:vikiUrlDestIdx, b:vikiUrlAnchorIdx
+
+NOTE: [1] The same as *Rx variables but with less groups.
+NOTE: [2] These variables are defined by |VikiSetupBuffer()|.
+
+- b:vikiAnchorRx                                    *b:vikiAnchorRx*
+    If this variable exists, the string "%{ANCHOR}" will be replaced with the 
+    search text. The expression has to conform to the very nomagic |/\V| 
+    syntax.
+
+                                                    *g:vikiAnchorNameRx*
+g:vikiAnchorNameRx             (default: '')
+    Characters allowed in anchors
+    Defaults to:
+    [b:vikiLowerCharacters][b:vikiLowerCharacters +  b:vikiUpperCharacters + '_0-9]*
+
+                                                    *g:vikiUrlRestRx*
+g:vikiUrlRestRx                (default: '['. g:vikiLowerCharacters . g:vikiUpperCharacters .'0-9?%_=&+-]*')
+
+                                                    *g:vikiSpecialProtocols*
+g:vikiSpecialProtocols         (default: 'https\?\|ftps\?\|nntp\|mailto\|mailbox\|file')
+    URLs matching these protocols are handled by |VikiOpenSpecialProtocol()|.
+    Can also be buffer-local.
+
+                                                    *g:vikiSpecialProtocolsExceptions*
+g:vikiSpecialProtocolsExceptions (default: "")
+    Exceptions from g:vikiSpecialProtocols
+
+                                                    *g:vikiSpecialFiles*
+g:vikiSpecialFiles             (default: [...])
+    Files matching these suffixes are handled by |viki#OpenSpecialFile()|.
+    Can also be buffer-local.
+
+                                                    *g:vikiSpecialFilesExceptions*
+g:vikiSpecialFilesExceptions   (default: "")
+    Exceptions from g:vikiSpecialFiles
+
+                                                    *g:viki_highlight_hyperlink_light*
+g:viki_highlight_hyperlink_light (default: 'term=underline cterm=underline gui=underline ctermfg=DarkBlue guifg=DarkBlue')
+
+                                                    *g:viki_highlight_hyperlink_dark*
+g:viki_highlight_hyperlink_dark (default: 'term=underline cterm=underline gui=underline ctermfg=LightBlue guifg=#bfbfff')
+
+                                                    *g:viki_highlight_inexistent_light*
+g:viki_highlight_inexistent_light (default: 'term=underline cterm=underline gui=underline ctermfg=DarkRed guifg=DarkRed')
+
+                                                    *g:viki_highlight_inexistent_dark*
+g:viki_highlight_inexistent_dark (default: 'term=underline cterm=underline gui=underline ctermfg=Red guifg=Red')
+
+                                                    *g:vikiPromote*
+g:vikiPromote                  (default: 0)
+    If set to true, any files loaded by viki will become viki enabled (in 
+    minor mode); this was the default behaviour in earlier versions
+
+                                                    *g:vikiUseParentSuffix*
+g:vikiUseParentSuffix          (default: 0)
+    If non-nil, use the parent document's suffix.
+    If true, always append the "parent" file's suffix to the 
+    destination file name. I.e. if the current file is "ThisIdea.txt" 
+    the the viki name "OtherIdea" will refer to the file 
+    "OtherIdea.txt".
+
+                                                    *g:vikiAnchorMarker*
+g:vikiAnchorMarker             (default: "#")
+    Prefix for anchors
+
+                                                    *g:vikiFreeMarker*
+g:vikiFreeMarker               (default: 0)
+    If true and an explicitly marked anchor isn't found, search for the anchor 
+    text as such. This search will be case-insensitive. deplate won't be able 
+    to deal with such pseudo-references, of course.
+
+                                                    *g:vikiPostFindAnchor*
+g:vikiPostFindAnchor           (default: 'norm! zz')
+
+                                                    *g:vikiNameTypes*
+g:vikiNameTypes                (default: "csSeuixwf")
+    Disable certain types of viki names globally or for a single buffer.
+    (experimental, doesn't fully work yet)
+    List of enabled viki name types:
+        s ... Simple viki name 
+            c ... CamelCase 
+            S ... simple, quoted viki name
+            i ... |interviki|
+            w ... Hyperwords
+                f ... file-bases hyperwords
+        e ... Extended viki name
+        u ... URL
+        x ... Directives (some commands, regions ...)
+
+                                                    *g:vikiExplorer*
+g:vikiExplorer                 (default: "Sexplore")
+    Which directory explorer to use to edit directories
+
+                                                    *g:vikiHide*
+g:vikiHide                     (default: '')
+    If hide or update: use the respective command when leaving a buffer
+    If a dirty buffers gets hidden, vim usually complains. This can be 
+    tiresome -- depending on your editing habits. When this variable is set to 
+    "hide", vim won't complain. If you set it to "update", a viki buffer will 
+    be automatically updated before editing a different file.  If you leave 
+    this empty (""), the default behaviour is in effect. See also |hidden|.
+
+                                                    *g:vikiNoWrapper*
+g:vikiNoWrapper                (default: '\cexplore')
+    Don't use g:vikiHide for commands matching this rx
+
+                                                    *g:vikiCacheInexistent*
+g:vikiCacheInexistent          (default: 0)
+    Cache information about a document's inexistent names
+    If non-zero, save patterns for |g:vikiMarkInexistent| for later 
+    re-use using |tlib#cache#Filename()|. You might want to delete old 
+    files from the |g:tlib_cache| directory from time to time.
+
+                                                    *g:vikiMapInexistent*
+g:vikiMapInexistent            (default: 1)
+    If non-nil, map keys that trigger the evaluation of inexistent names
+
+                                                    *g:vikiMapKeys*
+g:vikiMapKeys                  (default: "]).,;:!?\"' ")
+    Map these keys for g:vikiMapInexistent to LineQuick
+
+                                                    *g:vikiMapQParaKeys*
+g:vikiMapQParaKeys             (default: "\n")
+    Map these keys for g:vikiMapInexistent to ParagraphVisible
+
+                                                    *g:vikiHCM*
+g:vikiHCM                      (default: ['syntaxleave_oneline'])
+    Install hooks for these conditions (requires hookcursormoved to be 
+    installed)
+    "linechange" could cause some slowdown.
+
+                                                    *g:vikiMapBeforeKeys*
+g:vikiMapBeforeKeys            (default: ']')
+    Check the viki name before inserting this character
+
+                                                    *g:vikiFamily*
+g:vikiFamily                   (default: "")
+    Some functions a gathered in families/classes. See vikiLatex.vim for 
+    an example.
+    By defining this variable, family specific functions will be called for:
+        - viki#{b:vikiFamily}#SetupBuffer(state)
+        - viki#{b:vikiFamily}#DefineMarkup(state)
+        - viki#{b:vikiFamily}#DefineHighlighting(state)
+        - viki#{b:vikiFamily}#CompleteSimpleNameDef(def)
+        - viki#{b:vikiFamily}#CompleteExtendedNameDef(def)
+        - viki#{b:vikiFamily}#FindAnchor(anchor)
+    If one of these functions is undefined for a "viki family", then the
+    default one is called.
+    
+    Apart from the default behaviour the following families are defined:
+        - latex (see |viki-latex|)
+        - anyword (see |viki-anyword|)
+
+                                                    *g:vikiDirSeparator*
+g:vikiDirSeparator             (default: "/")
+    The directory separator
+
+                                                    *g:vikiTextstylesVer*
+g:vikiTextstylesVer            (default: 2)
+    The version of Deplate markup.
+    Defines the markup of |viki-textstyles| like emphasized or code.
+
+                                                    *g:vikiHomePage*
+g:vikiHomePage                 (default: '')
+    The default viki page (as absolute filename).
+    An absolute filename that is the general viki homepage (see also 
+    |:VikiEdit| and |:VikiHome|).
+
+                                                    *g:vikiFeedbackMin*
+g:vikiFeedbackMin              (default: &lines)
+    How often the feedback is changed when marking inexisting links
+
+                                                    *g:vikiMapLeader*
+g:vikiMapLeader                (default: '<LocalLeader>v')
+    The map leader for most viki key maps.
+
+                                                    *g:vikiAutoMarks*
+g:vikiAutoMarks                (default: 1)
+    If non-nil, anchors like #mX are turned into vim marks
+
+                                                    *g:VIKIBACKREFS*
+g:VIKIBACKREFS                 (default: {})
+    The variable that keeps back-links information
+
+                                                    *g:vikiBalloonLines*
+g:vikiBalloonLines             (default: '&lines / 3')
+    An expression that evaluates to the number of lines that should be 
+    included in the balloon tooltop text if &ballonexpr is set to 
+    viki#Balloon().
+
+                                                    *g:vikiBalloon*
+g:vikiBalloon                  (default: 1)
+    If true, show some line of the target file in a balloon tooltip 
+    window.
+
+                                                    *g:vikiBalloonEncoding*
+g:vikiBalloonEncoding          (default: &enc)
+
+                                                    *g:vikiHyperWordsFiles*
+g:vikiHyperWordsFiles          (default: [...])
+    A list of files that contain special viki names
+
+                                                    *g:vikiMapFunctionality*
+g:vikiMapFunctionality         (default: 'ALL')
+    Define which keys to map
+    b     ... go back
+    c     ... follow link (c-cr)
+    e     ... edit
+    F     ... find
+    f     ... follow link (<LocalLeader>v)
+    i     ... check for inexistant destinations
+    I     ... map keys in g:vikiMapKeys and g:vikiMapQParaKeys
+    m[fb] ... map mouse (depends on f or b)
+    p     ... edit parent (or backlink)
+    q     ... quote
+    tF    ... tab as find
+    Files ... #Files related
+    let g:vikiMapFunctionality      = 'mf mb tF c q e i I Files'
+
+                                                    *g:vikiMapFunctionalityMinor*
+g:vikiMapFunctionalityMinor    (default: 'f b p mf mb tF c q e')
+    Define which keys to map in minor mode (invoked via :VikiMinorMode)
+
+                                                    *:VikiFindNext*
+:VikiFindNext
+    Find the next viki name or URL
+
+                                                    *:VikiFindPrev*
+:VikiFindPrev
+    Find the previous viki name or URL
+
+                                                    *:VikiMarkInexistent*
+:VikiMarkInexistent
+    Update the highlighting of links to inexistent files. 
+    VikiMarkInexistent can take a range as argument.
+
+                                                    *:VikiQuote*
+:VikiQuote
+    Mark selected text as a quoted simple viki name, i.e., enclose it in 
+    [- and -].
+    This command requires imaps to be installed.
+
+                                                    *:VikiGoBack*
+:VikiGoBack
+
+                                                    *:VikiJump*
+:VikiJump
+
+                                                    *:VikiIndex*
+:VikiIndex
+
+                                                    *:VikiEdit*
+VikiEdit[!] NAME
+    Edit the wiki page called NAME. If the NAME is '*', the |viki-homepage| will 
+    be opened. This is a convenient way to edit any wiki page from vim's command 
+    line. If you call :VikiEdit! (with bang), the homepage will be opened first, 
+    so that the homepage's customizations (and not the current buffer's one) are 
+    in effect. There are a few gotchas:
+    
+        1. Viki doesn't define a default directory for wiki pages. Thus a wiki page 
+           will be looked for in the directory of the current buffer -- 
+           whatever this is -- and the customizations of this buffer are in 
+           effect. You can circumvent this problem by using |interviki| 
+           names or define a |viki-homepage| and call :VikiEdit! with a 
+           bang.
+    
+        2. Viki relies on some buffer local variables to be set. As customizability 
+           is one viki's main design goal (although, one might want to 
+           discuss whether I overdid it), there are no global settings that 
+           would define what a valid viki name is supposed to look like. As 
+           a consequence, if you disabled a certain type of wiki name in the 
+           current buffer, you won't be able to edit a wiki page of this 
+           type. E.g.: If the current buffer contains a LaTeX file, 
+           |vikiFamily| is most likely set to "LaTeX" (see |viki-latex|). 
+           For the LaTeX family, e.g., CamelCase and interwiki names are 
+           disabled. Consequently, you can't do, e.g., >
+             :VikiEdit IDEAS::WikiPage
+<         Again, you can circumvent this problem by defining a 
+           |viki-homepage| and call :VikiEdit! with a bang.
+
+                                                    *:VikiEditTab*
+:VikiEditTab
+
+                                                    *:VikiEditInWin1*
+:VikiEditInWin1
+
+                                                    *:VikiEditInWin2*
+:VikiEditInWin2
+
+                                                    *:VikiEditInWin3*
+:VikiEditInWin3
+
+                                                    *:VikiEditInWin4*
+:VikiEditInWin4
+
+                                                    *:VikiFilesUpdate*
+:VikiFilesUpdate
+    Update the current |viki-files| #Files region under the cursor.
+
+                                                    *:VikiFilesUpdateAll*
+:VikiFilesUpdateAll
+    Update all |viki-files| #Files regions in the current buffer.
+
+                                                    *:VikiFileExec*
+:VikiFileExec
+
+                                                    *:VikiFilesExec*
+:VikiFilesExec
+    |:execute| a vim command after doing some replacements with the command 
+    string. For each formatted string the command is issued only once -- 
+    i.e. you can work easily with the directories. If no special formatting 
+    string is contained, the preformatted filename is appended to the command.
+      %{FILE}  ... filename
+      %{FFILE} ... preformatted filename (with '#%\ ' escaped)
+      %{DIR}   ... file's directory
+
+                                                    *:VikiFilesCmd*
+:VikiFilesCmd
+    |:execute| VikiCmd_{VIKI_COMMAND_NAME} FILENAME
+
+                                                    *:VikiFilesCall*
+:VikiFilesCall
+    |:call| VikiCmd_{FUNCTION_NAME}(FILENAME)
+
+                                                    *viki#Mode()*
+viki#Mode(...)
+    This is mostly a legacy function. Using set ft=viki should work too.
+
+                                                    *VikiOpenAsWorkspace()*
+VikiOpenAsWorkspace(file)
+    Special file handlers
+
+                                                    *g:vikiOpenFileWith_ANY*
+g:vikiOpenFileWith_ANY         (default: "exec 'silent !'. g:netrw_browsex_viewer .' '. shellescape('%{FILE}')")
+
+                                                    *VikiOpenSpecialFile()*
+VikiOpenSpecialFile(file)
+    Handles filenames that match |vikiSpecialFiles|.
+    If g:vikiOpenFileWith_{SUFFIX} is defined, it contains a command 
+    definition for opending files of this type. "%{FILE}" is replaced with the 
+    file name ("%%" = "%") and the resulting string is executed. Example: >
+    
+        let g:vikiOpenFileWith_html = '!firefox %{FILE}'
+    
+<   The contents of variable g:vikiOpenFileWith_ANY will be used as fallback
+    command. Under Windows, g:vikiOpenFileWith_ANY defaults to "silent !cmd /c 
+    start".
+    All suffixes are translated to lower case.
+
+                                                    *g:vikiOpenUrlWith_mailbox*
+g:vikiOpenUrlWith_mailbox      (default: "call VikiOpenMailbox('%{URL}')")
+    Special protocol handlers
+
+                                                    *VikiOpenMailbox()*
+VikiOpenMailbox(url)
+
+                                                    *g:vikiUrlFileAs*
+g:vikiUrlFileAs                (default: 'special')
+    Possible values: special*, query, normal
+
+                                                    *g:vikiOpenUrlWith_file*
+g:vikiOpenUrlWith_file         (default: "call VikiOpenFileUrl('%{URL}')")
+
+                                                    *VikiOpenFileUrl()*
+VikiOpenFileUrl(url)
+
+                                                    *VikiOpenSpecialProtocol()*
+VikiOpenSpecialProtocol(url)
+    Handles filenames that match |vikiSpecialProtocols|.
+    If g:vikiOpenUrlWith_{PROTOCOL} is defined, it contains a command definition 
+    for opending urls of this type. "%{URL}" is replaced with the url ("%%" = 
+    "%") and the resulting string is executed. Example: >
+    
+        let g:vikiOpenUrlWith_mailto = '!thunderbird -compose %{URL}'
+    
+<   The contents of variable g:vikiOpenUrlWith_ANY will be used as fallback
+    command. Under Windows, g:vikiOpenUrlWith_ANY defaults to "silent 
+    !rundll32 url.dll ...".
+    All protocol names are translated to lower case.
+
+                                                    *viki#GetInterVikis()*
+viki#GetInterVikis()
+
+                                                    *viki#GetSimpleRx4SimpleWikiName()*
+viki#GetSimpleRx4SimpleWikiName()
+    Get a rx that matches a simple name
+
+                                                    *viki#CanonicFilename()*
+viki#CanonicFilename(fname)
+    Make all filenames use slashes
+
+                                                    *viki#FindRx()*
+viki#FindRx()
+    Build the rx to find viki names
+
+                                                    *viki#FindPrevHeading()*
+viki#FindPrevHeading()
+    Find the previous heading
+
+                                                    *viki#FindNextHeading()*
+viki#FindNextHeading()
+    Find the next heading
+
+                                                    *viki#IsSupportedType()*
+viki#IsSupportedType(type, ...)
+    Test whether we want to markup a certain viki name type for the current 
+    buffer
+    viki#IsSupportedType(type, ?types=b:vikiNameTypes)
+
+                                                    *viki#RxFromCollection()*
+viki#RxFromCollection(coll)
+    Build an rx from a list of names
+
+                                                    *viki#HighlightInexistent()*
+viki#HighlightInexistent()
+    Actually highlight inexistent file names
+
+
+    Check a text element for inexistent names
+
+                                                    *viki#MarkInexistentInElement()*
+viki#MarkInexistentInElement(elt)
+
+                                                    *viki#MarkInexistentInElement()*
+viki#MarkInexistentInElement(elt)
+
+                                                    *viki#ExprMarkInexistentInElement()*
+viki#ExprMarkInexistentInElement(elt, key)
+
+                                                    *viki#MarkInexistentInRange()*
+viki#MarkInexistentInRange(line1, line2)
+
+                                                    *viki#MarkInexistentInitial()*
+viki#MarkInexistentInitial()
+    First-time markup of inexistent names. Handles cached values. Called 
+    from syntax/viki.vim
+
+                                                    *viki#SaveCache()*
+viki#SaveCache(...)
+
+                                                    *viki#CheckInexistent()*
+viki#CheckInexistent()
+    The function called from autocommands: re-check for inexistent names 
+    when re-entering a buffer.
+
+                                                    *viki#SetBufferVar()*
+viki#SetBufferVar(name, ...)
+    Initialize buffer-local variables on the basis of other variables "..." 
+    or from a global variable.
+
+                                                    *viki#DispatchOnFamily()*
+viki#DispatchOnFamily(fn, ...)
+    Call a fn.family if existent, call fn otherwise.
+    viki#DispatchOnFamily(fn, ?family='', *args)
+
+                                                    *viki#IsHyperWord()*
+viki#IsHyperWord(word)
+
+                                                    *viki#HyperWordValue()*
+viki#HyperWordValue(word)
+
+                                                    *viki#CollectFileWords()*
+viki#CollectFileWords(table, simpleWikiName)
+
+                                                    *viki#CollectHyperWords()*
+viki#CollectHyperWords(table)
+
+                                                    *viki#MapMarkInexistent()*
+viki#MapMarkInexistent(key, element)
+    Map a key that triggers checking for inexistent names
+
+                                                    *viki#HookCheckPreviousPosition()*
+viki#HookCheckPreviousPosition(mode)
+    In case this function gets called repeatedly for the same position, check only once.
+
+                                                    *viki#RestoreCursorPosition()*
+viki#RestoreCursorPosition(...)
+    Restore the cursor position
+    TODO: adapt for vim7
+    viki#RestoreCursorPosition(?line, ?VCol, ?EOL, ?Winline)
+
+                                                    *viki#SaveCursorPosition()*
+viki#SaveCursorPosition()
+    Save the cursor position
+
+                                                    *viki#DebugCursorPosition()*
+viki#DebugCursorPosition(...)
+    Display a debug message
+
+                                                    *viki#MapFunctionality()*
+viki#MapFunctionality(mf, key)
+    Check if the key maps should support a specified functionality
+
+                                                    *viki#MinorModeReset()*
+viki#MinorModeReset()
+    Re-set minor mode if the buffer is already in viki minor mode.
+
+                                                    *viki#IsInRegion()*
+viki#IsInRegion(line)
+    Check whether line is within a region syntax
+
+                                                    *viki#GoParent()*
+viki#GoParent()
+    Jump to the parent buffer (or go back in history).
+    If b:vikiParent is defined, open this viki name, otherwise use 
+    |viki#GoBack()|.
+
+                                                    *viki#GoBack()*
+viki#GoBack(...)
+    Go back in history.
+    Viki keeps record about the "source" files from where a viki page was 
+    entered.  Calling this function jumps back to the "source" file (if only 
+    one such back reference is known) or let's you select from a list of 
+    "source" files. The information is stored in buffer variables -- i.e., 
+    it gets lost after closing the buffer. Care was taken to reduce 
+    information clutter, which is why the number of possible back references 
+    per "source" file was limited to one.
+
+                                                    *viki#SubstituteArgs()*
+viki#SubstituteArgs(str, ...)
+    Expand template strings as in
+    "foo %{FILE} bar", 'FILE', 'file.txt' => "foo file.txt bar"
+
+                                                    *VikiAnchor_l()*
+VikiAnchor_l(arg)
+    Handle special anchors in extented viki names
+    Example: [[index#l=10]]
+
+                                                    *VikiAnchor_line()*
+VikiAnchor_line(arg)
+    Example: [[index#line=10]]
+
+                                                    *VikiAnchor_rx()*
+VikiAnchor_rx(arg)
+    Example: [[index#rx=foo]]
+
+                                                    *VikiAnchor_vim()*
+VikiAnchor_vim(arg)
+    Example: [[index#vim=/foo]]
+
+                                                    *viki#GetAnchorRx()*
+viki#GetAnchorRx(anchor)
+    Return an rx for searching anchors
+
+                                                    *viki#SetAnchorMarks()*
+viki#SetAnchorMarks()
+    Set automatic anchor marks: #ma => 'a
+
+                                                    *viki#GetWinNr()*
+viki#GetWinNr(...)
+    Get the window number where the destination file should be opened
+
+                                                    *viki#SetWindow()*
+viki#SetWindow(winNr)
+    Set the window where to open a file/display a buffer
+
+                                                    *viki#OpenLink()*
+viki#OpenLink(filename, anchor, ...)
+    Open a filename in a certain window and jump to an anchor if any
+    viki#OpenLink(filename, anchor, ?create=0, ?postcmd='', ?wincmd=0)
+
+                                                    *viki#Family()*
+viki#Family(...)
+    Get the current viki family
+
+                                                    *viki#DecomposeUrl()*
+viki#DecomposeUrl(dest)
+    Decompose an url into filename, anchor, args
+
+                                                    *viki#GetSpecialFilesSuffixes()*
+viki#GetSpecialFilesSuffixes()
+    Get a list of special files' suffixes
+
+                                                    *viki#GetSpecialFilesSuffixesRx()*
+viki#GetSpecialFilesSuffixesRx(...)
+    Get an rx matching special files' suffixes
+
+                                                    *viki#IsSpecialFile()*
+viki#IsSpecialFile(dest)
+    Check if dest is a special file
+
+                                                    *viki#IsSpecialProtocol()*
+viki#IsSpecialProtocol(dest)
+    Check if dest uses a special protocol
+
+                                                    *viki#IsSpecial()*
+viki#IsSpecial(dest)
+    Check if dest is somehow special
+
+                                                    *viki#MakeUrl()*
+viki#MakeUrl(dest, anchor)
+
+                                                    *viki#MakeDef()*
+viki#MakeDef(v_name, v_dest, v_anchor, v_part, v_type)
+    Return a structure or whatever describing a viki name/link
+
+                                                    *viki#SplitDef()*
+viki#SplitDef(def)
+    Legacy function: Today we would use dictionaries for this
+    Return vimscript code that defines a set of variables on the basis of a 
+    viki name definition
+
+                                                    *viki#LinkDefinition()*
+viki#LinkDefinition(txt, col, compound, ignoreSyntax, type)
+    If txt matches a viki name typed as defined by compound return a 
+    structure defining this viki name.
+
+                                                    *viki#WithSuffix()*
+viki#WithSuffix(fname)
+    Return a viki filename with a suffix
+
+                                                    *viki#ExpandSimpleName()*
+viki#ExpandSimpleName(dest, name, suffix)
+    Return the real destination for a simple viki name
+
+                                                    *viki#IsInterViki()*
+viki#IsInterViki(vikiname)
+    Check whether a vikiname uses an interviki
+
+                                                    *viki#InterVikiName()*
+viki#InterVikiName(vikiname)
+    Get the interviki name of a vikiname
+
+                                                    *viki#InterVikiPart()*
+viki#InterVikiPart(vikiname)
+    Get the plain vikiname of a vikiname
+
+                                                    *viki#InterVikiDest()*
+viki#InterVikiDest(vikiname, ...)
+    Return an interviki's root directory
+
+                                                    *viki#InterVikiSuffix()*
+viki#InterVikiSuffix(vikiname, ...)
+    Return an interviki's suffix
+
+                                                    *viki#ExtendedModifier()*
+viki#ExtendedModifier(part)
+    Return the modifiers in extended viki names
+
+                                                    *viki#FindFileWithSuffix()*
+viki#FindFileWithSuffix(filename, suffixes)
+    Complete a file's basename on the basis of a list of suffixes
+
+                                                    *viki#GetLink()*
+viki#GetLink(ignoreSyntax, ...)
+    This is the core function that builds a viki name definition from what 
+    is under the cursor.
+    viki#GetLink(ignoreSyntax, ?txt, ?col=0, ?supported=b:vikiNameTypes)
+
+                                                    *viki#MaybeFollowLink()*
+viki#MaybeFollowLink(oldmap, ignoreSyntax, ?winNr=0)
+    Follow a viki name if any or complain about not having found a valid 
+    viki name under the cursor.
+    oldmap: If there isn't a viki link under the cursor:
+        ""       ... throw error 
+        1        ... return \<c-cr>
+     	whatever ... return whatever
+    ignoreSyntax: If there isn't a viki syntax group under the cursor:
+        0 ... no viki name found
+        1 ... look if there is a viki name under cursor anyways
+
+                                                    *viki#InterEditArg()*
+viki#InterEditArg(iname, name)
+
+                                                    *viki#HomePage()*
+viki#HomePage(?winNr=0)
+    Open the homepage.
+
+                                                    *viki#Edit()*
+viki#Edit(name, ?ÏgnoreSpecial=0, ?winNr=0)
+    Edit a vikiname
+
+                                                    *viki#Browse()*
+viki#Browse(name)
+
+                                                    *viki#BrowseComplete()*
+viki#BrowseComplete(ArgLead, CmdLine, CursorPos)
+
+                                                    *viki#EditComplete()*
+viki#EditComplete(ArgLead, CmdLine, CursorPos)
+    Command line completion of |:VikiEdit|
+
+                                                    *viki#Index()*
+viki#Index()
+    Edit the current directory's index page
+
+                                                    *viki#FindNextRegion()*
+viki#FindNextRegion(name)
+
+                                                    *viki#GetIndent()*
+viki#GetIndent()
+    Indentation
+
+                                                    *viki#ExecExternal()*
+viki#ExecExternal(cmd)
+
+
+#Files related stuff
+
+                                                    *viki#FilesUpdateAll()*
+viki#FilesUpdateAll()
+
+                                                    *viki#FilesExec()*
+viki#FilesExec(cmd, bang, ...)
+
+                                                    *viki#FilesCmd()*
+viki#FilesCmd(cmd, bang)
+
+                                                    *viki#FilesCall()*
+viki#FilesCall(cmd, bang)
+
+                                                    *viki#FilesUpdate()*
+viki#FilesUpdate()
+
+                                                    *viki#DirListing()*
+viki#DirListing(lhs, lhb, indent)
+
+                                                    *viki#FilesGetFilename()*
+viki#FilesGetFilename(t)
+
+                                                    *viki#FilesGetComment()*
+viki#FilesGetComment(t)
+
+                                                    *viki#Balloon()*
+viki#Balloon()
+
+                                                    *viki#MatchList()*
+viki#MatchList(lnum)
+
+                                                    *viki#MapListItemTextObject()*
+viki#MapListItemTextObject()
+    The maps are local to the current buffer. Add this line to your 
+    |vimrc| file in order to enable the ii text-object for all viki 
+    buffers:>
+      au FileType viki call viki#MapListItemTextObject()
+
+                                                    *v_ii*
+v_ii ... :<c-u>silent! call viki#SelectListItem('.')<cr>
+
+                                                    *o_ii*
+o_ii ... :normal Vii<cr>
+
+                                                    *viki#SelectListItem()*
+viki#SelectListItem(lnum)
+    Visually select the list item at line lnum.
+    A list item also contains all its child items. E.g. in a list like:>
+    
+      1. Venenatis diam dignissim dui. Praesent risus.
+      2. Tincidunt facilisis, est nisi pellentesque ligula.
+          a. Adipiscing dui non quam.
+          b. Duis posuere tortor.
+      3. Massa lorem, dignissim at, vehicula et.
+    
+    If the cursor is placed on item #2, this function also selects the 
+    items a and b.
+
+
+The following two functions can be used with the tinymode plugin to 
+move around list items. 
+
+Example configuration: >
+
+  call tinymode#EnterMap("listitem_move", "gl")
+  call tinymode#ModeMsg("listitem_move", "Move list item: h/j/k/l")
+  call tinymode#Map("listitem_move", "h", "silent call viki#ShiftListItem('<')")
+  call tinymode#Map("listitem_move", "l", "silent call viki#ShiftListItem('>')")
+  call tinymode#Map("listitem_move", "j", "silent call viki#MoveListItem('down')")
+  call tinymode#Map("listitem_move", "k", "silent call viki#MoveListItem('up')")
+<
+
+                                                    *viki#ShiftListItem()*
+viki#ShiftListItem(direction)
+
+                                                    *viki#MoveListItem()*
+viki#MoveListItem(direction)
+
+
+========================================================================
+ftplugin/viki.vim~
+
+                                                    *b:vikiCommentStart*
+b:vikiCommentStart             (default: "%")
+    Defines the prefix of comments when in "full" viki mode.
+    In minor mode this variable is set to either:
+        - b:commentStart
+        - b:ECcommentOpen
+        - matchstr(&commentstring, "^\\zs.*\\ze%s")
+
+                                                    *b:vikiCommentEnd*
+b:vikiCommentEnd               (default: "")
+
+                                                    *b:vikiHeadingMaxLevel*
+b:vikiHeadingMaxLevel          (default: -1)
+
+                                                    *g:vikiFoldMethodVersion*
+g:vikiFoldMethodVersion        (default: 7)
+    Choose folding method version
+    Viki supports several methods (1..7) for defining folds. If you 
+    find that text entry is slowed down it is probably due to the 
+    chosen fold method. You could try to use another method (see 
+    ../ftplugin/viki.vim for alternative methods) or check out this 
+    vim tip:
+    http://vim.wikia.com/wiki/Keep_folds_closed_while_inserting_text
+
+                                                    *b:vikiMaxFoldLevel*
+b:vikiMaxFoldLevel             (default: 5)
+
+                                                    *b:vikiInverseFold*
+b:vikiInverseFold              (default: 0)
+    If set, the section headings' levels are folded in reversed order 
+    so that |b:vikiMaxFoldLevel| corresponds to the top level and 1 to 
+    the lowest level. This is useful when maintaining a file with a 
+    fixed structure where the important things happen in subsections 
+    while the top sections change little.
+
+                                                    *g:vikiFoldBodyLevel*
+g:vikiFoldBodyLevel            (default: 6)
+    Consider fold levels bigger that this as text body, levels smaller 
+    than this as headings
+    This variable is only used if |g:vikiFoldMethodVersion| is 1.
+    If set to 0, the "b" mode in |vikiFolds| will set the body level 
+    depending on the headings used in the current buffer. Otherwise 
+    |b:vikiHeadingMaxLevel| + 1 will be used.
+
+                                                    *g:vikiFolds*
+g:vikiFolds                    (default: 'hf')
+    Define which elements should be folded:
+        h :: Heading
+        H :: Headings (but inverse folding)
+        l :: Lists
+        b :: The body has max heading level + 1. This is slightly faster 
+          than the other version as vim never has to scan the text; but 
+          the behaviour may vary depending on the sequence of headings if 
+          |vikiFoldBodyLevel| is set to 0.
+        s :: ???
+    This variable is only used if |g:vikiFoldMethodVersion| is 1.
+
+                                                    *[[*
+[[ ... :call viki#FindPrevHeading()<cr>
+
+                                                    *][*
+][ ... :call viki#FindNextHeading()<cr>
+
+                                                    *]]*
+]] ... ][
+
+                                                    *[]*
+[] ... [[
+
+                                                    *VikiFoldText()*
+VikiFoldText()
+
+                                                    *VikiFoldLevel()*
+VikiFoldLevel(lnum)
+
+                                                    *VikiFoldLevel()*
+VikiFoldLevel(lnum)
+    Fold paragraphs (see :help fold-expr)
+
+                                                    *VikiFoldLevel()*
+VikiFoldLevel(lnum)
+
+                                                    *VikiFoldLevel()*
+VikiFoldLevel(lnum)
+
+                                                    *VikiFoldLevel()*
+VikiFoldLevel(lnum)
+
+                                                    *VikiFoldLevel()*
+VikiFoldLevel(lnum)
+
+                                                    *VikiFoldLevel()*
+VikiFoldLevel(lnum)
+
+
+
+vim:tw=78:fo=tcq2:isk=!-~,^*,^|,^":ts=8:ft=help:norl:

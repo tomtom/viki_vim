@@ -3,12 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2010-12-03.
-" @Revision:    0.0.131
-
-let s:save_cpo = &cpo
-set cpo&vim
-" call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
+" @Last Change: 2011-04-21.
+" @Revision:    0.0.132
 
 
 """ viki/deplate {{{1
@@ -596,6 +592,3 @@ function! viki_viki#Find(flag, ...) "{{{3
     endif
 endf
 
-
-let &cpo = s:save_cpo
-unlet s:save_cpo
