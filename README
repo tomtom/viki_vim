@@ -13,6 +13,75 @@ markup.
 Demo:
 http://vimsomnia.blogspot.com/2010/11/vikitasks-viki-demonstration-personal.html 
 
+This plugin adds wiki-like hypertext capabilities to Vim. You can use viki as 
+a "minor" mode (i.e., as an add-on to any other mode) or as a full-fledged 
+wiki mode. There is also an add-on plugin for "wikifying" latex documents by 
+turning some latex commands into wiki names. If viki is properly configured, 
+activating a reference to an image, a webpage etc. will view that resource in 
+an external viewer.
+
+From http://sourceforge.net/projects/deplate/ you can download a ruby based 
+tool to convert viki markup to LaTeX, HTML, or DocBook. On its homepage 
+(http://deplate.sf.net) you can read a more detailled specification of the 
+markup.
+
+MINOR WIKI MODE:
+Just type |:VikiMinorMode| and all wiki names and URLs will be highlighted.  
+When the cursor is over a wiki name, you can press <c-cr> to jump to (or 
+create) the referred page (on a terminal use <LocalLeader>vf). Pressing 
+<LocalLeader>vb brings you back to the original document. Alternatively, you 
+can use <m-leftmouse> and <m-rightmouse> to jump back and forth. (NOTE: In 
+minor mode, it's possible that viki words and URLs are not highlighted when 
+they are included in some syntactic regions.)
+
+FULL WIKI MODE:
+In full mode, viki becomes a personal wiki 
+(http://c2.com/cgi/wiki?PersonalWiki). Set 'filetype' to viki or execute 
+|:VikiMode|. The full wiki mode is like the minor mode but with folding 
+support, syntax highlighting (for headings, lists, tables, textstyles etc.), 
+and additional key bindings (i.e., you can press <c-tab> or <s-c-tab> to move 
+the cursor to the next/previous viki name).
+
+BUT HEY, WHAT IS A WIKI ANYWAY:
+Among the vast amount of possible definitions, I prefer this one, which is my 
+own anyway :-): a wiki is a simple way of creating hypertexts. In its basic 
+form creating a hyperlink is as easy as writing a word in CamelCase (although 
+this sometimes turn out to be more annoying than useful) or by a rather 
+minimalist markup -- in the case of viki, this would be [[destination]] or 
+[-destination-].
+
+You begin by creating a directory where your wiki files should go to and by 
+creating a wiki index -- a master file that contains references to sub-pages. 
+After a while you end up with many small, tightly interlinked files/notes.
+
+Wikis also come with a rather subtle markup. Here is a simple comparison of 
+two examples of LaTeX and viki markup so that you get the idea of what it 
+looks like:
+
+    LaTeX: \section{Title}
+    Viki:  * Title
+
+    LaTeX: \emph{text}
+    Viki:  __text__
+
+And some wikis provide tools for translating this markup to other formats 
+(like viki does in the form of the "deplate" program, which can translate viki 
+markup to LaTeX, HTML, and Docbook). Unfortunately, about every wiki has its 
+own markup. 
+
+                                                    *viki-support*
+VIKI Forum (questions, feature requests):
+http://sourceforge.net/projects/deplate/forums/forum/700962
+
+Bug tracker:
+http://sourceforge.net/tracker/?group_id=108085&atid=649488
+
+Demo:
+http://vimsomnia.blogspot.com/2010/11/vikitasks-viki-demonstration-personal.html 
+
+
+-----------------------------------------------------------------------
+
 Status:  Works for me (there may be some minor quirks)
 Dependencies:
   tlib :: http://github.com/tomtom/tlib_vim
