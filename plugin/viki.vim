@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2011-04-21.
-" @Revision:    2721
+" @Last Change: 2011-04-22.
+" @Revision:    2722
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -158,8 +158,8 @@ function! VikiDefine(name, prefix, ...) "{{{3
         let vname = a:name .'::'
     end
     " let vname = escape(vname, ' \%#')
-    if !exists(':'+ a:name)
-        exec 'command -bang -nargs=? -complete=customlist,viki#EditComplete '. a:name .' call viki#Edit(empty(<q-args>) ? '. string(vname) .' : viki#InterEditArg('. string(a:name) .', <q-args>), !empty("<bang>"))'
+    if exists(':'+ a:name) != 2
+        exec 'command! -bang -nargs=? -complete=customlist,viki#EditComplete '. a:name .' call viki#Edit(empty(<q-args>) ? '. string(vname) .' : viki#InterEditArg('. string(a:name) .', <q-args>), !empty("<bang>"))'
     else
         echom "Viki: Command already exists. Cannot define a command for "+ a:name
     endif
