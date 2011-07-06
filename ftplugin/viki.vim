@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2011-04-21.
-" @Revision: 448
+" @Last Change: 2011-07-06.
+" @Revision: 450
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -175,6 +175,7 @@ endf
 
 if g:vikiFoldMethodVersion == 7
 
+    " :nodoc:
     function VikiFoldLevel(lnum)
         let cline = getline(a:lnum)
         let level = matchend(cline, '^\*\+')
@@ -189,13 +190,15 @@ if g:vikiFoldMethodVersion == 7
 elseif g:vikiFoldMethodVersion == 6
 
     " Fold paragraphs (see :help fold-expr)
+    " :nodoc:
     function VikiFoldLevel(lnum)
         return getline(a:lnum) =~ '^\\s*$' && getline(a:lnum + 1) =~ '\\S' ? '<1' : 1
     endf
 
 elseif g:vikiFoldMethodVersion == 5
 
-    function! VikiFoldLevel(lnum) "{{{3
+    " :nodoc:
+    function! VikiFoldLevel(lnum)
         " TLogVAR a:lnum
         let vikiFolds = s:VikiFolds()
         if vikiFolds =~# 'h'
@@ -225,7 +228,8 @@ elseif g:vikiFoldMethodVersion == 5
 
 elseif g:vikiFoldMethodVersion == 4
 
-    function! VikiFoldLevel(lnum) "{{{3
+    " :nodoc:
+    function! VikiFoldLevel(lnum)
         " TLogVAR a:lnum
         let vikiFolds = s:VikiFolds()
         if vikiFolds =~# 'h'
@@ -258,7 +262,8 @@ elseif g:vikiFoldMethodVersion == 4
 
 elseif g:vikiFoldMethodVersion == 3
 
-    function! VikiFoldLevel(lnum) "{{{3
+    " :nodoc:
+    function! VikiFoldLevel(lnum)
         let lt = getline(a:lnum)
         if lt !~ '\S'
             return '='
@@ -284,7 +289,8 @@ elseif g:vikiFoldMethodVersion == 3
 
 elseif g:vikiFoldMethodVersion == 2
 
-    function! VikiFoldLevel(lnum) "{{{3
+    " :nodoc:
+    function! VikiFoldLevel(lnum)
         let lt = getline(a:lnum)
         let fh = matchend(lt, '\V\^'. b:vikiHeadingStart .'\+\ze\s')
         if fh != -1

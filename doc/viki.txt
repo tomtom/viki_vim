@@ -760,8 +760,8 @@ by adding this line to your |vimrc| file: >
 
     au FileType tex let b:vikiFamily="latex"
 <
-                                                    *:VikiMinorModeLaTeX*
-LaTeX support is switched on with the command :VikiMinorModeLaTeX. This 
+                                                    *viki-latex*
+LaTeX support is switched on with the command |:VikiMinorModeLaTeX|. This 
 command sets b:vikiFamily to "latex" and calls |:VikiMinorMode|. This
 command relies on the external kpsewhich tool, which has to be installed on
 your computer.
@@ -962,7 +962,6 @@ Contents~
         viki#RxFromCollection ............... |viki#RxFromCollection()|
         viki#HighlightInexistent ............ |viki#HighlightInexistent()|
         viki#MarkInexistentInElement ........ |viki#MarkInexistentInElement()|
-        viki#MarkInexistentInElement ........ |viki#MarkInexistentInElement()|
         viki#ExprMarkInexistentInElement .... |viki#ExprMarkInexistentInElement()|
         viki#MarkInexistentInRange .......... |viki#MarkInexistentInRange()|
         viki#MarkInexistentInitial .......... |viki#MarkInexistentInitial()|
@@ -1055,12 +1054,6 @@ Contents~
         ]] .................................. |]]|
         [] .................................. |[]|
         VikiFoldText ........................ |VikiFoldText()|
-        VikiFoldLevel ....................... |VikiFoldLevel()|
-        VikiFoldLevel ....................... |VikiFoldLevel()|
-        VikiFoldLevel ....................... |VikiFoldLevel()|
-        VikiFoldLevel ....................... |VikiFoldLevel()|
-        VikiFoldLevel ....................... |VikiFoldLevel()|
-        VikiFoldLevel ....................... |VikiFoldLevel()|
         VikiFoldLevel ....................... |VikiFoldLevel()|
 
 
@@ -1622,9 +1615,6 @@ viki#HighlightInexistent()
                                                     *viki#MarkInexistentInElement()*
 viki#MarkInexistentInElement(elt)
 
-                                                    *viki#MarkInexistentInElement()*
-viki#MarkInexistentInElement(elt)
-
                                                     *viki#ExprMarkInexistentInElement()*
 viki#ExprMarkInexistentInElement(elt, key)
 
@@ -2050,25 +2040,6 @@ g:vikiFolds                    (default: 'hf')
 
                                                     *VikiFoldText()*
 VikiFoldText()
-
-                                                    *VikiFoldLevel()*
-VikiFoldLevel(lnum)
-
-                                                    *VikiFoldLevel()*
-VikiFoldLevel(lnum)
-    Fold paragraphs (see :help fold-expr)
-
-                                                    *VikiFoldLevel()*
-VikiFoldLevel(lnum)
-
-                                                    *VikiFoldLevel()*
-VikiFoldLevel(lnum)
-
-                                                    *VikiFoldLevel()*
-VikiFoldLevel(lnum)
-
-                                                    *VikiFoldLevel()*
-VikiFoldLevel(lnum)
 
                                                     *VikiFoldLevel()*
 VikiFoldLevel(lnum)

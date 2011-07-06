@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2011-04-22.
-" @Revision:    2722
+" @Last Change: 2011-07-06.
+" @Revision:    2723
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "

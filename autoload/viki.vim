@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2011-04-21.
-" @Revision:    0.820
+" @Last Change: 2011-07-06.
+" @Revision:    0.824
 
 
 """ General {{{1
@@ -994,8 +994,11 @@ if v:version == 700 && !has('patch8')
         let &lazyredraw = lr
         return ''
     endf
+
 else
-    function! viki#MarkInexistentInElement(elt) "{{{3
+
+    " :nodoc:
+    function! viki#MarkInexistentInElement(elt)
         if exists('b:vikiEnabled') && b:vikiEnabled <= 1
             finish
         endif
@@ -1015,6 +1018,7 @@ else
             let &lazyredraw = lr
         endtry
     endf
+
 endif
 
 
