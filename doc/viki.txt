@@ -236,8 +236,7 @@ You can also use |:autocmd| to set the filetype depending on the path: >
 
 If the variables b:getVikiLink or b:getExtVikiLink exist, their values are 
 used as _function_ names for returning the current viki name's definition. A 
-viki definition is an array of the three elements name, destination, anchor 
-with g:vikiDefSep as the separator.
+viki definition is an array of the three elements name, destination, anchor.
 
 If the variables b:editVikiPage or b:createVikiPage exist, their values are 
 interpreted as _command_ names for editing readable or creating new wiki 
@@ -760,7 +759,6 @@ by adding this line to your |vimrc| file: >
 
     au FileType tex let b:vikiFamily="latex"
 <
-                                                    *viki-latex*
 LaTeX support is switched on with the command |:VikiMinorModeLaTeX|. This 
 command sets b:vikiFamily to "latex" and calls |:VikiMinorMode|. This
 command relies on the external kpsewhich tool, which has to be installed on
@@ -1036,7 +1034,7 @@ Contents~
         viki#Balloon ........................ |viki#Balloon()|
         viki#MatchList ...................... |viki#MatchList()|
         viki#MapListItemTextObject .......... |viki#MapListItemTextObject()|
-        v_ii ................................ |v_ii|
+        v_<expr> ............................ |v_<expr>|
         o_ii ................................ |o_ii|
         viki#SelectListItem ................. |viki#SelectListItem()|
         viki#ShiftListItem .................. |viki#ShiftListItem()|
@@ -1920,13 +1918,20 @@ viki#MatchList(lnum)
 
                                                     *viki#MapListItemTextObject()*
 viki#MapListItemTextObject()
+                                                        *viki-text-objects* *ii*
+    Create a new text-object ii that works on a inner list item. Once the 
+    maps are enabled, users may, e.g., visually select an item in a list 
+    by typing vii. See |viki#SelectListItem()| for a definition of what is 
+    considered a list item.
+    
     The maps are local to the current buffer. Add this line to your 
     |vimrc| file in order to enable the ii text-object for all viki 
     buffers:>
       au FileType viki call viki#MapListItemTextObject()
 
-                                                    *v_ii*
-v_ii ... :<c-u>silent! call viki#SelectListItem('.')<cr>
+                                                    *v_<expr>*
+v_<expr> ... ii <SID>ListItemTextObject()
+    vnoremap <buffer> ii :<c-u>silent! call viki#SelectListItem('.')<cr>
 
                                                     *o_ii*
 o_ii ... :normal Vii<cr>
