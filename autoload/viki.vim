@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2011-07-06.
-" @Revision:    0.824
+" @Last Change: 2011-07-16.
+" @Revision:    0.828
 
 
 """ General {{{1
@@ -3092,14 +3092,24 @@ endf
 " maps are enabled, users may, e.g., visually select an item in a list 
 " by typing vii. See |viki#SelectListItem()| for a definition of what is 
 " considered a list item.
-
+" 
 " The maps are local to the current buffer. Add this line to your 
 " |vimrc| file in order to enable the ii text-object for all viki 
 " buffers:>
 "   au FileType viki call viki#MapListItemTextObject()
 function! viki#MapListItemTextObject() "{{{3
-    vnoremap <buffer> ii :<c-u>silent! call viki#SelectListItem('.')<cr>
+    " vnoremap <buffer> ii :<c-u>silent! call viki#SelectListItem('.')<cr>
+    vnoremap <buffer> <expr> ii <SID>ListItemTextObject()
     omap <buffer> ii :normal Vii<cr>
+endf
+
+
+function! s:ListItemTextObject() "{{{3
+    if indent('.') == 0
+        return "ip"
+    else
+        return ":\<c-u>silent! call viki#SelectListItem('.')\<cr>"
+    endif
 endf
 
 
