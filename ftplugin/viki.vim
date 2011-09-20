@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2011-07-06.
-" @Revision: 450
+" @Last Change: 2011-08-14.
+" @Revision: 452
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -177,6 +177,11 @@ if g:vikiFoldMethodVersion == 7
 
     " :nodoc:
     function VikiFoldLevel(lnum)
+        let vikiFolds = s:VikiFolds()
+        if vikiFolds == ''
+            " TLogDBG 'no folds'
+            return
+        endif
         let cline = getline(a:lnum)
         let level = matchend(cline, '^\*\+')
         " TLogVAR level, cline
@@ -192,6 +197,11 @@ elseif g:vikiFoldMethodVersion == 6
     " Fold paragraphs (see :help fold-expr)
     " :nodoc:
     function VikiFoldLevel(lnum)
+        let vikiFolds = s:VikiFolds()
+        if vikiFolds == ''
+            " TLogDBG 'no folds'
+            return
+        endif
         return getline(a:lnum) =~ '^\\s*$' && getline(a:lnum + 1) =~ '\\S' ? '<1' : 1
     endf
 
@@ -201,6 +211,10 @@ elseif g:vikiFoldMethodVersion == 5
     function! VikiFoldLevel(lnum)
         " TLogVAR a:lnum
         let vikiFolds = s:VikiFolds()
+        if vikiFolds == ''
+            " TLogDBG 'no folds'
+            return
+        endif
         if vikiFolds =~# 'h'
             " TLogVAR b:vikiHeadingStart
             let lt = getline(a:lnum)
@@ -232,6 +246,10 @@ elseif g:vikiFoldMethodVersion == 4
     function! VikiFoldLevel(lnum)
         " TLogVAR a:lnum
         let vikiFolds = s:VikiFolds()
+        if vikiFolds == ''
+            " TLogDBG 'no folds'
+            return
+        endif
         if vikiFolds =~# 'h'
             " TLogVAR b:vikiHeadingStart
             let lt = getline(a:lnum)
@@ -264,6 +282,11 @@ elseif g:vikiFoldMethodVersion == 3
 
     " :nodoc:
     function! VikiFoldLevel(lnum)
+        let vikiFolds = s:VikiFolds()
+        if vikiFolds == ''
+            " TLogDBG 'no folds'
+            return
+        endif
         let lt = getline(a:lnum)
         if lt !~ '\S'
             return '='
@@ -291,6 +314,11 @@ elseif g:vikiFoldMethodVersion == 2
 
     " :nodoc:
     function! VikiFoldLevel(lnum)
+        let vikiFolds = s:VikiFolds()
+        if vikiFolds == ''
+            " TLogDBG 'no folds'
+            return
+        endif
         let lt = getline(a:lnum)
         let fh = matchend(lt, '\V\^'. b:vikiHeadingStart .'\+\ze\s')
         if fh != -1
