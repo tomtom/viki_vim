@@ -2,8 +2,11 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2010-11-15.
-" @Revision: 0.966
+" @Last Change: 2011-10-29.
+" @Revision: 0.950
+"
+
+syntax spell toplevel 
 
 if version < 600
     syntax clear
@@ -41,19 +44,22 @@ syn cluster vikiHyperLinks contains=vikiLink,vikiExtendedLink,vikiURL,vikiInexis
 
 if b:vikiTextstylesVer == 1
     syn match vikiBold /\(^\|\W\zs\)\*\(\\\*\|\w\)\{-1,}\*/
-    syn region vikiContinousBold start=/\(^\|\W\zs\)\*\*[^ 	*]/ end=/\*\*\|\n\{2,}/ skip=/\\\n/
+    syn region vikiContinousBold start=/\(^\|\W\zs\)\*\*[^ 	*]/ end=/\*\*\|\n\{2,}/ skip=/\\\n/ contains=@Spell
     syn match vikiUnderline /\(^\|\W\zs\)_\(\\_\|[^_\s]\)\{-1,}_/
-    syn region vikiContinousUnderline start=/\(^\|\W\zs\)__[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\\n/
+    syn region vikiContinousUnderline start=/\(^\|\W\zs\)__[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\\n/ contains=@Spell
     syn match vikiTypewriter /\(^\|\W\zs\)=\(\\=\|\w\)\{-1,}=/
     syn region vikiContinousTypewriter start=/\(^\|\W\zs\)==[^ 	=]/ end=/==\|\n\{2,}/ skip=/\\\n/
-    syn cluster vikiTextstyles contains=vikiBold,vikiContinousBold,vikiTypewriter,vikiContinousTypewriter,vikiUnderline,vikiContinousUnderline,vikiEscapedChar
+    syn match vikiColor /\(^\|\W\zs\)'\(\\\*\|\w\)\{-1,}'/
+    syn region vikiContinousColor start=/\(^\|\W\zs\)''[^ 	_]/ end=/''\|\n\{2,}/ skip=/\\\n/ contains=@Spell
+    syn region vikiExample start=/^>\s*$/ end=/^<\s*$/ fold
+    syn cluster vikiTextstyles contains=vikiBold,vikiContinousBold,vikiTypewriter,vikiContinousTypewriter,vikiUnderline,vikiContinousUnderline,vikiEscapedChar,vikiColor,vikiContinousColor
 else
-    syn region vikiBold start=/\(^\|\W\zs\)__[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar
+    syn region vikiBold start=/\(^\|\W\zs\)__[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar,@Spell
     syn region vikiTypewriter start=/\(^\|[^\w`]\zs\)''[^ 	']/ end=/''\|\n\{2,}/ skip=/\\'\|\\\n/ contains=vikiEscapedChar
     syn cluster vikiTextstyles contains=vikiBold,vikiTypewriter,vikiEscapedChar
 endif
 
-syn cluster vikiText contains=@vikiTextstyles,@vikiHyperLinks,vikiMarkers,vikiSymbols
+syn cluster vikiText contains=@Spell,@vikiTextstyles,@vikiHyperLinks,vikiMarkers,vikiSymbols
 
 " exe 'syn match vikiComment /\V\^\[[:blank:]]\*'. escape(b:vikiCommentStart, '\/') .'\.\*/ contains=@vikiText'
 " syn match vikiComment /^[[:blank:]]*%.*$/ contains=@vikiText
@@ -139,22 +145,12 @@ syn region vikiFilesRegion matchgroup=vikiMacroDelim
 
 
 if g:vikiHighlightMath == 'latex'
-    " if has('conceal')
-    "     syn match vikiTexDollar /\$/ conceal
-    "     syn region vikiTexFormula matchgroup=Comment
-    "                 \ start=/\z(\$\$\?\)/ end=/\z1/
-    "                 \ contains=vikiTexDollar,@texmathMath
-    " else
-        syn region vikiTexFormula matchgroup=Comment
-                    \ start=/\z(\$\$\?\)/ end=/\z1/
-                    \ contains=@texmathMath
-    " endif
+    syn region vikiTexFormula matchgroup=Comment
+                \ start=/\z(\$\$\?\)/ end=/\z1/
+                \ contains=@texmathMath
     syn sync match vikiTexFormula grouphere NONE /^\s*$/
 endif
 
-syn region vikiTexMathMacro matchgroup=vikiMacroDelim
-            \ start=/{\(math\>\|\$\)\([^:{}]*:\)\?/ end=/}/ 
-            \ transparent contains=vikiMacroNames,@texmathMath
 syn region vikiTexRegion matchgroup=vikiMacroDelim
             \ start=/^[[:blank:]]*#Ltx\>\(\\\n\|.\)\{-}<<\z(.*\)$/ 
             \ end=/^[[:blank:]]*\z1[[:blank:]]*$/ 
@@ -162,7 +158,9 @@ syn region vikiTexRegion matchgroup=vikiMacroDelim
 syn region vikiTexMacro matchgroup=vikiMacroDelim
             \ start=/{\(ltx\)\([^:{}]*:\)\?/ end=/}/ 
             \ transparent contains=vikiMacroNames,@texmath
-
+syn region vikiTexMathMacro matchgroup=vikiMacroDelim
+            \ start=/{\(math\>\|\$\)\([^:{}]*:\)\?/ end=/}/ 
+            \ transparent contains=vikiMacroNames,@texmathMath
 
 syn match vikiList /^[[:blank:]]\+\([-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\)\ze[[:blank:]]/
 syn match vikiDescription /^[[:blank:]]\+\(\\\n\|.\)\{-1,}[[:blank:]]::\ze[[:blank:]]/ contains=@vikiHyperLinks,vikiEscapedChar,vikiComment
@@ -299,6 +297,9 @@ if version >= 508 || !exists("did_viki_syntax_inits")
   if b:vikiTextstylesVer == 1
       hi vikiContinousBold term=bold cterm=bold gui=bold
       hi vikiContinousUnderline term=underline cterm=underline gui=underline
+      hi vikiColor ctermfg=green guifg=green
+      hi vikiContinousColor ctermfg=green guifg=green
+      hi vikiExample ctermfg=cyan guifg=cyan
       exe "hi vikiContinousTypewriter term=underline ctermfg=". s:cm1 ."Grey guifg=". s:cm1 ."Grey". s:twfont
       HiLink vikiBold vikiContinousBold
       HiLink vikiUnderline vikiContinousUnderline 
@@ -341,7 +342,7 @@ if version >= 508 || !exists("did_viki_syntax_inits")
   delcommand HiLink
 endif
 
-" if g:vikiMarkInexistent && !exists("b:vikiCheckInexistent")
+"if g:vikiMarkInexistent && !exists("b:vikiCheckInexistent")
 if g:vikiMarkInexistent
     call viki#MarkInexistentInitial()
 endif
