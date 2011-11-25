@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2011-07-16.
-" @Revision:    0.828
+" @Last Change: 2011-11-25.
+" @Revision:    0.852
 
 
 """ General {{{1
@@ -354,6 +354,13 @@ endif
 if !exists("g:vikiMapFunctionalityMinor")
     " Define which keys to map in minor mode (invoked via :VikiMinorMode)
     let g:vikiMapFunctionalityMinor = 'f b p mf mb tF c q e' "{{{2
+endif
+
+if !exists('g:viki#files_head_rx')
+    " If a "head" argument is passed to the #Files region, the retrieved 
+    " lines will be preprocessed by removing text matching this 
+    " expression.
+    let g:viki#files_head_rx = '^\(\*\s\+\)'   "{{{2
 endif
 
 let g:viki#quit = 0
@@ -2584,7 +2591,6 @@ fun! viki#FindNextRegion(name) "{{{3
     return search(rx, 'We')
 endf
 
-
 " Indentation
 fun! viki#GetIndent()
     let lr = &lazyredraw
@@ -2872,7 +2878,8 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
             "     endif
             " endif
             let list = split(get(args, 'list', ''), ',\s*')
-            call map(ls, 'a:indent.s:GetFileEntry(v:val, list)')
+            let head = 0 + get(args, 'head', '0')
+            call map(ls, 'a:indent.s:GetFileEntry(v:val, list, head)')
             let @t = join(ls, "\<c-j>") ."\<c-j>"
             exec 'norm! '. a:lhb .'G"tP'
         finally
@@ -2883,7 +2890,7 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
     endif
 endf
 
-fun! s:GetFileEntry(file, list) "{{{3
+fun! s:GetFileEntry(file, list, head) "{{{3
     " let prefix = substitute(a:file, '[^/]', '', 'g')
     " let prefix = substitute(prefix, '/', repeat(' ', &shiftwidth), 'g')
     let attr = []
@@ -2923,9 +2930,16 @@ fun! s:GetFileEntry(file, list) "{{{3
     if !empty(attr)
         call add(f, ' {'. join(attr, '|') .'}')
     endif
-    let c = get(s:savedComments, a:file, '')
-    if !empty(c)
-        call add(f, c)
+    if a:head > 0
+        let lines = readfile(a:file, '', a:head)
+        let lines = filter(lines, 'v:val =~ ''\S''')
+        let lines = map(lines, 'substitute(v:val, g:viki#files_head_rx, "", "g")')
+        call add(f, ' -- '. join(lines, '|'))
+    else
+        let c = get(s:savedComments, a:file, '')
+        if !empty(c)
+            call add(f, c)
+        endif
     endif
     return join(f, '')
 endf

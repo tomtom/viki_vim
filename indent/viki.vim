@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     16-Jän-2004.
-" @Last Change: 2010-09-13.
-" @Revision: 0.266
+" @Last Change: 2011-10-21.
+" @Revision: 0.268
 
 if exists("b:did_indent") || exists("g:vikiNoIndent")
     finish
