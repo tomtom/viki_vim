@@ -1497,6 +1497,10 @@ endf
 " Retrieve information for back references
 function! s:GetBackRef()
     if g:vikiSaveHistory
+        if type(g:VIKIBACKREFS) != 4
+            unlet g:VIKIBACKREFS
+            let g:VIKIBACKREFS = {}
+        endif
         let id = expand('%:p')
         if empty(id)
             return []
