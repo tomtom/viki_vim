@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2011-11-25.
-" @Revision:    0.852
+" @Last Change: 2011-12-29.
+" @Revision:    0.863
 
 
 """ General {{{1
@@ -63,6 +63,10 @@ if !exists('g:vikiUrlRestRx')
     let g:vikiUrlRestRx = '['. g:vikiLowerCharacters . g:vikiUpperCharacters .'0-9?%_=&+-]*'  "{{{2
 endif
 
+if !exists('g:viki#error_malformed_names')
+    " If true, throw an error on malformed viki names.
+    let g:viki#error_malformed_names = 0   "{{{2
+endif
 
 if !exists("g:vikiSpecialProtocols")
     " URLs matching these protocols are handled by |VikiOpenSpecialProtocol()|.
@@ -1972,6 +1976,17 @@ function! s:ExtractMatch(match, idx, default) "{{{3
     endif
 endf
 
+function! viki#MalformedName(msg) "{{{3
+    let msg = "Viki: Malformed viki name: ". a:msg
+    if g:viki#error_malformed_names
+        throw msg
+    else
+        echohl WarningMsg
+        echom msg
+        echohl NONE
+    endif
+endf
+
 " If txt matches a viki name typed as defined by compound return a 
 " structure defining this viki name.
 function! viki#LinkDefinition(txt, col, compound, ignoreSyntax, type) "{{{3
@@ -2007,7 +2022,8 @@ function! viki#LinkDefinition(txt, col, compound, ignoreSyntax, type) "{{{3
         elseif a:ignoreSyntax
             return []
         else
-            throw "Viki: Malformed viki v_name: " . a:txt . " (". erx .")"
+            call viki#MalformedName("v_name: " . a:txt . " (". erx .")")
+            return []
         endif
     else
         return []

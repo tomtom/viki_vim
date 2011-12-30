@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2011-06-16.
-" @Revision:    0.0.142
+" @Last Change: 2011-12-04.
+" @Revision:    0.0.145
 
 
 """ viki/deplate {{{1
@@ -434,7 +434,7 @@ function! viki_viki#CompleteExtendedNameDef(def) "{{{3
     exec viki#SplitDef(a:def)
     if v_dest == g:vikiDefNil
         if v_anchor == g:vikiDefNil
-            throw "Viki: Malformed extended viki name (no destination): ". string(a:def)
+            call viki#MalformedName("extended name (no destination): ". string(a:def))
         else
             let v_dest = g:vikiSelfRef
         endif
@@ -526,11 +526,11 @@ function! viki_viki#CompleteSimpleNameDef(def) "{{{3
     " TLogVAR a:def
     exec viki#SplitDef(a:def)
     if v_name == g:vikiDefNil
-        throw "Viki: Malformed simple viki name (no name): ". string(a:def)
+        call viki#MalformedName("simple name (no name): ". string(a:def))
     endif
 
     if !(v_dest == g:vikiDefNil)
-        throw "Viki: Malformed simple viki name (destination=".v_dest."): ". string(a:def)
+        call viki#MalformedName("simple name (destination=".v_dest."): ". string(a:def))
     endif
 
     " TLogVAR v_name
