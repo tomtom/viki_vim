@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
 " @Last Change: 2012-01-20.
-" @Revision: 473
+" @Revision: 476
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -201,7 +201,7 @@ if g:vikiFoldMethodVersion == 8
             return
         endif
         let level = 1
-        if vikiFolds =~# 'h'
+        if vikiFolds =~? 'h'
             let hd_lnums = sort(map(keys(b:viki_headings), 'str2nr(v:val)'), 's:NumericSort')
             " TLogVAR hd_lnums
             for hd_lnum in hd_lnums
@@ -210,6 +210,10 @@ if g:vikiFoldMethodVersion == 8
                     " TLogVAR hd_lnum, level
                 endif
             endfor
+            if vikiFolds =~# 'H'
+                let max_level = max(values(b:viki_headings))
+                let level = max_level - level + 1
+            endif
         endif
         if vikiFolds =~# 'l'
             let level += matchend(getline(prevnonblank(a:lnum)), '^\s\+') / &shiftwidth
