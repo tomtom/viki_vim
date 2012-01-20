@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2011-08-14.
-" @Revision: 452
+" @Last Change: 2012-01-20.
+" @Revision: 467
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -173,7 +173,46 @@ function! s:SetMaxLevel() "{{{3
     call winrestview(view)
 endf
 
-if g:vikiFoldMethodVersion == 7
+if g:vikiFoldMethodVersion == 8
+
+    function! s:UpdateHeadings() "{{{3
+        let b:viki_headings = {}
+        let pos = getpos('.')
+        try
+            g/^\*\+\s/let b:viki_headings[line('.')] = matchend(getline('.'), '^\*\+\s')
+        finally
+            call setpos('.', pos)
+        endtry
+    endf
+    call s:UpdateHeadings()
+
+    autocmd viki CursorHold,CursorHoldI <buffer> call s:UpdateHeadings()
+
+    func s:NumericSort(i1, i2)
+        return a:i1 == a:i2 ? 0 : a:i1 > a:i2 ? 1 : -1
+    endfunc
+
+    " :nodoc:
+    function VikiFoldLevel(lnum)
+        let vikiFolds = s:VikiFolds()
+        if vikiFolds == ''
+            " TLogDBG 'no folds'
+            return
+        endif
+        let level = 1
+        let hd_lnums = sort(map(keys(b:viki_headings), 'str2nr(v:val)'), 's:NumericSort')
+        " TLogVAR hd_lnums
+        for hd_lnum in hd_lnums
+            if hd_lnum <= a:lnum
+                let level = b:viki_headings[hd_lnum]
+                " TLogVAR hd_lnum, level
+            endif
+        endfor
+        " TLogVAR a:lnum, level
+        return level
+    endf
+
+elseif g:vikiFoldMethodVersion == 7
 
     " :nodoc:
     function VikiFoldLevel(lnum)
