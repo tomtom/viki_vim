@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
 " @Last Change: 2012-01-20.
-" @Revision: 467
+" @Revision: 473
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -65,6 +65,7 @@ if !exists("g:vikiFolds")
     "       than the other version as vim never has to scan the text; but 
     "       the behaviour may vary depending on the sequence of headings if 
     "       |vikiFoldBodyLevel| is set to 0.
+    "     f :: Files regions.
     "     s :: ???
     " This variable is only used if |g:vikiFoldMethodVersion| is 1.
     let g:vikiFolds = 'hf' "{{{2
@@ -200,14 +201,19 @@ if g:vikiFoldMethodVersion == 8
             return
         endif
         let level = 1
-        let hd_lnums = sort(map(keys(b:viki_headings), 'str2nr(v:val)'), 's:NumericSort')
-        " TLogVAR hd_lnums
-        for hd_lnum in hd_lnums
-            if hd_lnum <= a:lnum
-                let level = b:viki_headings[hd_lnum]
-                " TLogVAR hd_lnum, level
-            endif
-        endfor
+        if vikiFolds =~# 'h'
+            let hd_lnums = sort(map(keys(b:viki_headings), 'str2nr(v:val)'), 's:NumericSort')
+            " TLogVAR hd_lnums
+            for hd_lnum in hd_lnums
+                if hd_lnum <= a:lnum
+                    let level = b:viki_headings[hd_lnum]
+                    " TLogVAR hd_lnum, level
+                endif
+            endfor
+        endif
+        if vikiFolds =~# 'l'
+            let level += matchend(getline(prevnonblank(a:lnum)), '^\s\+') / &shiftwidth
+        endif
         " TLogVAR a:lnum, level
         return level
     endf
