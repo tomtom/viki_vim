@@ -888,6 +888,7 @@ Contents~
         g:vikiLowerCharacters ............... |g:vikiLowerCharacters|
         g:vikiAnchorNameRx .................. |g:vikiAnchorNameRx|
         g:vikiUrlRestRx ..................... |g:vikiUrlRestRx|
+        g:viki#error_malformed_names ........ |g:viki#error_malformed_names|
         g:vikiSpecialProtocols .............. |g:vikiSpecialProtocols|
         g:vikiSpecialProtocolsExceptions .... |g:vikiSpecialProtocolsExceptions|
         g:vikiSpecialFiles .................. |g:vikiSpecialFiles|
@@ -1006,6 +1007,7 @@ Contents~
         viki#MakeUrl ........................ |viki#MakeUrl()|
         viki#MakeDef ........................ |viki#MakeDef()|
         viki#SplitDef ....................... |viki#SplitDef()|
+        viki#MalformedName .................. |viki#MalformedName()|
         viki#LinkDefinition ................. |viki#LinkDefinition()|
         viki#WithSuffix ..................... |viki#WithSuffix()|
         viki#ExpandSimpleName ............... |viki#ExpandSimpleName()|
@@ -1212,6 +1214,10 @@ g:vikiAnchorNameRx             (default: '')
 
                                                     *g:vikiUrlRestRx*
 g:vikiUrlRestRx                (default: '['. g:vikiLowerCharacters . g:vikiUpperCharacters .'0-9?%_=&+-]*')
+
+                                                    *g:viki#error_malformed_names*
+g:viki#error_malformed_names   (default: 0)
+    If true, throw an error on malformed viki names.
 
                                                     *g:vikiSpecialProtocols*
 g:vikiSpecialProtocols         (default: 'https\?\|ftps\?\|nntp\|mailto\|mailbox\|file')
@@ -1800,6 +1806,9 @@ viki#SplitDef(def)
     Return vimscript code that defines a set of variables on the basis of a 
     viki name definition
 
+                                                    *viki#MalformedName()*
+viki#MalformedName(msg)
+
                                                     *viki#LinkDefinition()*
 viki#LinkDefinition(txt, col, compound, ignoreSyntax, type)
     If txt matches a viki name typed as defined by compound return a 
@@ -2039,6 +2048,7 @@ g:vikiFolds                    (default: 'hf')
           than the other version as vim never has to scan the text; but 
           the behaviour may vary depending on the sequence of headings if 
           |vikiFoldBodyLevel| is set to 0.
+        f :: Files regions.
         s :: ???
     This variable is only used if |g:vikiFoldMethodVersion| is 1.
 
