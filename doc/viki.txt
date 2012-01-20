@@ -1049,7 +1049,6 @@ Contents~
         b:vikiCommentStart .................. |b:vikiCommentStart|
         b:vikiCommentEnd .................... |b:vikiCommentEnd|
         b:vikiHeadingMaxLevel ............... |b:vikiHeadingMaxLevel|
-        g:vikiFoldMethodVersion ............. |g:vikiFoldMethodVersion|
         b:vikiMaxFoldLevel .................. |b:vikiMaxFoldLevel|
         b:vikiInverseFold ................... |b:vikiInverseFold|
         g:vikiFoldBodyLevel ................. |g:vikiFoldBodyLevel|
@@ -2007,16 +2006,6 @@ b:vikiCommentEnd               (default: "")
 
                                                     *b:vikiHeadingMaxLevel*
 b:vikiHeadingMaxLevel          (default: -1)
-
-                                                    *g:vikiFoldMethodVersion*
-g:vikiFoldMethodVersion        (default: 7)
-    Choose folding method version
-    Viki supports several methods (1..7) for defining folds. If you 
-    find that text entry is slowed down it is probably due to the 
-    chosen fold method. You could try to use another method (see 
-    ../ftplugin/viki.vim for alternative methods) or check out this 
-    vim tip:
-    http://vim.wikia.com/wiki/Keep_folds_closed_while_inserting_text
 
                                                     *b:vikiMaxFoldLevel*
 b:vikiMaxFoldLevel             (default: 5)
