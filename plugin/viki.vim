@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2011-07-06.
-" @Revision:    2723
+" @Last Change: 2012-01-21.
+" @Revision:    2724
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -40,7 +40,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 39
         finish
     endif
 endif
-let loaded_viki = 319
+let loaded_viki = 320
 
 
 if !exists("tlist_viki_settings")
