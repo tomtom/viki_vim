@@ -513,3 +513,29 @@ version: "3.19"
   - Act more graciously if g:vikiHomePage is empty
   MD5 checksum: 64ebd14609764e98b91f1e233e121e32
 
+version: "3.20"
+  - Use syn-conceal if available
+  - viki#SetAnchorMarks(): call QuickfixsignsSet('', ['marks']): specify "marks"
+  - Register docx, pptx, xlsx as special extensions
+  - viki_viki#SetupBuffer: Allow brackets in extended viki links
+  - compiler/deplate: Space was not escaped (thanks to E Peron)
+  - don't set fold* if vikiFoldMethodVersion<1
+  - .gitignore
+  - Don't check for has('vim_starting')
+  - Moved s:MatchList() to autoload/viki.vim
+  - New: viki#SelectListItem(), viki#ShiftListItem(), viki#MoveListItem()
+  - Use vimdedoc.rb to generate the help file from source
+  - Enable {fn} macros as hyperlinks
+  - VikiDefine: define interviki commands with command!
+  - Duplicate help tags (fix #2)
+  - vnoremap <buffer> <expr> ii for viki#SelectListItem('.')
+  - VikiFoldLevel(): Always check if vikiFolds == ""
+  - #Files region: allow optional "head" argument
+  - Configurable option for how to handle malformed viki names
+  - Make sure g:VIKIBACKREFS is a dictionary
+  - New VikiFoldLevel version 8: headings only, uses cached info about heading levels for speed-up
+  - Enable VikiFoldLevel() v8 to fold list items
+  - Enable VikiFoldLevel() v8 to inversely fold headings (H)
+  - Remove support for multiple folding methods (g:vikiFoldMethodVersion)
+  MD5 checksum: 18b8b9837ebb7451d56a90ccfc1de854
+
