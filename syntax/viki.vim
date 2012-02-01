@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2012-01-31.
-" @Revision: 0.988
+" @Last Change: 2012-02-01.
+" @Revision: 0.993
 
 if version < 600
     syntax clear
@@ -46,15 +46,17 @@ if has('conceal') && &enc == 'utf-8'
                 \ ['ArrorLR', '<->', '↔'],
                 \ ['ArrowL', '<-', '←'],
                 \ ['ArrowR', '->', '→'],
+                \ ['ARROWL', '<=', '◄'],
+                \ ['ARROWR', '=>', '►'],
                 \ ['Ellipsis', '...', '…'],
                 \ ]
         
         exec 'syn match vikiSymbol'. s:name .' /\V'. s:chars .'/ conceal cchar='. s:cchar
         call add(s:sym_cluster, s:name)
     endfor
-    unlet s:name s:chars s:cchar
-    syn match vikiSymbols /\V\(<=\+>\|<~\+>\|<=\+\|=\+>\|<~\+\|~\+>\|&\(#\d\+\|\w\+\);\)/
+    syn match vikiSymbols /\V\(<=\+>\|<~\+>\|<~\+\|~\+>\|&\(#\d\+\|\w\+\);\)/
     exec 'syn cluster vikiSymbols contains=vikiSymbols,'. join(s:sym_cluster, ',')
+    unlet s:name s:chars s:cchar s:sym_cluster
 else
     " syn match vikiSymbols /\(--\|!=\|==\+\|\~\~\+\|<-\+>\|<=\+>\|<\~\+>\|<-\+\|-\+>\|<=\+\|=\+>\|<\~\+\|\~\+>\|\.\.\.\)/
     syn match vikiSymbols /\V\(--\|!=\|==\+\|~~\+\|<-\+>\|<=\+>\|<~\+>\|<-\+\|-\+>\|<=\+\|=\+>\|<~\+\|~\+>\|...\|&\(#\d\+\|\w\+\);\)/
@@ -322,12 +324,6 @@ if version >= 508 || !exists("did_viki_syntax_inits")
   exe "hi vikiTableRowSep term=bold cterm=bold gui=bold ctermbg=". s:cm2 ."Grey guibg=". s:cm2 ."Grey"
   
   exe "hi vikiSymbols term=bold cterm=bold gui=bold ctermfg=". s:cm1 ."Red guifg=". s:cm1 ."Red"
-  if exists('s:sym_cluster')
-      for s:name in s:sym_cluster
-          exe "HiLink vikiSymbol". s:name ." Normal"
-      endfor
-      unlet s:name s:sym_cluster
-  endif
 
   hi vikiMarkers term=bold cterm=bold gui=bold ctermfg=DarkRed guifg=DarkRed ctermbg=yellow guibg=yellow
   hi vikiAnchor term=italic cterm=italic gui=italic ctermfg=grey guifg=grey
