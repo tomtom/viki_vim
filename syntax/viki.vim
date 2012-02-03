@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2012-02-01.
-" @Revision: 0.993
+" @Last Change: 2012-02-03.
+" @Revision: 0.1000
 
 if version < 600
     syntax clear
@@ -43,18 +43,22 @@ if has('conceal') && &enc == 'utf-8'
                 \ ['Unequal', '!=', '≠'],
                 \ ['Identity', '==', '≡'],
                 \ ['Approx', '~~', '≈'],
-                \ ['ArrorLR', '<->', '↔'],
-                \ ['ArrowL', '<-', '←'],
-                \ ['ArrowR', '->', '→'],
-                \ ['ARROWL', '<=', '◄'],
-                \ ['ARROWR', '=>', '►'],
+                \ ['ArrowLR', '<-\+>', '↔'],
+                \ ['ArrowL', '<-\+', '←'],
+                \ ['ArrowR', '-\+>', '→'],
+                \ ['ARROWLR', '<=\+>', '⇔'],
+                \ ['ARROWL', '<=\+', '⇐'],
+                \ ['ARROWR', '=\+>', '⇒'],
+                \ ['ArrowTildeLR', '<~\+>', '↭'],
+                \ ['ArrowTildeL', '<~\+', '↜'],
+                \ ['ArrowTildeR', '~\+>', '↝'],
                 \ ['Ellipsis', '...', '…'],
                 \ ]
         
         exec 'syn match vikiSymbol'. s:name .' /\V'. s:chars .'/ conceal cchar='. s:cchar
         call add(s:sym_cluster, s:name)
     endfor
-    syn match vikiSymbols /\V\(<=\+>\|<~\+>\|<~\+\|~\+>\|&\(#\d\+\|\w\+\);\)/
+    syn match vikiSymbols /\V\(&\(#\d\+\|\w\+\);\)/
     exec 'syn cluster vikiSymbols contains=vikiSymbols,'. join(s:sym_cluster, ',')
     unlet s:name s:chars s:cchar s:sym_cluster
 else
