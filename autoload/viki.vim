@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2011-12-29.
-" @Revision:    0.863
+" @Last Change: 2012-02-03.
+" @Revision:    0.864
 
 
 """ General {{{1
@@ -1380,7 +1380,6 @@ call s:ResetSavedCursorPosition()
 
 
 " Restore the cursor position
-" TODO: adapt for vim7
 " viki#RestoreCursorPosition(?line, ?VCol, ?EOL, ?Winline)
 function! viki#RestoreCursorPosition(...) "{{{3
     let bn = bufnr('%')
