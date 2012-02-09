@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
 " @Last Change: 2012-02-09.
-" @Revision: 0.1002
+" @Revision: 0.1003
 
 if version < 600
     syntax clear
@@ -90,11 +90,7 @@ else
     syn cluster vikiTextstyles contains=vikiBold,vikiTypewriter,vikiEscapedChar
 endif
 
-if exists('g:loaded_tskeleton')
-    syn cluster vikiText contains=@vikiTextstyles,@vikiHyperLinks,vikiMarkers,@vikiSymbols,TSkelPlaceHolder
-else
-    syn cluster vikiText contains=@vikiTextstyles,@vikiHyperLinks,vikiMarkers,@vikiSymbols
-endif
+syn cluster vikiText contains=@vikiTextstyles,@vikiHyperLinks,vikiMarkers,@vikiSymbols
 
 " exe 'syn match vikiComment /\V\^\[[:blank:]]\*'. escape(b:vikiCommentStart, '\/') .'\.\*/ contains=@vikiText'
 " syn match vikiComment /^[[:blank:]]*%.*$/ contains=@vikiText
