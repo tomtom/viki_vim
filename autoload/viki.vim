@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-02-03.
-" @Revision:    0.864
+" @Last Change: 2012-02-17.
+" @Revision:    0.868
 
 
 """ General {{{1
@@ -2850,6 +2850,7 @@ endf
 
 fun! viki#FilesUpdate() "{{{3
     let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
+    " TLogVAR lh, lb, le, indent
     " 'vikiFiles', 'vikiFilesRegion'
     call s:DeleteRegionBody(lb, le)
     call viki#DirListing(lh, lb, indent)
@@ -2890,17 +2891,19 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
             if !empty(exclude)
                 call filter(ls, 'v:val !~ exclude')
             endif
-            let order = get(args, 'order', '')
-            " if !empty(order)
-            "     if order == 'd'
-            "         call sort(ls, 's:SortDirsFirst')
-            "     endif
-            " endif
-            let list = split(get(args, 'list', ''), ',\s*')
-            let head = 0 + get(args, 'head', '0')
-            call map(ls, 'a:indent.s:GetFileEntry(v:val, list, head)')
-            let @t = join(ls, "\<c-j>") ."\<c-j>"
-            exec 'norm! '. a:lhb .'G"tP'
+            if !empty(ls)
+                let order = get(args, 'order', '')
+                " if !empty(order)
+                "     if order == 'd'
+                "         call sort(ls, 's:SortDirsFirst')
+                "     endif
+                " endif
+                let list = split(get(args, 'list', ''), ',\s*')
+                let head = 0 + get(args, 'head', '0')
+                call map(ls, 'a:indent.s:GetFileEntry(v:val, list, head)')
+                let @t = join(ls, "\<c-j>") ."\<c-j>"
+                exec 'norm! '. a:lhb .'G"tP'
+            endif
         finally
             let @t = t
             " call setpos('.', p)
