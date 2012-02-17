@@ -87,6 +87,7 @@ Requirements:
 
                                                     *viki-related-plugins*
 Optional enhancements:
+- vikitasks (vimscript #2894): Distributed TODO lists
 - hookcursormoved (vimscript #2037): Enhanced detection of hyperlinks to inexistent destinations.
 - vxfold (vimscript #3004): Provides org-mode like fold cycling
 - VOoM (vimscript #2657): A two-pane outliner with support for viki
@@ -129,11 +130,6 @@ It's probably a good idea to check the values of the following variables:
         let g:vikiLowerCharacters = "a-zäöüßáàéèíìóòçñ"
         let g:vikiUpperCharacters = "A-ZÄÖÜ"
 <
-    - |g:vikiUseParentSuffix| (see also |viki-names|); I personally prefer 
-      this to be ON >
-
-        let g:vikiUseParentSuffix = 1
-<
     - |vikiNameTypes| (see |viki-names|): control which type of viki names you 
       want to use (this allows you to turn off, e.g., simple viki names)
 
@@ -144,6 +140,9 @@ example: >
     let g:vikiOpenUrlWith_mailto = 'thunderbird -compose %{URL}'
     let g:vikiOpenFileWith_html  = "silent !firefox %{FILE}"
     let g:vikiOpenFileWith_ANY   = "silent !start %{FILE}"
+
+You should at least check the definitions of |g:vikiOpenFileWith_ANY| 
+and |g:vikiOpenUrlWith_ANY|.
 
 This way, if you had, e.g., pdftotext (from the xpdf distribution) installed, 
 you could make viki to open references to pdf files right in VIM: >
@@ -224,15 +223,12 @@ In order to automatically set |deplate| as the compiler for viki files: >
     au FileType viki compiler deplate
 
                                                     *viki-filetype-detection*
-Some users might want to automatically set the filetype to viki depening on 
-the file extension. This can be done using |:autocmd|: >
-
-    let g:vikiNameSuffix=".viki"
-    autocmd! BufRead,BufNewFile *.viki set filetype=viki
+By default, the filetype of files matching the suffix defined in 
+|g:vikiNameSuffix| will be set to viki.
 
 You can also use |:autocmd| to set the filetype depending on the path: >
 
-    autocmd! BufRead,BufNewFile $HOME/MyWiki/* set filetype=viki
+    autocmd BufRead,BufNewFile $HOME/MyWiki/* set filetype=viki
 
 If the variables b:getVikiLink or b:getExtVikiLink exist, their values are 
 used as _function_ names for returning the current viki name's definition. A 
@@ -927,6 +923,8 @@ Contents~
         g:vikiMapFunctionality .............. |g:vikiMapFunctionality|
         g:vikiMapFunctionalityMinor ......... |g:vikiMapFunctionalityMinor|
         g:viki#files_head_rx ................ |g:viki#files_head_rx|
+        g:viki#autoupdate_files ............. |g:viki#autoupdate_files|
+        g:viki#use_texmath .................. |g:viki#use_texmath|
         :VikiFindNext ....................... |:VikiFindNext|
         :VikiFindPrev ....................... |:VikiFindPrev|
         :VikiMarkInexistent ................. |:VikiMarkInexistent|
@@ -1087,12 +1085,13 @@ g:vikiMarkInexistent           (default: 1)
     different colours.
 
                                                     *g:vikiHighlightMath*
-g:vikiHighlightMath            (default: '')
+g:vikiHighlightMath            (default: 'latex')
+    If "latex", use the texmathMath |syn-cluster| to highlight 
+    mathematical formulas.
 
                                                     *g:vikiNameSuffix*
-g:vikiNameSuffix               (default: "")
-    Default file suffix (including the optional period, e.g. '.txt' or 
-    '.viki').
+g:vikiNameSuffix               (default: ".viki")
+    Default file suffix (including the optional period, e.g. '.viki').
     Can also be buffer-local.
 
                                                     *g:vikiIndex*
@@ -1105,7 +1104,7 @@ g:viki_intervikis              (default: {})
     autoload/viki.vim is loaded).
 
                                                     *g:vikiSaveHistory*
-g:vikiSaveHistory              (default: 0)
+g:vikiSaveHistory              (default: index(split(&viminfo, ','), '!') != -1)
     If non-nil, cache back-links information
 
                                                     *b:vikiNoSimpleNames*
@@ -1254,8 +1253,8 @@ g:vikiPromote                  (default: 0)
     minor mode); this was the default behaviour in earlier versions
 
                                                     *g:vikiUseParentSuffix*
-g:vikiUseParentSuffix          (default: 0)
-    If non-nil, use the parent document's suffix.
+g:vikiUseParentSuffix          (default: 1)
+    If true, use the parent document's suffix.
     If true, always append the "parent" file's suffix to the 
     destination file name. I.e. if the current file is "ThisIdea.txt" 
     the the viki name "OtherIdea" will refer to the file 
@@ -1336,7 +1335,7 @@ g:vikiMapBeforeKeys            (default: ']')
     Check the viki name before inserting this character
 
                                                     *g:vikiFamily*
-g:vikiFamily                   (default: "")
+g:vikiFamily                   (default: "viki")
     Some functions a gathered in families/classes. See vikiLatex.vim for 
     an example.
     By defining this variable, family specific functions will be called for:
@@ -1428,6 +1427,15 @@ g:viki#files_head_rx           (default: '^\(\*\s\+\)')
     If a "head" argument is passed to the #Files region, the retrieved 
     lines will be preprocessed by removing text matching this 
     expression.
+
+                                                    *g:viki#autoupdate_files*
+g:viki#autoupdate_files        (default: 0)
+    If true, automatically update all |viki-files| regions.
+
+                                                    *g:viki#use_texmath*
+g:viki#use_texmath             (default: 1)
+    If true, load syntax/texmath.vim for a prettier display of 
+    mathematical formulas.
 
                                                     *:VikiFindNext*
 :VikiFindNext
@@ -1681,7 +1689,6 @@ viki#HookCheckPreviousPosition(mode)
                                                     *viki#RestoreCursorPosition()*
 viki#RestoreCursorPosition(...)
     Restore the cursor position
-    TODO: adapt for vim7
     viki#RestoreCursorPosition(?line, ?VCol, ?EOL, ?Winline)
 
                                                     *viki#SaveCursorPosition()*
