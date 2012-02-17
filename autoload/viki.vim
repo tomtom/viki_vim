@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-02-17.
-" @Revision:    0.868
+" @Revision:    0.873
 
 
 """ General {{{1
@@ -2773,7 +2773,9 @@ fun! viki#FilesUpdateAll() "{{{3
         endwh
     finally
         " call setpos('.', p)
-        call winrestview(view)
+        if winsaveview() != view
+            call winrestview(view)
+        endif
     endtry
 endf
 
