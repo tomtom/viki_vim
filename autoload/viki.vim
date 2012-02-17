@@ -268,7 +268,7 @@ if !exists("g:vikiFamily")
     " Apart from the default behaviour the following families are defined:
     "     - latex (see |viki-latex|)
     "     - anyword (see |viki-anyword|)
-    let g:vikiFamily = "" "{{{2
+    let g:vikiFamily = "viki" "{{{2
 endif
 
 if !exists("g:vikiDirSeparator")
@@ -1201,7 +1201,7 @@ endf
 " viki#DispatchOnFamily(fn, ?family='', *args)
 function! viki#DispatchOnFamily(fn, ...) "{{{3
     let fam = a:0 >= 1 && a:1 != '' ? a:1 : viki#Family()
-    if !exists('g:loaded_viki_'. fam)
+    if !exists('*viki_'. fam .'#SetupBuffer')
         exec 'runtime autoload/viki_'. fam .'.vim'
     endif
     if fam == '' || !exists('*viki_'.fam.'#'.a:fn)
@@ -1765,10 +1765,11 @@ endf
 function! viki#Family(...) "{{{3
     let anyway = a:0 >= 1 ? a:1 : 0
     if (anyway || (exists('b:vikiEnabled') && b:vikiEnabled)) && exists('b:vikiFamily') && !empty(b:vikiFamily)
-        return b:vikiFamily
+        let rv = b:vikiFamily
     else
-        return g:vikiFamily
+        let rv = g:vikiFamily
     endif
+    return empty(rv) ? 'viki' : rv
 endf
 
 " Return the number of windows
