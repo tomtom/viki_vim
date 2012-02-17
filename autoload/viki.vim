@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-02-17.
-" @Revision:    0.873
+" @Revision:    0.886
 
 
 """ General {{{1
@@ -3108,17 +3108,43 @@ function! viki#Balloon() "{{{3
         let def = viki#GetLink(1, getline(v:beval_lnum), v:beval_col)
         exec viki#SplitDef(def)
         " TLogVAR v_dest
-        if !viki#IsSpecial(v_dest) 
+        let text = ''
+        if viki#IsSpecial(v_dest) 
+            if isdirectory(v_dest)
+                let pattern = tlib#file#Join([v_dest, '*'])
+                let files = glob(pattern)
+                let list = split(files, '\n')
+                call map(list, 'fnamemodify(v:val, ":t")')
+                let lines = []
+                if !empty(list)
+                    let max = &columns
+                    let line = []
+                    let len = 0
+                    for file in list
+                        let len1 = len + strlen(file)
+                        if len1 < max
+                            call add(line, file)
+                            let len = len1
+                        else
+                            call add(lines, join(line, ', '))
+                            let line = []
+                            let len = 0
+                        endif
+                    endfor
+                endif
+                let text  = join(lines, "\n")
+            endif
+        else
             try
                 let lines = readfile(v_dest)[0 : eval(g:vikiBalloonLines)]
                 let text  = join(lines, "\n")
-                if &fenc != g:vikiBalloonEncoding && has('iconv')
-                    let text = iconv(text, &fenc, g:vikiBalloonEncoding)
-                endif
-                return text
             catch
             endtry
         endif
+        if !empty(text) && &fenc != g:vikiBalloonEncoding && has('iconv')
+            let text = iconv(text, &fenc, g:vikiBalloonEncoding)
+        endif
+        return text
     endif
     return ''
 endf
