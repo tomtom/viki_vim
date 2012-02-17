@@ -731,8 +731,22 @@ function! s:EditWrapper(cmd, fname) "{{{3
                 " TLogDBG a:cmd .' '. fname
                 exec a:cmd .' '. fname
             else
+                let pre = ''
+                if &modified && !&hidden
+                    call inputsave()
+                    let val = input('Viki: Hide/save modified buffer? (HIDE/save/cancel) ')
+                    call inputrestore()
+                    if val =~? '^s\%[ave]$'
+                        update
+                    elseif val =~? '^c\%[ancel]$'
+                        return
+                    else
+                        let pre = 'hide'
+                    endif
+                    echom "Viki: Please set g:vikiHide"
+                endif
                 " TLogDBG a:cmd .' '. fname
-                exec a:cmd .' '. fname
+                exec pre a:cmd fname
             endif
         catch /^Vim\%((\a\+)\)\=:E37/
             echoerr "Vim raised E37: You tried to abondon a dirty buffer (see :h E37)"
