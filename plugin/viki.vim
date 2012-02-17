@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
 " @Last Change: 2012-02-17.
-" @Revision:    2728
+" @Revision:    2731
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -95,7 +95,7 @@ endif
 
 if !exists("g:vikiSaveHistory")
     " If non-nil, cache back-links information
-    let g:vikiSaveHistory = 0 "{{{2
+    let g:vikiSaveHistory = index(split(&viminfo, ','), '!') != -1 "{{{2
 endif
 
 
