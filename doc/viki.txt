@@ -865,6 +865,7 @@ Contents~
         g:vikiIndex ......................... |g:vikiIndex|
         g:viki_intervikis ................... |g:viki_intervikis|
         g:vikiSaveHistory ................... |g:vikiSaveHistory|
+        g:vikiAutoupdateFiles ............... |g:vikiAutoupdateFiles|
         b:vikiNoSimpleNames ................. |b:vikiNoSimpleNames|
         b:vikiDisableType ................... |b:vikiDisableType|
         VikiMakeName ........................ |VikiMakeName()|
@@ -923,7 +924,6 @@ Contents~
         g:vikiMapFunctionality .............. |g:vikiMapFunctionality|
         g:vikiMapFunctionalityMinor ......... |g:vikiMapFunctionalityMinor|
         g:viki#files_head_rx ................ |g:viki#files_head_rx|
-        g:viki#autoupdate_files ............. |g:viki#autoupdate_files|
         g:viki#use_texmath .................. |g:viki#use_texmath|
         :VikiFindNext ....................... |:VikiFindNext|
         :VikiFindPrev ....................... |:VikiFindPrev|
@@ -1106,6 +1106,10 @@ g:viki_intervikis              (default: {})
                                                     *g:vikiSaveHistory*
 g:vikiSaveHistory              (default: index(split(&viminfo, ','), '!') != -1)
     If non-nil, cache back-links information
+
+                                                    *g:vikiAutoupdateFiles*
+g:vikiAutoupdateFiles          (default: 0)
+    If true, automatically update all |viki-files| regions.
 
                                                     *b:vikiNoSimpleNames*
 b:vikiNoSimpleNames            (default: 0)
@@ -1427,10 +1431,6 @@ g:viki#files_head_rx           (default: '^\(\*\s\+\)')
     If a "head" argument is passed to the #Files region, the retrieved 
     lines will be preprocessed by removing text matching this 
     expression.
-
-                                                    *g:viki#autoupdate_files*
-g:viki#autoupdate_files        (default: 0)
-    If true, automatically update all |viki-files| regions.
 
                                                     *g:viki#use_texmath*
 g:viki#use_texmath             (default: 1)

@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-02-17.
-" @Revision:    0.886
+" @Revision:    0.905
 
 
 """ General {{{1
@@ -371,11 +371,6 @@ if !exists('g:viki#files_head_rx')
     " lines will be preprocessed by removing text matching this 
     " expression.
     let g:viki#files_head_rx = '^\(\*\s\+\)'   "{{{2
-endif
-
-if !exists('g:viki#autoupdate_files')
-    " If true, automatically update all |viki-files| regions.
-    let g:viki#autoupdate_files = 0   "{{{2
 endif
 
 if !exists('g:viki#use_texmath')

@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
 " @Last Change: 2012-02-17.
-" @Revision:    2731
+" @Revision:    2732
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -96,6 +96,11 @@ endif
 if !exists("g:vikiSaveHistory")
     " If non-nil, cache back-links information
     let g:vikiSaveHistory = index(split(&viminfo, ','), '!') != -1 "{{{2
+endif
+
+if !exists('g:vikiAutoupdateFiles')
+    " If true, automatically update all |viki-files| regions.
+    let g:vikiAutoupdateFiles = 0   "{{{2
 endif
 
 
