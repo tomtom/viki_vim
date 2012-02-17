@@ -367,6 +367,11 @@ if !exists('g:viki#files_head_rx')
     let g:viki#files_head_rx = '^\(\*\s\+\)'   "{{{2
 endif
 
+if !exists('g:viki#autoupdate_files')
+    " If true, automatically update all |viki-files| regions.
+    let g:viki#autoupdate_files = 0   "{{{2
+endif
+
 let g:viki#quit = 0
 
 let s:positions = {}
