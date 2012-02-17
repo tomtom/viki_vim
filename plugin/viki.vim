@@ -71,7 +71,9 @@ if !exists("g:vikiMarkInexistent")
 endif
 
 if !exists("g:vikiHighlightMath")
-    let g:vikiHighlightMath = '' "{{{2
+    " If "latex", use the texmathMath |syn-cluster| to highlight 
+    " mathematical formulas.
+    let g:vikiHighlightMath = 'latex' "{{{2
 endif
 
 if !exists("g:vikiNameSuffix")
