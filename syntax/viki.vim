@@ -180,19 +180,15 @@ syn region vikiFilesRegion matchgroup=vikiMacroDelim
 
 
 if g:vikiHighlightMath == 'latex'
-    " if has('conceal')
-    "     syn match vikiTexDollar /\$/ conceal
-    "     syn region vikiTexFormula matchgroup=Comment
-    "                 \ start=/\z(\$\$\?\)/ end=/\z1/
-    "                 \ contains=vikiTexDollar,@texmathMath
-    " else
-        syn region vikiTexFormula matchgroup=Comment
-                    \ start=/\z(\$\$\?\)/ end=/\z1/
-                    \ contains=@texmathMath
-    " endif
+    syn region vikiTexFormula matchgroup=Comment
+                \ start=/\z(\$\$\?\)/ end=/\z1/
+                \ contains=@texmathMath
     syn sync match vikiTexFormula grouphere NONE /^\s*$/
 endif
 
+syn region vikiTexMacro matchgroup=vikiMacroDelim
+            \ start=/{\(ltx\)\([^:{}]*:\)\?/ end=/}/ 
+            \ transparent contains=vikiMacroNames,@texmath
 syn region vikiTexMathMacro matchgroup=vikiMacroDelim
             \ start=/{\(math\>\|\$\)\([^:{}]*:\)\?/ end=/}/ 
             \ transparent contains=vikiMacroNames,@texmathMath
@@ -200,9 +196,6 @@ syn region vikiTexRegion matchgroup=vikiMacroDelim
             \ start=/^[[:blank:]]*#Ltx\>\(\\\n\|.\)\{-}<<\z(.*\)$/ 
             \ end=/^[[:blank:]]*\z1[[:blank:]]*$/ 
             \ contains=@texmathMath
-syn region vikiTexMacro matchgroup=vikiMacroDelim
-            \ start=/{\(ltx\)\([^:{}]*:\)\?/ end=/}/ 
-            \ transparent contains=vikiMacroNames,@texmath
 
 
 syn match vikiList /^[[:blank:]]\+\([-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\)\ze[[:blank:]]/
