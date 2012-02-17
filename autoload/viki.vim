@@ -129,6 +129,9 @@ if !exists("g:vikiSpecialFiles") "{{{2
                 \ 'xlsx',
                 \ 'xmind',
                 \ ]
+    if exists("g:vikiSpecialFilesExtra")
+        let g:vikiSpecialFiles += g:vikiSpecialFilesExtra
+    endif
 endif
 
 if !exists("g:vikiSpecialFilesExceptions")
