@@ -372,6 +372,12 @@ if !exists('g:viki#autoupdate_files')
     let g:viki#autoupdate_files = 0   "{{{2
 endif
 
+if !exists('g:viki#use_texmath')
+    " If true, load syntax/texmath.vim for a prettier display of 
+    " mathematical formulas.
+    let g:viki#use_texmath = 1   "{{{2
+endif
+
 let g:viki#quit = 0
 
 let s:positions = {}

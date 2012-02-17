@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2012-02-09.
-" @Revision: 0.1003
+" @Last Change: 2012-02-17.
+" @Revision: 0.1004
 
 if version < 600
     syntax clear
@@ -17,7 +17,9 @@ let b:vikiEnabled = 0
 call viki#DispatchOnFamily('MinorMode', '', 2)
 let b:vikiEnabled = 2
 
-runtime syntax/texmath.vim
+if g:viki#use_texmath
+    runtime syntax/texmath.vim
+endif
 
 " On slow machine the extended syntax highlighting can cause some major 
 " slowdown (I'm not really sure what is causing this, but it can be 
