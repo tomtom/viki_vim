@@ -72,6 +72,9 @@ if !exists("g:vikiSpecialProtocols")
     " URLs matching these protocols are handled by |VikiOpenSpecialProtocol()|.
     " Can also be buffer-local.
     let g:vikiSpecialProtocols = 'https\?\|ftps\?\|nntp\|mailto\|mailbox\|file' "{{{2
+    if exists("g:vikiSpecialProtocolsExtra")
+        let g:vikiSpecialProtocols .= '\|'. g:vikiSpecialProtocolsExtra
+    endif
 endif
 
 if !exists("g:vikiSpecialProtocolsExceptions")
