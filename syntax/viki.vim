@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
 " @Last Change: 2012-02-17.
-" @Revision: 0.1010
+" @Revision: 0.1012
 
 if version < 600
     syntax clear
@@ -80,7 +80,10 @@ if b:vikiTextstylesVer == 1
     syn region vikiContinousUnderline start=/\(^\|\W\zs\)__[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\\n/ contains=@Spell
     syn match vikiTypewriter /\(^\|\W\zs\)=\(\\=\|\w\)\{-1,}=/
     syn region vikiContinousTypewriter start=/\(^\|\W\zs\)==[^ 	=]/ end=/==\|\n\{2,}/ skip=/\\\n/ contains=@Spell
-    syn cluster vikiTextstyles contains=vikiBold,vikiContinousBold,vikiTypewriter,vikiContinousTypewriter,vikiUnderline,vikiContinousUnderline,vikiEscapedChar
+    syn match vikiColor /\(^\|\W\zs\)'\(\\\*\|\w\)\{-1,}'/
+    syn region vikiContinousColor start=/\(^\|\W\zs\)''[^      _]/ end=/''\|\n\{2,}/ skip=/\\\n/ contains=@Spell
+    syn region vikiExample start=/^>\s*$/ end=/^<\s*$/ fold
+    syn cluster vikiTextstyles contains=vikiBold,vikiContinousBold,vikiTypewriter,vikiContinousTypewriter,vikiUnderline,vikiContinousUnderline,vikiEscapedChar,vikiColor,vikiContinousColor
 else
     if has('conceal')
         syn region vikiBold matchgroup=NonText start=/\(^\|\W\zs\)__\ze[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar,@Spell
@@ -338,6 +341,9 @@ if version >= 508 || !exists("did_viki_syntax_inits")
       HiLink vikiBold vikiContinousBold
       HiLink vikiUnderline vikiContinousUnderline 
       HiLink vikiTypewriter vikiContinousTypewriter
+      hi vikiColor ctermfg=green guifg=green
+      hi vikiContinousColor ctermfg=green guifg=green
+      hi vikiExample ctermfg=cyan guifg=cyan
   else
       " hi vikiBold term=italic,bold cterm=italic,bold gui=italic,bold
       hi vikiBold term=bold,underline cterm=bold,underline gui=bold
