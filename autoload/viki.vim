@@ -157,12 +157,12 @@ if !exists('g:vikiPromote')
 endif
 
 if !exists("g:vikiUseParentSuffix")
-    " If non-nil, use the parent document's suffix.
+    " If true, use the parent document's suffix.
     " If true, always append the "parent" file's suffix to the 
     " destination file name. I.e. if the current file is "ThisIdea.txt" 
     " the the viki name "OtherIdea" will refer to the file 
     " "OtherIdea.txt".
-    let g:vikiUseParentSuffix = 0 "{{{2
+    let g:vikiUseParentSuffix = 1 "{{{2
 endif
 
 if !exists("g:vikiAnchorMarker")
