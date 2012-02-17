@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2012-02-09.
-" @Revision:    2725
+" @Last Change: 2012-02-17.
+" @Revision:    2728
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -75,10 +75,9 @@ if !exists("g:vikiHighlightMath")
 endif
 
 if !exists("g:vikiNameSuffix")
-    " Default file suffix (including the optional period, e.g. '.txt' or 
-    " '.viki').
+    " Default file suffix (including the optional period, e.g. '.viki').
     " Can also be buffer-local.
-    let g:vikiNameSuffix = "" "{{{2
+    let g:vikiNameSuffix = ".viki" "{{{2
 endif
 
 if !exists("g:vikiIndex")
@@ -222,6 +221,9 @@ command! VIKI :call viki#HomePage()
 
 augroup viki
     au!
+    if !empty('g:vikiNameSuffix')
+        exec 'autocmd BufRead,BufNewFile *'. g:vikiNameSuffix .' setf viki'
+    endif
     autocmd BufEnter * if exists("b:vikiEnabled") && b:vikiEnabled == 1 | call viki#MinorModeReset() | endif
     autocmd BufEnter * if exists("b:vikiEnabled") && b:vikiEnabled && exists("b:vikiCheckInexistent") && b:vikiCheckInexistent > 0 | call viki#CheckInexistent() | endif
     autocmd BufLeave * if &filetype == 'viki' | let b:vikiCheckInexistent = line(".") | endif
