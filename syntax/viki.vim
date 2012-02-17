@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
 " @Last Change: 2012-02-17.
-" @Revision: 0.1004
+" @Revision: 0.1010
 
 if version < 600
     syntax clear
@@ -16,6 +16,8 @@ scriptencoding utf-8
 let b:vikiEnabled = 0
 call viki#DispatchOnFamily('MinorMode', '', 2)
 let b:vikiEnabled = 2
+
+syntax spell toplevel
 
 if g:viki#use_texmath
     runtime syntax/texmath.vim
@@ -73,26 +75,26 @@ syn cluster vikiHyperLinks contains=vikiLink,vikiExtendedLink,vikiURL,vikiInexis
 
 if b:vikiTextstylesVer == 1
     syn match vikiBold /\(^\|\W\zs\)\*\(\\\*\|\w\)\{-1,}\*/
-    syn region vikiContinousBold start=/\(^\|\W\zs\)\*\*[^ 	*]/ end=/\*\*\|\n\{2,}/ skip=/\\\n/
+    syn region vikiContinousBold start=/\(^\|\W\zs\)\*\*[^ 	*]/ end=/\*\*\|\n\{2,}/ skip=/\\\n/ contains=@Spell
     syn match vikiUnderline /\(^\|\W\zs\)_\(\\_\|[^_\s]\)\{-1,}_/
-    syn region vikiContinousUnderline start=/\(^\|\W\zs\)__[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\\n/
+    syn region vikiContinousUnderline start=/\(^\|\W\zs\)__[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\\n/ contains=@Spell
     syn match vikiTypewriter /\(^\|\W\zs\)=\(\\=\|\w\)\{-1,}=/
-    syn region vikiContinousTypewriter start=/\(^\|\W\zs\)==[^ 	=]/ end=/==\|\n\{2,}/ skip=/\\\n/
+    syn region vikiContinousTypewriter start=/\(^\|\W\zs\)==[^ 	=]/ end=/==\|\n\{2,}/ skip=/\\\n/ contains=@Spell
     syn cluster vikiTextstyles contains=vikiBold,vikiContinousBold,vikiTypewriter,vikiContinousTypewriter,vikiUnderline,vikiContinousUnderline,vikiEscapedChar
 else
     if has('conceal')
-        syn region vikiBold matchgroup=NonText start=/\(^\|\W\zs\)__\ze[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar
+        syn region vikiBold matchgroup=NonText start=/\(^\|\W\zs\)__\ze[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar,@Spell
                     \ concealends
-        syn region vikiTypewriter matchgroup=NonText start=/\(^\|[^\w`]\zs\)''\ze[^ 	']/ end=/''\|\n\{2,}/ skip=/\\'\|\\\n/ contains=vikiEscapedChar
+        syn region vikiTypewriter matchgroup=NonText start=/\(^\|[^\w`]\zs\)''\ze[^ 	']/ end=/''\|\n\{2,}/ skip=/\\'\|\\\n/ contains=vikiEscapedChar,@Spell
                     \ concealends
     else
-        syn region vikiBold start=/\(^\|\W\zs\)__\ze[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar
-        syn region vikiTypewriter start=/\(^\|[^\w`]\zs\)''\ze[^ 	']/ end=/''\|\n\{2,}/ skip=/\\'\|\\\n/ contains=vikiEscapedChar
+        syn region vikiBold start=/\(^\|\W\zs\)__\ze[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar,@Spell
+        syn region vikiTypewriter start=/\(^\|[^\w`]\zs\)''\ze[^ 	']/ end=/''\|\n\{2,}/ skip=/\\'\|\\\n/ contains=vikiEscapedChar,@Spell
     endif
     syn cluster vikiTextstyles contains=vikiBold,vikiTypewriter,vikiEscapedChar
 endif
 
-syn cluster vikiText contains=@vikiTextstyles,@vikiHyperLinks,vikiMarkers,@vikiSymbols
+syn cluster vikiText contains=@Spell,@vikiTextstyles,@vikiHyperLinks,vikiMarkers,@vikiSymbols
 
 " exe 'syn match vikiComment /\V\^\[[:blank:]]\*'. escape(b:vikiCommentStart, '\/') .'\.\*/ contains=@vikiText'
 " syn match vikiComment /^[[:blank:]]*%.*$/ contains=@vikiText
