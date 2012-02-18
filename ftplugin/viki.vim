@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2012-02-17.
-" @Revision: 484
+" @Last Change: 2012-02-18.
+" @Revision: 485
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -91,6 +91,10 @@ setlocal expandtab
 " setlocal iskeyword+=#,{
 setlocal iskeyword+={
 setlocal iskeyword-=_
+
+if g:vikiFoldLevel > 0 && &l:foldlevel == 0
+    let &l:foldlevel = g:vikiFoldLevel
+endif
 
 if has('balloon_multiline')
     call tlib#balloon#Register('viki#Balloon()')

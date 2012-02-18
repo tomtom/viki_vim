@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2012-02-17.
-" @Revision:    2732
+" @Last Change: 2012-02-18.
+" @Revision:    2736
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -40,7 +40,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 39
         finish
     endif
 endif
-let loaded_viki = 321
+let loaded_viki = 400
 
 
 if !exists("tlist_viki_settings")
@@ -101,6 +101,12 @@ endif
 if !exists('g:vikiAutoupdateFiles')
     " If true, automatically update all |viki-files| regions.
     let g:vikiAutoupdateFiles = 0   "{{{2
+endif
+
+if !exists('g:vikiFoldLevel')
+    " If > 0, set the 'foldlevel' of viki files to this value. (This is 
+    " only useful if 'foldlevel' still has the default value of 0.)
+    let g:vikiFoldLevel = 5   "{{{2
 endif
 
 
