@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
 " @Last Change: 2012-02-18.
-" @Revision:    2736
+" @Revision:    2737
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -232,11 +232,12 @@ command! VikiHome :call viki#HomePage()
 command! VIKI :call viki#HomePage()
 
 
+if !empty('g:vikiNameSuffix')
+    exec 'autocmd filetypedetect BufRead,BufNewFile *'. g:vikiNameSuffix .' setf viki'
+endif
+
 augroup viki
     au!
-    if !empty('g:vikiNameSuffix')
-        exec 'autocmd BufRead,BufNewFile *'. g:vikiNameSuffix .' setf viki'
-    endif
     autocmd BufEnter * if exists("b:vikiEnabled") && b:vikiEnabled == 1 | call viki#MinorModeReset() | endif
     autocmd BufEnter * if exists("b:vikiEnabled") && b:vikiEnabled && exists("b:vikiCheckInexistent") && b:vikiCheckInexistent > 0 | call viki#CheckInexistent() | endif
     autocmd BufLeave * if &filetype == 'viki' | let b:vikiCheckInexistent = line(".") | endif
