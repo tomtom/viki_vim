@@ -341,23 +341,25 @@ A viki name is either:
         |VikiOpenSpecialProtocol()|.
 
     4. Hyperwords (not supported by deplate)
-        Hyperwords are defined in either ./.vikiWords or &rtp[0]/vikiWords.txt 
-        each word in a line in the form "word destination" (lines beginning  
-        with '%' are ignored). These words are automatically highlighted.  
-        Depending on your setting of |vikiNameTypes|, viki may try to make 
-        hyperwords out of the filenames in the current buffer's directory.  
-        I.e. if |vikiNameSuffix| is '.txt' and there is a file 'example.txt' 
+        Hyperwords are defined in either ./.vikiWords or 
+        &rtp[0]/vikiWords.txt each word in a line in the form "word 
+        destination" (lines beginning  with '%' are ignored). These 
+        words are automatically highlighted.  Depending on your setting 
+        of |vikiNameTypes|, viki may try to make hyperwords out of the 
+        filenames in the current buffer's directory.  I.e. if 
+        |vikiNameSuffix| is '.viki' and there is a file 'example.viki' 
         in the same directory as the current buffer's file, then each 
-        occurrence of the word 'example' will be turned into a clickable link. 
-        You can prevent a file name from being highlighted as hyperword by 
-        defining an entry in the vikiWords file with "-" as destination.
+        occurrence of the word 'example' will be turned into a clickable 
+        link. You can prevent a file name from being highlighted as 
+        hyperword by defining an entry in the vikiWords file with "-" as 
+        destination.
 
 Adding #[a-z0-9]\+ to the wiki name denotes a reference to a specific anchor.  
 Examples for wiki names referring to an anchor: >
 
 	ThatPage#there
-	[[anyplace/filename.txt#there]]
-	[[anyplace/filename.txt#there][Filename]]
+	[[anyplace/filename.viki#there]]
+	[[anyplace/filename.viki#there][Filename]]
 
 A anchor is marked as "^".b:commentStart."\?#[a-z0-9]\+" in the destination
 file. If |b:commentStart| is not defined, the EnhancedCommentify-variables or
@@ -681,8 +683,8 @@ Example: >
     [[lib/example1.rb]]
     [[lib/example2.rb]]
 
-    #Files glob=*.txt types=f <<
-    [[example.txt]] The manual
+    #Files glob=*.viki types=f <<
+    [[example.viki]] The manual
 
 The filenames are stored as extended viki names. Each line can take a comment 
 that is restored upon automatic update.
@@ -815,11 +817,11 @@ viki names. Example: >
 Ctags~
 
 For ctags support (e.g. in conjunction with taglist) add this to your .ctags 
-file (this assumes that *.txt files are in viki mode; you have to adjust the 
+file (this assumes that *.viki files are in viki mode; you have to adjust the 
 file suffix if you choose a different suffix): >
 
     --langdef=deplate
-    --langmap=deplate:.txt
+    --langmap=deplate:.viki
     --regex-deplate=/^(\*+ .+)/\1/s,structure/
     --regex-deplate=/^(#[a-z][a-z0-9]+)/\1/s,structure/
     --regex-deplate=/\[\[[^\]]+\]\[([^\]]+)\]\]/\1/r,reference/
