@@ -10,21 +10,6 @@ tool to convert viki markup to LaTeX, HTML, or DocBook. On its homepage
 (http://deplate.sf.net) you can read a more detailled specification of the 
 markup.
 
-Demo:
-http://vimsomnia.blogspot.com/2010/11/vikitasks-viki-demonstration-personal.html 
-
-This plugin adds wiki-like hypertext capabilities to Vim. You can use viki as 
-a "minor" mode (i.e., as an add-on to any other mode) or as a full-fledged 
-wiki mode. There is also an add-on plugin for "wikifying" latex documents by 
-turning some latex commands into wiki names. If viki is properly configured, 
-activating a reference to an image, a webpage etc. will view that resource in 
-an external viewer.
-
-From http://sourceforge.net/projects/deplate/ you can download a ruby based 
-tool to convert viki markup to LaTeX, HTML, or DocBook. On its homepage 
-(http://deplate.sf.net) you can read a more detailled specification of the 
-markup.
-
 MINOR WIKI MODE:
 Just type |:VikiMinorMode| and all wiki names and URLs will be highlighted.  
 When the cursor is over a wiki name, you can press <c-cr> to jump to (or 
@@ -88,5 +73,4 @@ Dependencies:
       > git clone git://github.com/tomtom/tlib_vim.git
 Install: See http://github.com/tomtom/vimtlib/blob/master/INSTALL.TXT
 See http://github.com/tomtom for related plugins.
-
 
