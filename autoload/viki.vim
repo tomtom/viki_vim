@@ -3,9 +3,11 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-02-17.
-" @Revision:    0.905
+" @Last Change: 2012-02-19.
+" @Revision:    0.906
 
+
+exec 'runtime! autoload/viki/enc_'. &enc .'.vim'
 
 """ General {{{1
 
