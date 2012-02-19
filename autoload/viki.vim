@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-02-19.
-" @Revision:    0.906
+" @Revision:    0.909
 
 
 exec 'runtime! autoload/viki/enc_'. &enc .'.vim'
@@ -3180,24 +3180,17 @@ function! viki#MatchList(lnum) "{{{3
 endf
 
 
-"                                                     *viki-text-objects* *ii*
-" Create a new text-object ii that works on a inner list item. Once the 
-" maps are enabled, users may, e.g., visually select an item in a list 
-" by typing vii. See |viki#SelectListItem()| for a definition of what is 
-" considered a list item.
-" 
-" The maps are local to the current buffer. Add this line to your 
-" |vimrc| file in order to enable the ii text-object for all viki 
-" buffers:>
-"   au FileType viki call viki#MapListItemTextObject()
-function! viki#MapListItemTextObject() "{{{3
-    " vnoremap <buffer> ii :<c-u>silent! call viki#SelectListItem('.')<cr>
-    vnoremap <buffer> <expr> ii <SID>ListItemTextObject()
-    omap <buffer> ii :normal Vii<cr>
-endf
-
-
-function! s:ListItemTextObject() "{{{3
+" "                                                     *viki-text-objects* *ii*
+" " Create a new text-object ii that works on a inner list item. Once the 
+" " maps are enabled, users may, e.g., visually select an item in a list 
+" " by typing vii. See |viki#SelectListItem()| for a definition of what is 
+" " considered a list item.
+" " 
+" " The maps are local to the current buffer. Add this line to your 
+" " |vimrc| file in order to enable the ii text-object for all viki 
+" " buffers:>
+" "   au FileType viki call viki#MapListItemTextObject()
+function! viki#ListItemTextObject() "{{{3
     if indent('.') == 0
         return "ip"
     else
