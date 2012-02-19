@@ -539,3 +539,33 @@ version: "3.20"
   - Remove support for multiple folding methods (g:vikiFoldMethodVersion)
   MD5 checksum: 18b8b9837ebb7451d56a90ccfc1de854
 
+version: "4.00"
+  - Use conceal to hide bold & typewriter markup and to replace some symbols
+  - concealed symbols: ARROWL, ARROWR
+  - Use conceal for ArrowTilde*, ARRORLR
+  - syntax: Properly highlight tskeleton placeholders in viki syntax
+  - Undo special treatment of TSkelPlaceHolder (this should be handled by tskeleton)
+  - viki#DirListing(): Don't insert an empty line if the listing is empty
+  - g:viki#autoupdate_files: Optionally update all Files regions when setting viki filetype
+  - viki#FilesUpdateAll(): call winrestview() only if the view has changed
+  - viki#Balloon(): Also show directory listings
+  - g:viki#use_texmath: if true, load syntax/texmath.vim
+  - g:vikiNameSuffix: Defaults to .viki
+  - g:vikiFamily defaults to viki
+  - g:vikiUseParentSuffix default to 1
+  - g:vikiHighlightMath defaults to 'latex'
+  - g:vikiSaveHistory defaults to 1 if &viminfo includes '!'
+  - g:vikiSpecialFilesExtra: Define extra file extensions in .vimrc
+  - g:vikiSpecialProtocolsExtra: Define extra special protocols in .vimrc
+  - If hidden is off and the buffer is dirty, query the user what to do
+  - Rename g:viki#autoupdate_files to g:vikiAutoupdateFiles
+  - Syntax: Enable highlighting of spell errors (thanks tlapicka)
+  - Cleanup (thanks tlapicka)
+  - If b:vikiTextstylesVer == 1: Syntax for vikiColor, vikiContinousColor, and vikiExample (proposed by tlapicka)
+  - docs: consistently use .viki as suffix.
+  - g:vikiFoldLevel: Set the foldlevel of viki files
+  - Use filetypedetect group for BufRead,BufNewFile events
+  - vikiUpperCharacters, vikiLowerCharacters: Improved definitions for utf8 & latin1
+  - Create ii text object by default.
+  MD5 checksum: 95f40e8f6c015161196620f5f6a7e5f1
+
