@@ -168,29 +168,29 @@ There are two ways to define an interviki:
 
     1. Use |VikiDefine()|: >
 
-        call VikiDefine('SCI', $HOME."/Projects/Sci/Ideas", ".txt")
+       call VikiDefine('SCI', $HOME."/Projects/Sci/Ideas", ".txt")
 
 <      This command will automatically define a menu for each interviki 
        (unless g:vikiMenuPrefix is empty) and it will also define a command 
        with the name of the interviki that can be used to quickly access viki 
        files from the vim command line.
 
+       The disadvantage of this approach is that you can define 
+       intervikis only after plugin/viki.vim was loaded -- e.g. in 
+       after/plugin/viki.vim.
+
     2. Use |g:viki_intervikis| (a dictionary). The values can be either a list 
        (arguments for |VikiDefine()|) or a string. >
 
-        let g:viki_intervikis['SCI']  = [$HOME."/Projects/Sci/Ideas", ".txt"]
-        let g:viki_intervikis['PROJ'] = $HOME."/Projects"
+       let g:viki_intervikis = {}
+       let g:viki_intervikis['SCI']  = [$HOME."/Projects/Sci/Ideas", ".txt"]
+       let g:viki_intervikis['PROJ'] = $HOME."/Projects"
 
-Intervikis added to g:viki_intervikis will be defined via |VikiDefine()| when 
-first loading ~/vimfiles/autoload/viki.vim. I.e. you cannot use automatically 
-defined commands or menus before loading the autoload file. So, if you don't 
-use the menus and the interviki commands to open files from the command line, 
-use the variable. Otherwise, calling |VikiDefine()| from 
-~/vimfiles/after/plugin/viki.vim might be the better solution (which would 
-also load autoload/viki.vim on startup though).
+<      This variable has to be set in vimrc before loading the vim 
+       plugin.
 
-This could then be accessed as SCI::ThisIdea, which would refer to the file 
-"~/Projects/Sci/Ideas/ThisIdea.txt".
+Your newly defined interviki can then be accessed as SCI::ThisIdea, 
+which would refer to the file "~/Projects/Sci/Ideas/ThisIdea.txt".
 
 VikiDefine also defines a command (:SCI in this example) that opens a wiki's 
 index file (an optional 4th argument or "${g:vikiIndex}.${suffix}").
