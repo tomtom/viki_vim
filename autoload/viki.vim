@@ -718,6 +718,14 @@ endf
 function! s:EditWrapper(cmd, fname) "{{{3
     " TLogVAR a:cmd, a:fname
     let fname = escape(simplify(a:fname), ' %#')
+    if !&shellslash && fname !~ '^\w\+://'
+        let fname = substitute(fname, '/', '\\', 'g')
+        " TLogVAR fname
+    endif
+    if a:cmd =~ '^\(silent\s\+\)\?!'
+        let fname = shellescape(fname)
+        " TLogVAR fname
+    endif
     " let fname = escape(simplify(a:fname), '%#')
     if a:cmd =~ g:vikiNoWrapper
         " TLogDBG a:cmd .' '. fname
