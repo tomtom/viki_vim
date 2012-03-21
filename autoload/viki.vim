@@ -89,6 +89,7 @@ if !exists("g:vikiSpecialFiles") "{{{2
     " Can also be buffer-local.
     " :read: let g:vikiSpecialFiles = [...] "{{{2
     let g:vikiSpecialFiles = [
+                \ '3gp',
                 \ 'aac',
                 \ 'aif',
                 \ 'aiff',
