@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-02-20.
-" @Revision:    0.910
+" @Last Change: 2012-03-21.
+" @Revision:    0.915
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -1676,8 +1676,7 @@ function! viki#SetAnchorMarks() "{{{3
     let sr  = @/
     let anchorRx = viki#GetAnchorRx('m\zs\[a-zA-Z]\ze\s\*\$')
     " TLogVAR anchorRx
-    " exec 'silent keepjumps g /'. anchorRx .'/exec "norm! m". substitute(getline("."), anchorRx, ''\2'', "")'
-    exec 'silent keepjumps g /'. anchorRx .'/exec "norm! m". matchstr(getline("."), anchorRx)'
+    exec 'silent! keepjumps g /'. anchorRx .'/exec "norm! m". matchstr(getline("."), anchorRx)'
     let @/ = sr
     " TLogVAR pos
     " call setpos('.', pos)
