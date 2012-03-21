@@ -516,9 +516,11 @@ if !exists("g:vikiOpenFileWith_ANY")
         let g:vikiOpenFileWith_ANY = "exec 'silent ! start \"\" '. shellescape('%{FILE}')"
     elseif has("mac")
         let g:vikiOpenFileWith_ANY = "exec 'silent !open '. shellescape('%{FILE}')"
+    elseif exists('$XDG_CURRENT_DESKTOP') && !empty($XDG_CURRENT_DESKTOP)
+        let g:vikiOpenFileWith_ANY = "exec 'silent !xdg-open '. shellescape('%{FILE}')"
     elseif $GNOME_DESKTOP_SESSION_ID != "" || $DESKTOP_SESSION == 'gnome'
         let g:vikiOpenFileWith_ANY = "exec 'silent !gnome-open '. shellescape('%{FILE}')"
-    elseif $KDEDIR != ""
+    elseif exists("$KDEDIR") && !empty($KDEDIR)
         let g:vikiOpenFileWith_ANY = "exec 'silent !kfmclient exec '. shellescape('%{FILE}')"
     endif
 endif
@@ -613,6 +615,8 @@ if !exists("g:vikiOpenUrlWith_ANY")
         let g:vikiOpenUrlWith_ANY = "exec 'silent ! RunDll32.EXE URL.DLL,FileProtocolHandler '. shellescape('%{URL}', 1)"
     elseif has("mac")
         let g:vikiOpenUrlWith_ANY = "exec 'silent !open '. escape('%{URL}', ' &!%')"
+    elseif exists('$XDG_CURRENT_DESKTOP') && !empty($XDG_CURRENT_DESKTOP)
+        let g:vikiOpenFileWith_ANY = "exec 'silent !xdg-open '. shellescape('%{URL}')"
     elseif $GNOME_DESKTOP_SESSION_ID != ""
         let g:vikiOpenUrlWith_ANY = "exec 'silent !gnome-open '. shellescape('%{URL}')"
     elseif $KDEDIR != ""
