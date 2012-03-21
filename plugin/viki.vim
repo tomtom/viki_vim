@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2012-02-18.
-" @Revision:    2737
+" @Last Change: 2012-03-13.
+" @Revision:    2738
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -107,6 +107,12 @@ if !exists('g:vikiFoldLevel')
     " If > 0, set the 'foldlevel' of viki files to this value. (This is 
     " only useful if 'foldlevel' still has the default value of 0.)
     let g:vikiFoldLevel = 5   "{{{2
+endif
+
+if !exists('g:vikiIndentedPriorityLists')
+    " If true, priority lists must be indented by at least one 
+    " whitespace character.
+    let g:vikiIndentedPriorityLists = 1   "{{{2
 endif
 
 

@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2012-02-17.
-" @Revision: 0.1012
+" @Last Change: 2012-03-13.
+" @Revision: 0.1018
 
 if version < 600
     syntax clear
@@ -221,17 +221,13 @@ syn match vikiTag /\(\s\+\(:[^[:punct:][:space:]]\+\)\+\)\+/ contained contained
 
 syn match vikiContact /\s\+@[^[:punct:][:space:]]\+/ contained containedin=vikiPriorityListTodoGen,vikiPriorityListTodoGenInLine nextgroup=vikiContact
 
-syn match vikiPriorityListTodoGen /^[[:blank:]]\+\zs#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\(\s\+\(_\|\([0-9%-]\+\|\.\.\)\{1,3}\)\)\?\)\(\s\+\(:[^[:punct:][:space:]]\+\)\+\)*\(\s\+@[^[:punct:][:space:]]\+\)*\ze[[:punct:][:space:]]/ contains=vikiContact,vikiTag,@vikiPriorityListTodo,@vikiText
-" syn match vikiPriorityListTodoGenInLine /#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\)\(\s\+\(:[^[:punct:][:space:]]\+\)\+\)*\(\s\+@[^[:punct:][:space:]]\+\)*\ze[[:punct:][:space:]]/ contains=vikiContact,vikiTag,vikiPriorityListTodoA,vikiPriorityListTodoB,vikiPriorityListTodoC,vikiPriorityListTodoD,vikiPriorityListTodoE,vikiPriorityListTodoF,vikiPriorityListTodo0,@vikiText contained
 
-syn match vikiPriorityListDoneGen /^[[:blank:]]\+\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}\u.\{-}:\|\(T: \+\)\?\d*\u\d* \+x[0-9%-]*\):\? .*/
-syn match vikiPriorityListDoneX /^[[:blank:]]\+\zs#X\d\?\s.*/
-" syn match vikiPriorityListDoneA /^[[:blank:]]\+\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}A.\{-}:\|\(T: \+\)\?\d*A\d* \+x[0-9%-]*\):\? .*/
-" syn match vikiPriorityListDoneB /^[[:blank:]]\+\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}B.\{-}:\|\(T: \+\)\?\d*B\d* \+x[0-9%-]*\):\? .*/
-" syn match vikiPriorityListDoneC /^[[:blank:]]\+\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}C.\{-}:\|\(T: \+\)\?\d*C\d* \+x[0-9%-]*\):\? .*/
-" syn match vikiPriorityListDoneD /^[[:blank:]]\+\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}D.\{-}:\|\(T: \+\)\?\d*D\d* \+x[0-9%-]*\):\? .*/
-" syn match vikiPriorityListDoneE /^[[:blank:]]\+\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}E.\{-}:\|\(T: \+\)\?\d*E\d* \+x[0-9%-]*\):\? .*/
-" syn match vikiPriorityListDoneF /^[[:blank:]]\+\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}F.\{-}:\|\(T: \+\)\?\d*F\d* \+x[0-9%-]*\):\? .*/
+let s:plquant = g:vikiIndentedPriorityLists ? '\+' : '*'
+exec 'syn match vikiPriorityListTodoGen /^[[:blank:]]'. s:plquant .'\zs#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\(\s\+\(_\|\([0-9%-]\+\|\.\.\)\{1,3}\)\)\?\)\(\s\+\(:[^[:punct:][:space:]]\+\)\+\)*\(\s\+@[^[:punct:][:space:]]\+\)*\ze[[:punct:][:space:]]/ contains=vikiContact,vikiTag,@vikiPriorityListTodo,@vikiText'
+exec 'syn match vikiPriorityListDoneGen /^[[:blank:]]'. s:plquant .'\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}\u.\{-}:\|\(T: \+\)\?\d*\u\d* \+x[0-9%-]*\):\? .*/'
+exec 'syn match vikiPriorityListDoneX /^[[:blank:]]'. s:plquant .'\zs#X\d\?\s.*/'
+unlet s:plquant
+
 
 syntax sync minlines=2
 " syntax sync maxlines=50
