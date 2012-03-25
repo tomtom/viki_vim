@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2012-02-19.
-" @Revision: 487
+" @Last Change: 2012-03-25.
+" @Revision: 488
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -189,7 +189,7 @@ function! s:UpdateHeadings() "{{{3
     let b:viki_headings = {}
     let pos = getpos('.')
     try
-        g/^\*\+\s/let b:viki_headings[line('.')] = matchend(getline('.'), '^\*\+\s')
+        silent! g/^\*\+\s/let b:viki_headings[line('.')] = matchend(getline('.'), '^\*\+\s')
     finally
         call setpos('.', pos)
     endtry
