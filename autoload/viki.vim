@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-03-21.
-" @Revision:    0.915
+" @Last Change: 2012-03-23.
+" @Revision:    0.918
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -718,7 +718,7 @@ endf
 function! s:EditWrapper(cmd, fname) "{{{3
     " TLogVAR a:cmd, a:fname
     let fname = escape(simplify(a:fname), ' %#')
-    if !&shellslash && fname !~ '^\w\+://'
+    if g:vikiDirSeparator == '\' && fname !~ '^\w\+://'
         let fname = substitute(fname, '/', '\\', 'g')
         " TLogVAR fname
     endif
