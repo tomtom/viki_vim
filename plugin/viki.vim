@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2012-03-13.
-" @Revision:    2738
+" @Last Change: 2012-03-25.
+" @Revision:    2740
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -20,15 +20,6 @@
 " Optional Enhancements:
 " - imaps.vim (vimscript #244 or #475 for |:VimQuote|)
 " - kpsewhich (not a vim plugin :-) for vikiLaTeX
-"
-" TODO: File names containing # (the # is interpreted as URL component)
-" TODO: Per Interviki simple name patterns
-" TODO: Allow Wiki links like ::Word or even ::word (not in minor mode 
-" due possible conflict with various programming languages?)
-" TODO: :VikiRename command: rename links/files (requires a 
-" cross-plattform grep or similar; or one could a global register)
-" TODO: don't know how to deal with viki names that span several lines 
-" (e.g.  in LaTeX mode)
 
 if &cp || exists("loaded_viki")
     finish
@@ -40,7 +31,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 39
         finish
     endif
 endif
-let loaded_viki = 400
+let loaded_viki = 401
 
 
 if !exists("tlist_viki_settings")
