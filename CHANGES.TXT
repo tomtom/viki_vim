@@ -569,3 +569,14 @@ version: "4.00"
   - Create ii text object by default.
   MD5 checksum: 95f40e8f6c015161196620f5f6a7e5f1
 
+version: "4.01"
+  - Escape special character when loading "autoload/viki/enc_{&enc}.vim"
+  - Support for xdg
+  - Register 3gp as special file
+  - viki#SetAnchorMarks(): Hide errors
+  - :EditWrapper(): Fix slashes on windows
+  - g:vikiIndentedPriorityLists: if 0, allow priority lists not to be indented
+  - s:EditWrapper(): Correct filenames only if g:vikiDirSeparator == '\'
+  - s:UpdateHeadings(): Use silent! when searching for headers
+  MD5 checksum: 918f9422bc3678ccd8c0eb71abad6f6b
+
