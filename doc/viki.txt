@@ -342,10 +342,11 @@ A viki name is either:
 
     4. Hyperwords (not supported by deplate)
         Hyperwords are defined in either ./.vikiWords or 
-        &rtp[0]/vikiWords.txt each word in a line in the form "word 
-        destination" (lines beginning  with '%' are ignored). These 
-        words are automatically highlighted.  Depending on your setting 
-        of |vikiNameTypes|, viki may try to make hyperwords out of the 
+        &rtp[0]/vikiWords.txt each word in a line in the form 
+        "word<tab>destination", where <tab> is the tab character (code 
+        9). Lines beginning  with '%' are ignored. These words are 
+        automatically highlighted.  Depending on your setting of 
+        |vikiNameTypes|, viki may try to make hyperwords out of the 
         filenames in the current buffer's directory.  I.e. if 
         |vikiNameSuffix| is '.viki' and there is a file 'example.viki' 
         in the same directory as the current buffer's file, then each 
@@ -869,6 +870,7 @@ Contents~
         g:vikiSaveHistory ................... |g:vikiSaveHistory|
         g:vikiAutoupdateFiles ............... |g:vikiAutoupdateFiles|
         g:vikiFoldLevel ..................... |g:vikiFoldLevel|
+        g:vikiIndentedPriorityLists ......... |g:vikiIndentedPriorityLists|
         b:vikiNoSimpleNames ................. |b:vikiNoSimpleNames|
         b:vikiDisableType ................... |b:vikiDisableType|
         VikiMakeName ........................ |VikiMakeName()|
@@ -1118,6 +1120,11 @@ g:vikiAutoupdateFiles          (default: 0)
 g:vikiFoldLevel                (default: 5)
     If > 0, set the 'foldlevel' of viki files to this value. (This is 
     only useful if 'foldlevel' still has the default value of 0.)
+
+                                                    *g:vikiIndentedPriorityLists*
+g:vikiIndentedPriorityLists    (default: 1)
+    If true, priority lists must be indented by at least one 
+    whitespace character.
 
                                                     *b:vikiNoSimpleNames*
 b:vikiNoSimpleNames            (default: 0)
