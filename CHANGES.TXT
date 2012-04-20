@@ -580,3 +580,14 @@ version: "4.01"
   - s:UpdateHeadings(): Use silent! when searching for headers
   MD5 checksum: 918f9422bc3678ccd8c0eb71abad6f6b
 
+  - Escape special character when loading "autoload/viki/enc_{&enc}.vim"
+  - Support for xdg
+  - Register 3gp as special file
+  - viki#SetAnchorMarks(): Hide errors
+  - :EditWrapper(): Fix slashes on windows
+  - g:vikiIndentedPriorityLists: if 0, allow priority lists not to be indented
+  - s:EditWrapper(): Correct filenames only if g:vikiDirSeparator == '\'
+  - s:UpdateHeadings(): Use silent! when searching for headers
+  MD5 checksum: 918f9422bc3678ccd8c0eb71abad6f6b
+version: "4.01"
+
