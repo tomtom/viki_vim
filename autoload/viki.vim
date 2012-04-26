@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-03-23.
-" @Revision:    0.918
+" @Last Change: 2012-04-26.
+" @Revision:    0.919
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2436,7 +2436,7 @@ function! viki#HomePage(...) "{{{3
 endf
 
 
-" :display: viki#Edit(name, ?ìgnoreSpecial=0, ?winNr=0)
+" :display: viki#Edit(name, ?ignoreSpecial=0, ?winNr=0)
 " Edit a vikiname
 function! viki#Edit(name, ...) "{{{3
     TVarArg ['ignoreSpecial', 0], ['winNr', 0]

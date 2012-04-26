@@ -1897,7 +1897,7 @@ viki#HomePage(?winNr=0)
     Open the homepage.
 
                                                     *viki#Edit()*
-viki#Edit(name, ?ìgnoreSpecial=0, ?winNr=0)
+viki#Edit(name, ?ignoreSpecial=0, ?winNr=0)
     Edit a vikiname
 
                                                     *viki#Browse()*
