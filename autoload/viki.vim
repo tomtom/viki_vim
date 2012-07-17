@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-04-26.
-" @Revision:    0.919
+" @Last Change: 2012-07-17.
+" @Revision:    0.921
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -1478,6 +1478,11 @@ endf
 " Check if the key maps should support a specified functionality
 function! viki#MapFunctionality(mf, key)
     return a:mf == 'ALL' || (a:mf =~# '\<'. a:key .'\>')
+endf
+
+function! viki#MinorMode(...) "{{{3
+    let type = a:0 >= 1 ? a:1 : ''
+    call viki#DispatchOnFamily('MinorMode', type, 1)
 endf
 
 " Re-set minor mode if the buffer is already in viki minor mode.
