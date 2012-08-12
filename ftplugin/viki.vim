@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2012-03-25.
-" @Revision: 488
+" @Last Change: 2012-07-26.
+" @Revision: 502
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -186,17 +186,20 @@ function! s:SetMaxLevel() "{{{3
 endf
 
 function! s:UpdateHeadings() "{{{3
-    let b:viki_headings = {}
+    let viki_headings = {}
     let pos = getpos('.')
     try
-        silent! g/^\*\+\s/let b:viki_headings[line('.')] = matchend(getline('.'), '^\*\+\s')
+        silent! g/^\*\+\s/let viki_headings[line('.')] = matchend(getline('.'), '^\*\+\s')
     finally
         call setpos('.', pos)
     endtry
+    if !exists('b:viki_headings') || b:viki_headings != viki_headings
+        let b:viki_headings = viki_headings
+    endif
 endf
-call s:UpdateHeadings()
 
-autocmd viki CursorHold,CursorHoldI <buffer> call s:UpdateHeadings()
+autocmd viki CursorHold,CursorHoldI,InsertLeave <buffer> call s:UpdateHeadings()
+call s:UpdateHeadings()
 
 func s:NumericSort(i1, i2)
     return a:i1 == a:i2 ? 0 : a:i1 > a:i2 ? 1 : -1
@@ -208,16 +211,21 @@ function VikiFoldLevel(lnum)
         " TLogDBG 'no folds'
         return
     endif
+    let new = 0
     let level = 1
     if vikiFolds =~? 'h'
-        let hd_lnums = sort(map(keys(b:viki_headings), 'str2nr(v:val)'), 's:NumericSort')
+        let hd_lnums = map(keys(b:viki_headings), 'str2nr(v:val)')
+        let hd_lnums = filter(hd_lnums, 'v:val <= a:lnum')
         " TLogVAR hd_lnums
-        for hd_lnum in hd_lnums
-            if hd_lnum <= a:lnum
-                let level = b:viki_headings[hd_lnum]
-                " TLogVAR hd_lnum, level
+        if !empty(hd_lnums)
+            let hd_lnums = sort(hd_lnums, 's:NumericSort')
+            let hd_lnum = hd_lnums[-1]
+            let level = b:viki_headings[''. hd_lnum]
+            if hd_lnum == a:lnum
+                let new = 1
             endif
-        endfor
+            " TLogVAR hd_lnums, hd_lnum, level
+        endif
         if vikiFolds =~# 'H'
             let max_level = max(values(b:viki_headings))
             let level = max_level - level + 1
@@ -227,6 +235,6 @@ function VikiFoldLevel(lnum)
         let level += matchend(getline(prevnonblank(a:lnum)), '^\s\+') / &shiftwidth
     endif
     " TLogVAR a:lnum, level
-    return level
+    return new ? '>'. level : level
 endf
 
