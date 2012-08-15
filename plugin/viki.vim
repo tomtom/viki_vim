@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2012-07-17.
-" @Revision:    2741
+" @Last Change: 2012-08-15.
+" @Revision:    2743
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -231,6 +231,7 @@ command! VIKI :call viki#HomePage()
 
 if !empty('g:vikiNameSuffix')
     exec 'autocmd filetypedetect BufRead,BufNewFile *'. g:vikiNameSuffix .' setf viki'
+    let g:ft_ignore_pat = '\('. g:ft_ignore_pat .'\|'. tlib#rx#Escape(g:vikiNameSuffix) .'$\)'
 endif
 
 augroup viki
