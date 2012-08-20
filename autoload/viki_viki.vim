@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
 " @Last Change: 2012-08-20.
-" @Revision:    0.0.184
+" @Revision:    0.0.185
 
 
 if !exists('g:viki_viki#conceal_extended_link_markup')
@@ -229,7 +229,7 @@ endf
 
 " Define viki core syntax groups for hyperlinks
 function! viki_viki#DefineMarkup(state) "{{{3
-    TLogVAR a:state
+    " TLogVAR a:state
     if viki#IsSupportedType("sS") && b:vikiSimpleNameSimpleRx != ""
         exe "syntax match vikiLink /" . b:vikiSimpleNameSimpleRx . "/"
     endif
