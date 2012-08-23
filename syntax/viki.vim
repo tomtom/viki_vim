@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2012-08-15.
-" @Revision: 0.1025
+" @Last Change: 2012-08-23.
+" @Revision: 0.1037
 
 if version < 600
     syntax clear
@@ -172,10 +172,11 @@ syn region vikiRegionAlt matchgroup=vikiMacroDelim
 syn match vikiCommand /^\C[[:blank:]]*#\([A-Z]\{2,}\)\>\(\\\n\|.\)*/
             \ contains=vikiCommandNames
 
-syn match vikiFilesMarkers /\[\[\([^\/]\+\/\)*\|\]!\]/ contained containedin=vikiFiles
-syn match vikiFilesIndicators /{.\{-}}/ contained containedin=vikiFiles
-syn match vikiFiles /^\s*\[\[.\{-}\]!\].*$/
-            \ contained containedin=vikiFilesRegion contains=vikiFilesMarkers,vikiFilesIndicators
+" syn match vikiFilesMarkers /\[\[\([^\/]\+\/\)*\|\]!\]/ contained containedin=vikiFiles
+" syn match vikiFilesIndicators /{.\{-}}/ contained containedin=vikiFiles
+syn match vikiFilesIndicators /^\s*[`_+|\\-]\+\s/ contained containedin=vikiFiles
+syn match vikiFiles /^\s*[`_+|\\-]\+\s\+\[\[.\{-}\]!\].*$/
+            \ contained containedin=vikiFilesRegion contains=vikiExtendedLink,vikiFilesIndicators
 syn region vikiFilesRegion matchgroup=vikiMacroDelim
             \ start=/^[[:blank:]]*#Files\>\(\\\n\|.\)\{-}<<\z(.*\)$/ 
             \ end=/^[[:blank:]]*\z1[[:blank:]]*$/ 
@@ -356,7 +357,7 @@ if version >= 508 || !exists("did_viki_syntax_inits")
   HiLink vikiFilesRegion Statement
   HiLink vikiFiles Constant
   HiLink vikiFilesMarkers Ignore
-  HiLink vikiFilesIndicators Special
+  HiLink vikiFilesIndicators Directory
   " HiLink vikiCommandNames Constant
   " HiLink vikiRegionNames Constant
   " HiLink vikiMacroNames Constant

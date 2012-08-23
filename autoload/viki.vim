@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-08-15.
-" @Revision:    0.922
+" @Last Change: 2012-08-23.
+" @Revision:    0.962
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2913,6 +2913,7 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
         echoerr 'Viki: No glob pattern defnied: '. string(args)
     else
         " let p = getpos('.')
+        let deep = patt =~ '\*\*'
         let view = winsaveview()
         let t = @t
         try
@@ -2948,7 +2949,7 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
                 " endif
                 let list = split(get(args, 'list', ''), ',\s*')
                 let head = 0 + get(args, 'head', '0')
-                call map(ls, 'a:indent.s:GetFileEntry(v:val, list, head)')
+                call map(ls, 'a:indent.s:GetFileEntry(v:val, deep, list, head)')
                 let @t = join(ls, "\<c-j>") ."\<c-j>"
                 exec 'norm! '. a:lhb .'G"tP'
             endif
@@ -2960,15 +2961,17 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
     endif
 endf
 
-fun! s:GetFileEntry(file, list, head) "{{{3
-    " let prefix = substitute(a:file, '[^/]', '', 'g')
-    " let prefix = substitute(prefix, '/', repeat(' ', &shiftwidth), 'g')
+fun! s:GetFileEntry(file, deep, list, head) "{{{3
+    let f = []
+    let d = s:GetDepth(a:file)
     let attr = []
+    let is_dir = 0
     if index(a:list, 'detail') != -1
         let type = getftype(a:file)
         if type != 'file'
             if type == 'dir'
-                call add(attr, 'D')
+                let is_dir = 1
+                " call add(attr, 'D')
             else
                 call add(attr, type)
             endif
@@ -2977,30 +2980,26 @@ fun! s:GetFileEntry(file, list, head) "{{{3
         call add(attr, getfperm(a:file))
     else
         if isdirectory(a:file)
-            call add(attr, 'D')
+            let is_dir = 1
+            " call add(attr, 'D')
         endif
     endif
-    let f = []
-    let d = s:GetDepth(a:file)
-    " if index(a:list, 'tree') == -1
-    "     call add(f, '[[')
-    "     call add(f, repeat('|-', d))
-    "     if index(attr, 'D') == -1
-    "         call add(f, ' ')
-    "     else
-    "         call add(f, '-+ ')
-    "     endif
-    "     call add(f, fnamemodify(a:file, ':t') .'].]')
-    " else
-        if index(a:list, 'flat') == -1
-            call add(f, repeat(' ', d * &shiftwidth))
+    if index(a:list, 'flat') == -1
+        " call add(f, repeat(' ', d * &shiftwidth))
+        let prefix  = repeat(' ', d)
+        if a:deep
+            let prefix .= is_dir ? ' \' : '| '
+        else
+            let prefix .= is_dir ? '+' : '|'
         endif
-        call add(f, '[['. a:file .']!]')
-    " endif
+        let prefix .= ' '
+        call add(f, prefix)
+    endif
+    call add(f, '[['. a:file .']!]')
     if !empty(attr)
         call add(f, ' {'. join(attr, '|') .'}')
     endif
-    if a:head > 0
+    if a:head > 0 && !isdirectory(a:file)
         let lines = readfile(a:file, '', a:head)
         let lines = filter(lines, 'v:val =~ ''\S''')
         let lines = map(lines, 'substitute(v:val, g:viki#files_head_rx, "", "g")')
@@ -3015,7 +3014,7 @@ fun! s:GetFileEntry(file, list, head) "{{{3
 endf
 
 fun! s:GetDepth(file) "{{{3
-    return len(substitute(a:file, '[^/]', '', 'g'))
+    return len(substitute(a:file, '[^\/]', '', 'g'))
 endf
 
 fun! s:GetRegionArgs(ls, le) "{{{3
