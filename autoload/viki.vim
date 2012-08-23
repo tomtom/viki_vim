@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-08-23.
-" @Revision:    0.962
+" @Revision:    0.967
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -540,7 +540,6 @@ if !exists('*VikiOpenSpecialFile')
     " All suffixes are translated to lower case.
     function! VikiOpenSpecialFile(file) "{{{3
         " TLogVAR a:file
-        " let proto = tolower(matchstr(a:file, '\c\.\zs[a-z]\+$'))
         let proto = tolower(fnamemodify(a:file, ':e'))
         if exists('g:vikiOpenFileWith_'. proto)
             let prot = g:vikiOpenFileWith_{proto}
@@ -762,10 +761,6 @@ function! s:EditWrapper(cmd, fname) "{{{3
             echoerr "Vim raised E37: You tried to abondon a dirty buffer (see :h E37)"
             echoerr "Viki: You may want to reconsider your g:vikiHide or 'hidden' settings"
         catch /^Vim\%((\a\+)\)\=:E325/
-        " catch
-        "     echohl error
-        "     echom v:errmsg
-        "     echohl NONE
         endtry
     endif
 endf
@@ -845,13 +840,10 @@ function! s:MarkInexistent(line1, line2, ...) "{{{3
         return
     endif
     if exists('b:vikiPosition')
-        " let cursorRestore = 0
-        " bufnum, lnum, col, off]
         let li0 = b:vikiPosition.pos[1]
         let co0 = b:vikiPosition.pos[2]
         let co1 = co0 - 2
     else
-        " let cursorRestore = 1
         let li0 = line('.')
         let co0 = col('.')
         let co1 = co0 - 1
@@ -890,12 +882,6 @@ function! s:MarkInexistent(line1, line2, ...) "{{{3
         if feedback
             call tlib#progressbar#Init(line('$'), 'Viki: Mark inexistent %s', 20)
         endif
-
-        " if line('.') == 1
-        "     keepjumps norm! G$
-        " else
-        "     keepjumps norm! k$
-        " endif
 
         let rx = viki#FindRx()
         let pp = 0
@@ -966,7 +952,6 @@ function! s:MarkInexistent(line1, line2, ...) "{{{3
                         let check = 0
                     endif
                     " TLogVAR check, v_dest
-                    " if check && v_dest != "" && v_dest != g:vikiSelfRef && !isdirectory(v_dest)
                     if check && v_dest != g:vikiSelfRef && !isdirectory(v_dest)
                         if filereadable(v_dest)
                             call filter(b:vikiNamesNull, 'v:val != partx')
@@ -1056,8 +1041,6 @@ else
         endif
         let lr = &lazyredraw
         set lazyredraw
-        " let pos = getpos('.')
-        " TLogVAR pos
         try
             call viki#SaveCursorPosition()
             call s:MarkInexistentIn{a:elt}()
@@ -1065,8 +1048,6 @@ else
             call s:ResetSavedCursorPosition()
             return ''
         finally
-            " TLogVAR pos
-            " call setpos('.', pos)
             let &lazyredraw = lr
         endtry
     endf
@@ -1083,17 +1064,12 @@ endf
 function! viki#MarkInexistentInRange(line1, line2) "{{{3
     let lr = &lazyredraw
     set lazyredraw
-    " let pos = getpos('.')
-    " TLogVAR pos
     try
         call viki#SaveCursorPosition()
         call s:MarkInexistent(a:line1, a:line2)
         call viki#RestoreCursorPosition()
         call s:ResetSavedCursorPosition()
-        " call s:MarkInexistent(a:line1, a:line2)
     finally
-        " TLogVAR pos
-        " call setpos('.', pos)
         let &lazyredraw = lr
     endtry
 endf
@@ -1110,7 +1086,6 @@ endf
 
 function! s:MarkInexistentInParagraphVisible() "{{{3
     let l0 = max([line("'{"), line("w0")])
-    " let l1 = line("'}")
     let l1 = line(".")
     call s:MarkInexistent(l0, l1)
 endf
@@ -1139,15 +1114,11 @@ endf
 " First-time markup of inexistent names. Handles cached values. Called 
 " from syntax/viki.vim
 function! viki#MarkInexistentInitial() "{{{3
-    " let save_inexistent = 0
     if tlib#var#Get('vikiCacheInexistent', 'wbg')
         let cfile = tlib#cache#Filename('viki_inexistent', '', 1)
         " TLogVAR cfile
         if getftime(cfile) < getftime(expand('%:p'))
-            " let cfile = ''
-            " let save_inexistent = 1
         elseif !empty(cfile)
-        " if !empty(cfile)
             let cvals = tlib#cache#Get(cfile)
             " TLogVAR cvals
             if !empty(cvals)
@@ -1163,9 +1134,6 @@ function! viki#MarkInexistentInitial() "{{{3
         let cfile = ''
     endif
     call viki#MarkInexistentInElement('Document')
-    " if save_inexistent
-    "     call viki#SaveCache(cfile)
-    " endif
 endf
 
 function! viki#SaveCache(...) "{{{3
@@ -1329,8 +1297,6 @@ function! s:CollectVikiWords(table, filename, basedir) "{{{3
                     continue
                 endif
                 let ml = matchlist(wl, '^\(.\{-}\) *\t\+ *\(.\+\)$')
-                " let ml = matchlist(wl, '^\(\S\+\) *\t\+ *\(.\+\)$')
-                " let ml = matchlist(wl, '^\(\S\+\)[[:space:]]\+\(.\+\)$')
                 if !empty(ml)
                     let mkey = s:CanonicHyperWord(ml[1])
                     let mval = ml[2]
@@ -1392,16 +1358,12 @@ function! viki#MapMarkInexistent(key, element) "{{{3
     if arg == ''
         let arg = key
     endif
-    " let map = '<c-r>=viki#MarkInexistentInElement('. string(a:element) .')<cr>'
-    " let map = stridx(g:vikiMapBeforeKeys, a:key) != -1 ? arg.map : map.arg
-    " exe 'inoremap <silent> <buffer> '. key .' '. map
     exe 'inoremap <buffer> <expr> '. key .' viki#ExprMarkInexistentInElement('. string(a:element) .','. string(key) .')'
 endf
 
 
 " In case this function gets called repeatedly for the same position, check only once.
 function! viki#HookCheckPreviousPosition(mode) "{{{3
-    " if a:mode == 'n'
     if s:hookcursormoved_oldpos != b:hookcursormoved_oldpos
         keepjumps keepmarks call s:MarkInexistent(b:hookcursormoved_oldpos[1], b:hookcursormoved_oldpos[1])
         let s:hookcursormoved_oldpos = b:hookcursormoved_oldpos
@@ -1427,8 +1389,6 @@ function! viki#RestoreCursorPosition(...) "{{{3
     if has_key(s:positions, bn)
         let ve = &virtualedit
         set virtualedit=all
-        " exe 'keepjumps norm! '. s:positions[bn].w0 .'zt'
-        " call setpos('.', s:positions[bn].pos)
         call winrestview(s:positions[bn].view)
         let &virtualedit = ve
     endif
@@ -1438,7 +1398,7 @@ endf
 function! viki#SaveCursorPosition() "{{{3
     let ve = &virtualedit
     set virtualedit=all
-    " let s:lazyredraw   = &lazyredraw
+    " let s:lazyredraw = &lazyredraw
     " set nolazyredraw
     let bn = bufnr('%')
     let s:positions[bn] = {
@@ -1607,7 +1567,6 @@ endf
 " "foo %{FILE} bar", 'FILE', 'file.txt' => "foo file.txt bar"
 function! viki#SubstituteArgs(str, ...) "{{{3
     let i  = 1
-    " let rv = escape(a:str, '\')
     let rv = a:str
     let default = ''
     let done = 0
@@ -1683,7 +1642,6 @@ endf
 
 " Set automatic anchor marks: #ma => 'a
 function! viki#SetAnchorMarks() "{{{3
-    " let pos = getpos(".")
     let view = winsaveview()
     " TLogVAR pos
     let sr  = @/
@@ -1691,8 +1649,6 @@ function! viki#SetAnchorMarks() "{{{3
     " TLogVAR anchorRx
     exec 'silent! keepjumps g /'. anchorRx .'/exec "norm! m". matchstr(getline("."), anchorRx)'
     let @/ = sr
-    " TLogVAR pos
-    " call setpos('.', pos)
     call winrestview(view)
     if exists('*QuickfixsignsSet')
         call QuickfixsignsSet('', ['marks'])
@@ -1954,12 +1910,6 @@ function! viki#MakeUrl(dest, anchor) "{{{3
     if a:anchor == ""
         return a:dest
     else
-        " if a:dest[-1:-1] != '/'
-        "     let dest = a:dest .'/'
-        " else
-        "     let dest = a:dest
-        " endif
-        " return join([dest, a:anchor], '#')
         return join([a:dest, a:anchor], '#')
     endif 
 endf
@@ -2063,9 +2013,6 @@ function! viki#LinkDefinition(txt, col, compound, ignoreSyntax, type) "{{{3
             let name   = s:ExtractMatch(match, nameIdx,   g:vikiDefNil)
             let dest   = s:ExtractMatch(match, destIdx,   g:vikiDefNil)
             let anchor = s:ExtractMatch(match, anchorIdx, g:vikiDefNil)
-            " let name   = s:GetVikiNamePart(part, erx, nameIdx,   "no name")
-            " let dest   = s:GetVikiNamePart(part, erx, destIdx,   "no destination")
-            " let anchor = s:GetVikiNamePart(part, erx, anchorIdx, "no anchor")
             " TLogVAR name, dest, anchor, part, a:type
             return viki#MakeDef(name, dest, anchor, part, a:type)
         elseif a:ignoreSyntax
@@ -2137,7 +2084,6 @@ endf
 
 " Get the interviki name of a vikiname
 function! viki#InterVikiName(vikiname)
-    " return substitute(a:vikiname, s:InterVikiRx, '\1', '')
     let ml = matchlist(a:vikiname, s:InterVikiRx)
     let name = get(ml, 1, '')
     " echom "DBG" a:vikiname string(ml) name
@@ -2146,8 +2092,6 @@ endf
 
 " Get the plain vikiname of a vikiname
 function! viki#InterVikiPart(vikiname)
-    " return substitute(a:vikiname, s:InterVikiRx, '\2', '')
-    " return matchlist(a:vikiname, s:InterVikiRx)[2]
     let ml = matchlist(a:vikiname, s:InterVikiRx)
     let part = get(ml, 2, '')
     " echom "DBG" a:vikiname string(ml) part
@@ -2206,7 +2150,6 @@ function! viki#InterVikiDest(vikiname, ...)
                 let v_dest = i_index
                 " TLogVAR v_dest, i_index
             endif
-            " let i_dest = expand(i_dest)
             let i_dest = fnamemodify(i_dest, ':p')
             " TLogVAR i_dest, rx
             if !empty(rx)
@@ -2535,9 +2478,6 @@ function! s:EditCompleteAgent(interviki, afname, fname) "{{{3
         else
             let name = a:fname
         endif
-        " if name !~ '\C'. viki#GetSimpleRx4SimpleWikiName()
-        "     let name = '[-'. a:fname .'-]'
-        " endif
         if a:interviki != ''
             let name = a:interviki .'::'. name
         endif
@@ -2561,7 +2501,6 @@ function! s:EditCompleteMapAgent1(val, sfx, iv, rx) "{{{3
         endif
     endif
     " TLogVAR rv, a:rx
-    " let rv = substitute(rv, a:rx, '\1', '')
     let m = matchlist(rv, a:rx)
     " TLogVAR m
     let rv = m[1]
@@ -2576,7 +2515,6 @@ endf
 " Command line completion of |:VikiEdit|
 function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
     " TLogVAR a:ArgLead, a:CmdLine, a:CursorPos
-    " let arglead = a:ArgLead
     let rx_pre = '^\s*\(\d*\(verb\|debug\|sil\|sp\|vert\|tab\)\w\+!\?\s\+\)*'
     let arglead = matchstr(a:CmdLine, rx_pre .'\(\u\+\)!\?\s\zs.*')
     let ii = matchstr(a:CmdLine, rx_pre .'\zs\(\u\+\)\ze!\?\s')
@@ -2605,7 +2543,6 @@ function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
         " TLogVAR f,d,r
         let d  = substitute(d, '\', '/', 'g')
         let rv = split(glob(d), '\n')
-        " call map(rv, 'escape(v:val, " ")')
         " TLogVAR d,rv
         if sfx != ''
             call filter(rv, 'isdirectory(v:val) || ".". fnamemodify(v:val, ":e") == sfx')
@@ -2615,14 +2552,11 @@ function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
         " TLogVAR rv
         call filter(rv, '!empty(v:val)')
         " TLogVAR rv
-        " call map(rv, string(i). '."::". substitute(v:val, r, ''\1'', "")')
     else
         " TLogDBG 'B'
         let rv = split(glob(arglead.'*'.sfx), '\n')
         " TLogVAR rv
         call map(rv, 's:EditCompleteAgent('. string(i) .', v:val, v:val)')
-        " TLogVAR rv
-        " call map(rv, 'escape(v:val, " ")')
         " TLogVAR rv
         if arglead == ''
             let rv += g:vikiInterVikiNames
@@ -2631,8 +2565,6 @@ function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
         endif
     endif
     " TLogVAR rv
-    " call map(rv, 'substitute(v:val, ''^\(.\{-}\s\ze\S*$'', "", "")')
-    " call map(rv, 'escape(v:val, "%# ")')
     return rv
 endf
 
@@ -2804,7 +2736,6 @@ endf
 " #Files related stuff
 
 fun! viki#FilesUpdateAll() "{{{3
-    " let p = getpos('.')
     let view = winsaveview()
     try
         norm! gg
@@ -2813,7 +2744,6 @@ fun! viki#FilesUpdateAll() "{{{3
             norm! j
         endwh
     finally
-        " call setpos('.', p)
         if winsaveview() != view
             call winrestview(view)
         endif
@@ -2899,7 +2829,6 @@ endf
 fun! viki#FilesUpdate() "{{{3
     let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
     " TLogVAR lh, lb, le, indent
-    " 'vikiFiles', 'vikiFilesRegion'
     call s:DeleteRegionBody(lb, le)
     call viki#DirListing(lh, lb, indent)
 endf
@@ -2910,19 +2839,15 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
     let patt = get(args, 'glob', '')
     " TLogVAR patt
     if empty(patt)
-        echoerr 'Viki: No glob pattern defnied: '. string(args)
+        echoerr 'Viki: No glob pattern: '. string(args)
     else
-        " let p = getpos('.')
         let deep = patt =~ '\*\*'
         let view = winsaveview()
         let t = @t
         try
-            " let style = get(args, 'style', 'ls')
-            " let ls = VikiGetDirListing_{style}(split(glob(patt), '\n'))
             let ls = split(glob(patt), '\n')
             " TLogVAR ls
             let types = get(args, 'types', '')
-            " TLogVAR ls
             if !empty(types)
                 let show_files = stridx(types, 'f') != -1
                 let show_dirs  = stridx(types, 'd') != -1
@@ -2941,12 +2866,6 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
                 call filter(ls, 'v:val !~ exclude')
             endif
             if !empty(ls)
-                let order = get(args, 'order', '')
-                " if !empty(order)
-                "     if order == 'd'
-                "         call sort(ls, 's:SortDirsFirst')
-                "     endif
-                " endif
                 let list = split(get(args, 'list', ''), ',\s*')
                 let head = 0 + get(args, 'head', '0')
                 call map(ls, 'a:indent.s:GetFileEntry(v:val, deep, list, head)')
@@ -2955,7 +2874,6 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
             endif
         finally
             let @t = t
-            " call setpos('.', p)
             call winrestview(view)
         endtry
     endif
@@ -2971,7 +2889,6 @@ fun! s:GetFileEntry(file, deep, list, head) "{{{3
         if type != 'file'
             if type == 'dir'
                 let is_dir = 1
-                " call add(attr, 'D')
             else
                 call add(attr, type)
             endif
@@ -2981,11 +2898,9 @@ fun! s:GetFileEntry(file, deep, list, head) "{{{3
     else
         if isdirectory(a:file)
             let is_dir = 1
-            " call add(attr, 'D')
         endif
     endif
     if index(a:list, 'flat') == -1
-        " call add(f, repeat(' ', d * &shiftwidth))
         let prefix  = repeat(' ', d)
         if a:deep
             let prefix .= is_dir ? ' \' : '| '
@@ -3019,7 +2934,6 @@ endf
 
 fun! s:GetRegionArgs(ls, le) "{{{3
     let t = @t
-    " let p = getpos('.')
     try
         let t = s:GetBrokenLine(a:ls, a:le)
         " TLogVAR t
@@ -3059,7 +2973,6 @@ fun! s:GetRegionArgs(ls, le) "{{{3
         return args
     finally
         let @t = t
-        " call setpos('.', p)
     endtry
 endf
 
@@ -3082,7 +2995,6 @@ fun! s:GetRegionStartRx(...) "{{{3
 endf
 
 fun! s:GetRegionGeometry(...) "{{{3
-    " let p = getpos('.')
     let view = winsaveview()
     try
         norm! $
@@ -3105,7 +3017,6 @@ fun! s:GetRegionGeometry(...) "{{{3
         endif
         return [0, 0, 0, '']
     finally
-        " call setpos('.', p)
         call winrestview(view)
     endtry
 endf
