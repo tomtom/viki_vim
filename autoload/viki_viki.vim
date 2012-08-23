@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2012-08-20.
-" @Revision:    0.0.185
+" @Last Change: 2012-08-23.
+" @Revision:    0.0.186
 
 
 if !exists('g:viki_viki#conceal_extended_link_markup')
@@ -236,7 +236,7 @@ function! viki_viki#DefineMarkup(state) "{{{3
     if viki#IsSupportedType("e") && b:vikiExtendedNameSimpleRx != ""
         if g:viki_viki#conceal_extended_link_markup && has('conceal')
             let cchar = empty(g:viki_viki#conceal_extended_link_cchar) ? '' : ('cchar='. g:viki_viki#conceal_extended_link_cchar)
-            exe 'syntax region vikiExtendedLinkInfo matchgroup=vikiExtendedLinkMarkup start=/\[\[\(\(\\\[\|[^]]\)\+\]\[\)\?/ end=/\]\]/ concealends '. cchar .' contained containedin=vikiExtendedLink'
+            exe 'syntax region vikiExtendedLinkInfo matchgroup=vikiExtendedLinkMarkup start=/\[\[\(\(\\\[\|[^]]\)\+\]\[\)\?/ end=/\][!*]\?\]/ concealends '. cchar .' contained containedin=vikiExtendedLink'
             exe "syntax match vikiExtendedLink '" . b:vikiExtendedNameSimpleRx . "' skipnl contains=vikiExtendedLinkInfo"
         else
             exe "syntax match vikiExtendedLink '" . b:vikiExtendedNameSimpleRx . "' skipnl"
