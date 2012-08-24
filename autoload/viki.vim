@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-08-24.
-" @Revision:    0.975
+" @Revision:    0.984
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2842,6 +2842,12 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
         echoerr 'Viki: No glob pattern: '. string(args)
     else
         let deep = patt =~ '\*\*'
+        let bufdir = expand('%:p:h')
+        if patt !~ '^\([%\\/]\|\w\+:\)' && !&autochdir && bufdir != getcwd()
+            let patt = tlib#file#Join([expand('%:p:h'), patt])
+        endif
+        " TLogVAR patt
+        let s:dirlisting_depth0 = s:GetDepth(split(patt, '[*?]')[0])
         let view = winsaveview()
         let t = @t
         try
@@ -2882,7 +2888,7 @@ endf
 
 fun! s:GetFileEntry(file, deep, list, head) "{{{3
     let f = []
-    let d = s:GetDepth(a:file)
+    let d = s:GetDepth(a:file) - s:dirlisting_depth0
     let attr = []
     let is_dir = 0
     if index(a:list, 'detail') != -1
