@@ -986,6 +986,7 @@ Contents~
         viki#SaveCursorPosition ............. |viki#SaveCursorPosition()|
         viki#DebugCursorPosition ............ |viki#DebugCursorPosition()|
         viki#MapFunctionality ............... |viki#MapFunctionality()|
+        viki#MinorMode ...................... |viki#MinorMode()|
         viki#MinorModeReset ................. |viki#MinorModeReset()|
         viki#IsInRegion ..................... |viki#IsInRegion()|
         viki#GoParent ....................... |viki#GoParent()|
@@ -1366,7 +1367,7 @@ g:vikiFamily                   (default: "viki")
         - viki#{b:vikiFamily}#FindAnchor(anchor)
     If one of these functions is undefined for a "viki family", then the
     default one is called.
-    
+
     Apart from the default behaviour the following families are defined:
         - latex (see |viki-latex|)
         - anyword (see |viki-anyword|)
@@ -1487,14 +1488,14 @@ VikiEdit[!] NAME
     line. If you call :VikiEdit! (with bang), the homepage will be opened first, 
     so that the homepage's customizations (and not the current buffer's one) are 
     in effect. There are a few gotchas:
-    
+
         1. Viki doesn't define a default directory for wiki pages. Thus a wiki page 
            will be looked for in the directory of the current buffer -- 
            whatever this is -- and the customizations of this buffer are in 
            effect. You can circumvent this problem by using |interviki| 
            names or define a |viki-homepage| and call :VikiEdit! with a 
            bang.
-    
+
         2. Viki relies on some buffer local variables to be set. As customizability 
            is one viki's main design goal (although, one might want to 
            discuss whether I overdid it), there are no global settings that 
@@ -1570,9 +1571,9 @@ VikiOpenSpecialFile(file)
     If g:vikiOpenFileWith_{SUFFIX} is defined, it contains a command 
     definition for opending files of this type. "%{FILE}" is replaced with the 
     file name ("%%" = "%") and the resulting string is executed. Example: >
-    
+
         let g:vikiOpenFileWith_html = '!firefox %{FILE}'
-    
+
 <   The contents of variable g:vikiOpenFileWith_ANY will be used as fallback
     command. Under Windows, g:vikiOpenFileWith_ANY defaults to "silent !cmd /c 
     start".
@@ -1601,9 +1602,9 @@ VikiOpenSpecialProtocol(url)
     If g:vikiOpenUrlWith_{PROTOCOL} is defined, it contains a command definition 
     for opending urls of this type. "%{URL}" is replaced with the url ("%%" = 
     "%") and the resulting string is executed. Example: >
-    
+
         let g:vikiOpenUrlWith_mailto = '!thunderbird -compose %{URL}'
-    
+
 <   The contents of variable g:vikiOpenUrlWith_ANY will be used as fallback
     command. Under Windows, g:vikiOpenUrlWith_ANY defaults to "silent 
     !rundll32 url.dll ...".
@@ -1717,6 +1718,9 @@ viki#DebugCursorPosition(...)
                                                     *viki#MapFunctionality()*
 viki#MapFunctionality(mf, key)
     Check if the key maps should support a specified functionality
+
+                                                    *viki#MinorMode()*
+viki#MinorMode(...)
 
                                                     *viki#MinorModeReset()*
 viki#MinorModeReset()
@@ -1974,13 +1978,13 @@ viki#ListItemTextObject()
 viki#SelectListItem(lnum)
     Visually select the list item at line lnum.
     A list item also contains all its child items. E.g. in a list like:>
-    
+
       1. Venenatis diam dignissim dui. Praesent risus.
       2. Tincidunt facilisis, est nisi pellentesque ligula.
           a. Adipiscing dui non quam.
           b. Duis posuere tortor.
       3. Massa lorem, dignissim at, vehicula et.
-    
+
     If the cursor is placed on item #2, this function also selects the 
     items a and b.
 
