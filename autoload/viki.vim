@@ -2910,7 +2910,11 @@ fun! s:GetFileEntry(file, deep, list, head) "{{{3
         let prefix .= ' '
         call add(f, prefix)
     endif
-    call add(f, '[['. a:file .']!]')
+    if g:viki_viki#conceal_extended_link_markup && has('conceal')
+        call add(f, '[['. a:file .']['. fnamemodify(a:file, ':t') .']!]')
+    else
+        call add(f, '[['. a:file .']!]')
+    endif
     if !empty(attr)
         call add(f, ' {'. join(attr, '|') .'}')
     endif
