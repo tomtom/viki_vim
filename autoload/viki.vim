@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-08-24.
-" @Revision:    0.984
+" @Revision:    0.998
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2877,7 +2877,8 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
                 let s:getfileentry_deep = 0
                 call map(ls, 'a:indent.s:GetFileEntry(v:val, deep, list, head)')
                 let @t = join(ls, "\<c-j>") ."\<c-j>"
-                exec 'norm! '. a:lhb .'G"tP'
+                " TLogVAR a:lhb
+                exec 'norm! '. a:lhb .'G"t'. (a:lhb > line('$') ? 'p' : 'P')
             endif
         finally
             let @t = t
@@ -3011,18 +3012,29 @@ fun! s:GetRegionStartRx(...) "{{{3
 endf
 
 fun! s:GetRegionGeometry(...) "{{{3
+    " TLogVAR a:000
     let view = winsaveview()
     try
         norm! $
         let rx_start = s:GetRegionStartRx(a:0 >= 1 ? a:1 : '')
         let hds = search(rx_start, 'cbWe')
+        " TLogVAR rx_start, hds
         if hds > 0
-            let hde = search(rx_start, 'ce')
+            if hds == line('$')
+                let hde = hds
+            else
+                let hde = search(rx_start, 'cWe')
+            endif
             let hdt = s:GetBrokenLine(hds, hde)
             let hdm = matchlist(hdt, rx_start)
             let hdi = hdm[1]
             let rx_end = '\V\^\[[:blank:]]\*'. escape(hdm[5], '\') .'\[[:blank:]]\*\$'
-            let hbe = search(rx_end)
+            if hds == line('$')
+                let hbe = hds + 1
+            else
+                let hbe = search(rx_end, 'W')
+            endif
+            " TLogVAR hds, hde, hbe
             if hds > 0 && hde > 0 && hbe > 0
                 return [hds, hde + 1, hbe, hdi]
             else
@@ -3044,13 +3056,17 @@ fun! s:DeleteRegionBody(...) "{{{3
     else
         let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
     endif
-    call s:SaveComments(lb, le - 1)
-    if le > lb
-        exec 'norm! '. lb .'Gd'. (le - 1) .'G'
+    " TLogVAR lb, le
+    if le <= line('$')
+        call s:SaveComments(lb, le - 1)
+        if le > lb
+            exec 'norm! '. lb .'Gd'. (le - 1) .'G'
+        endif
     endif
 endf
 
 fun! s:SaveComments(lb, le) "{{{3
+    " TLogVAR a:lb, a:le
     let s:savedComments = {}
     for l in range(a:lb, a:le)
         let t = getline(l)
