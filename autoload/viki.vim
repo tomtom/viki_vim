@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-08-23.
-" @Revision:    0.967
+" @Last Change: 2012-08-24.
+" @Revision:    0.975
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2868,6 +2868,7 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
             if !empty(ls)
                 let list = split(get(args, 'list', ''), ',\s*')
                 let head = 0 + get(args, 'head', '0')
+                let s:getfileentry_deep = 0
                 call map(ls, 'a:indent.s:GetFileEntry(v:val, deep, list, head)')
                 let @t = join(ls, "\<c-j>") ."\<c-j>"
                 exec 'norm! '. a:lhb .'G"tP'
@@ -2903,7 +2904,12 @@ fun! s:GetFileEntry(file, deep, list, head) "{{{3
     if index(a:list, 'flat') == -1
         let prefix  = repeat(' ', d)
         if a:deep
-            let prefix .= is_dir ? ' \' : '| '
+            if s:getfileentry_deep == d
+                let prefix .= is_dir ? ' +' : ' |'
+            else
+                let prefix .= is_dir ? '`+' : '`|'
+            endif
+            let s:getfileentry_deep = d
         else
             let prefix .= is_dir ? '+' : '|'
         endif
