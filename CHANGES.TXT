@@ -602,3 +602,17 @@ version: "4.01"
   MD5 checksum: 918f9422bc3678ccd8c0eb71abad6f6b
 version: "4.01"
 
+  - Define a viki#MinorMode(...) function again.
+  - Start a new fold at each heading (fixes #5)
+  - Add g:vikiNameSuffix to g:ft_ignore_pat (fixes #8)
+  - Conceal markup of extended links with names (fixes #7)
+  - Hide markup of extended links & use cchar (fixes #7)
+  - Improved #Files region: highligh as extended links; emulate tree
+  - Conceal extended links markup: allow modifiers
+  - If has('conceal') and extended markup is concealed #Files regions display only the filenames tail
+  - #Files: modfied display of deep file listings
+  - #Files: Make sure pattern is evaluated with respect to the buffer's directory
+  - #Files: Error when region begins on last line
+  MD5 checksum: dfde55c2220122cdbc66ece97731ecf7
+version: "4.02"
+
