@@ -630,3 +630,8 @@ version: "4.02"
   - #Files: Error when region begins on last line
   MD5 checksum: 44dbf4bf6d6a985e3b140781636f8fdc
 
+  - #Files: Error when glob pattern started with [*?]
+  - #Files head: call iconv() if encodings differ
+  MD5 checksum: 44dbf4bf6d6a985e3b140781636f8fdc
+version: "4.03"
+
