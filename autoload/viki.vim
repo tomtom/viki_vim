@@ -2847,7 +2847,13 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
             let patt = tlib#file#Join([expand('%:p:h'), patt])
         endif
         " TLogVAR patt
-        let s:dirlisting_depth0 = s:GetDepth(split(patt, '[*?]')[0])
+        if patt =~ '^[^\\/*?]*[*?]'
+            let s:dirlisting_depth0 = 0
+        else
+            let patt_parts = split(patt, '[*?]')
+            " TLogVAR patt_parts
+            let s:dirlisting_depth0 = s:GetDepth(patt_parts[0])
+        endif
         let view = winsaveview()
         let t = @t
         try
