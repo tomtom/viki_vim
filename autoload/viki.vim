@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-08-24.
-" @Revision:    0.998
+" @Last Change: 2012-08-27.
+" @Revision:    0.1007
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2941,7 +2941,13 @@ fun! s:GetFileEntry(file, deep, list, head) "{{{3
         let lines = readfile(a:file, '', a:head)
         let lines = filter(lines, 'v:val =~ ''\S''')
         let lines = map(lines, 'substitute(v:val, g:viki#files_head_rx, "", "g")')
-        call add(f, ' -- '. join(lines, '|'))
+        let head_text = join(lines, '|')
+        " TLogVAR &l:fenc, &l:enc, head_text
+        if &l:fenc != &l:enc && has('iconv')
+            let head_text = iconv(head_text, &l:fenc, &l:enc)
+            " TLogVAR head_text
+        endif
+        call add(f, ' -- '. head_text)
     else
         let c = get(s:savedComments, a:file, '')
         if !empty(c)
