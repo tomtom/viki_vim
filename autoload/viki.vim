@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-08-27.
-" @Revision:    0.1007
+" @Revision:    0.1017
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -3046,7 +3046,10 @@ fun! s:GetRegionGeometry(...) "{{{3
             else
                 let hbe = search(rx_end, 'W')
             endif
-            " TLogVAR hds, hde, hbe
+            if hbe == 0 && empty(hdm[5])
+                let hbe = line('$') + 1
+            endif
+            " TLogVAR hdm, hds, hde, hbe
             if hds > 0 && hde > 0 && hbe > 0
                 return [hds, hde + 1, hbe, hdi]
             else
@@ -3069,7 +3072,7 @@ fun! s:DeleteRegionBody(...) "{{{3
         let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
     endif
     " TLogVAR lb, le
-    if le <= line('$')
+    if le <= line('$') + 1
         call s:SaveComments(lb, le - 1)
         if le > lb
             exec 'norm! '. lb .'Gd'. (le - 1) .'G'
