@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2012-08-27.
-" @Revision:    2745
+" @Last Change: 2012-08-28.
+" @Revision:    2748
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -18,7 +18,7 @@
 " - tlib.vim (vimscript #1863)
 " 
 " Optional Enhancements:
-" - imaps.vim (vimscript #244 or #475 for |:VimQuote|)
+" - vikitasks.vim (vimscript #2894)
 " - kpsewhich (not a vim plugin :-) for vikiLaTeX
 
 if &cp || exists("loaded_viki")
@@ -31,7 +31,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 39
         finish
     endif
 endif
-let loaded_viki = 403
+let loaded_viki = 404
 
 
 if !exists("tlist_viki_settings")
