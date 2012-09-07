@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-08-27.
-" @Revision:    0.1017
+" @Last Change: 2012-09-07.
+" @Revision:    0.1029
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -367,6 +367,48 @@ endif
 if !exists("g:vikiMapFunctionalityMinor")
     " Define which keys to map in minor mode (invoked via :VikiMinorMode)
     let g:vikiMapFunctionalityMinor = 'f b p mf mb tF c q e' "{{{2
+endif
+
+if !exists("g:vikiFoldMethodVersion")
+    " :nodoc:
+    " Choose folding method version
+    " Viki supports several methods (1..7) for defining folds. If you 
+    " find that text entry is slowed down it is probably due to the 
+    " chosen fold method. You could try to use another method (see 
+    " ../ftplugin/viki.vim for alternative methods) or check out this 
+    " vim tip:
+    " http://vim.wikia.com/wiki/Keep_folds_closed_while_inserting_text
+    let g:vikiFoldMethodVersion = 8 "{{{2
+endif
+
+if !exists("g:vikiFoldBodyLevel")
+    " Consider fold levels bigger that this as text body, levels smaller 
+    " than this as headings
+    " This variable is only used if |g:vikiFoldMethodVersion| is 1.
+    " If set to 0, the "b" mode in |vikiFolds| will set the body level 
+    " depending on the headings used in the current buffer. Otherwise 
+    " |b:vikiHeadingMaxLevel| + 1 will be used.
+    let g:vikiFoldBodyLevel = 6 "{{{2
+endif
+
+if !exists("g:vikiFolds")
+    " Define which elements should be folded:
+    "     h :: Heading
+    "     H :: Headings (but inverse folding)
+    "     l :: Lists
+    "     b :: The body has max heading level + 1. This is slightly faster 
+    "       than the other version as vim never has to scan the text; but 
+    "       the behaviour may vary depending on the sequence of headings if 
+    "       |vikiFoldBodyLevel| is set to 0.
+    "     f :: Files regions.
+    "     s :: ???
+    " This variable is only used if |g:vikiFoldMethodVersion| is 1.
+    let g:vikiFolds = 'hf' "{{{2
+endif
+
+if !exists("g:vikiFoldsContext") "{{{2
+    " Context lines for folds
+    let g:vikiFoldsContext = [2, 2, 2, 2]
 endif
 
 if !exists('g:viki#files_head_rx')
@@ -3218,10 +3260,11 @@ endf
 
 
 " :doc:
-" The following two functions can be used with the tinymode plugin to 
-" move around list items. 
+" If the |tinykeymap| plugin is installed, a gl map is created to move 
+" around list items.
 "
-" Example configuration: >
+" If you use the tinymode plugin, add the following to lines to your 
+" |vimrc| file:
 "
 "   call tinymode#EnterMap("listitem_move", "gl")
 "   call tinymode#ModeMsg("listitem_move", "Move list item: h/j/k/l")
@@ -3282,4 +3325,103 @@ function! viki#MoveListItem(direction) "{{{3
     endtry
 endf
 
+
+function! s:VikiFolds() "{{{3
+    let vikiFolds = tlib#var#Get('vikiFolds', 'bg')
+    " TLogVAR vikiFolds
+    if vikiFolds == 'ALL'
+        let vikiFolds = 'hlsfb'
+        " let vikiFolds = 'hHlsfb'
+    elseif vikiFolds == 'DEFAULT'
+        let vikiFolds = 'hf'
+    endif
+    " TLogVAR vikiFolds
+    return vikiFolds
+endf
+
+
+func s:NumericSort(i1, i2)
+    return a:i1 == a:i2 ? 0 : a:i1 > a:i2 ? 1 : -1
+endfunc
+
+
+function viki#FoldLevel(lnum)
+    let vikiFolds = s:VikiFolds()
+    if vikiFolds == ''
+        " TLogDBG 'no folds'
+        return
+    endif
+    let new = 0
+    let level = 1
+    if vikiFolds =~? 'h'
+        let hd_lnums = map(keys(b:viki_headings), 'str2nr(v:val)')
+        let hd_lnums = filter(hd_lnums, 'v:val <= a:lnum')
+        " TLogVAR hd_lnums
+        if !empty(hd_lnums)
+            let hd_lnums = sort(hd_lnums, 's:NumericSort')
+            let hd_lnum = hd_lnums[-1]
+            let level = b:viki_headings[''. hd_lnum]
+            if hd_lnum == a:lnum
+                let new = 1
+            endif
+            " TLogVAR hd_lnums, hd_lnum, level
+        endif
+        if vikiFolds =~# 'H'
+            let max_level = max(values(b:viki_headings))
+            let level = max_level - level + 1
+        endif
+    endif
+    if vikiFolds =~# 'l'
+        let level += matchend(getline(prevnonblank(a:lnum)), '^\s\+') / &shiftwidth
+    endif
+    " TLogVAR a:lnum, level
+    return new ? '>'. level : level
+endf
+
+
+function! viki#FoldText() "{{{3
+  let line = getline(v:foldstart)
+  if synIDattr(synID(v:foldstart, 1, 1), 'name') =~ '^vikiFiles'
+      let line = fnamemodify(viki#FilesGetFilename(line), ':h')
+  else
+      let ctxtlev = tlib#var#Get('vikiFoldsContext', 'wbg')
+      let ctxt    = get(ctxtlev, v:foldlevel, 0)
+      " TLogVAR ctxt
+      " TLogDBG type(ctxt)
+      if type(ctxt) == 3
+          let [ctxtbeg, ctxtend] = ctxt
+      else
+          let ctxtbeg = 1
+          let ctxtend = ctxt
+      end
+      let line = matchstr(line, '^\s*\zs.*$')
+      for li in range(ctxtbeg, ctxtend)
+          let li = v:foldstart + li
+          if li > v:foldend
+              break
+          endif
+          let lp = matchstr(getline(li), '^\s*\zs.\{-}\ze\s*$')
+          if !empty(lp)
+              let lp = substitute(lp, '\s\+', ' ', 'g')
+              let line .= ' | '. lp
+          endif
+      endfor
+  endif
+  return v:folddashes . line
+endf
+
+
+function! viki#UpdateHeadings() "{{{3
+    let viki_headings = {}
+    let pos = getpos('.')
+    try
+        silent! g/^\*\+\s/let viki_headings[line('.')] = matchend(getline('.'), '^\*\+\s')
+    finally
+        call setpos('.', pos)
+    endtry
+    if !exists('b:viki_headings') || b:viki_headings != viki_headings
+        let b:viki_headings = viki_headings
+    endif
+    " TLogVAR len(viki_headings)
+endf
 
