@@ -928,6 +928,8 @@ Contents~
         g:vikiHyperWordsFiles ............... |g:vikiHyperWordsFiles|
         g:vikiMapFunctionality .............. |g:vikiMapFunctionality|
         g:vikiMapFunctionalityMinor ......... |g:vikiMapFunctionalityMinor|
+        g:vikiFoldBodyLevel ................. |g:vikiFoldBodyLevel|
+        g:vikiFolds ......................... |g:vikiFolds|
         g:viki#files_head_rx ................ |g:viki#files_head_rx|
         g:viki#use_texmath .................. |g:viki#use_texmath|
         :VikiFindNext ....................... |:VikiFindNext|
@@ -1048,21 +1050,20 @@ Contents~
         viki#SelectListItem ................. |viki#SelectListItem()|
         viki#ShiftListItem .................. |viki#ShiftListItem()|
         viki#MoveListItem ................... |viki#MoveListItem()|
+        viki#FoldLevel ...................... |viki#FoldLevel()|
+        viki#FoldText ....................... |viki#FoldText()|
+        viki#UpdateHeadings ................. |viki#UpdateHeadings()|
         b:vikiCommentStart .................. |b:vikiCommentStart|
         b:vikiCommentEnd .................... |b:vikiCommentEnd|
         b:vikiHeadingMaxLevel ............... |b:vikiHeadingMaxLevel|
         b:vikiMaxFoldLevel .................. |b:vikiMaxFoldLevel|
         b:vikiInverseFold ................... |b:vikiInverseFold|
-        g:vikiFoldBodyLevel ................. |g:vikiFoldBodyLevel|
-        g:vikiFolds ......................... |g:vikiFolds|
         [[ .................................. |[[|
         ][ .................................. |][|
         ]] .................................. |]]|
         [] .................................. |[]|
         v_<expr> ............................ |v_<expr>|
         o_ii ................................ |o_ii|
-        VikiFoldText ........................ |VikiFoldText()|
-        VikiFoldLevel ....................... |VikiFoldLevel()|
 
 
 ========================================================================
@@ -1441,6 +1442,29 @@ g:vikiMapFunctionality         (default: 'ALL')
                                                     *g:vikiMapFunctionalityMinor*
 g:vikiMapFunctionalityMinor    (default: 'f b p mf mb tF c q e')
     Define which keys to map in minor mode (invoked via :VikiMinorMode)
+
+                                                    *g:vikiFoldBodyLevel*
+g:vikiFoldBodyLevel            (default: 6)
+    Consider fold levels bigger that this as text body, levels smaller 
+    than this as headings
+    This variable is only used if |g:vikiFoldMethodVersion| is 1.
+    If set to 0, the "b" mode in |vikiFolds| will set the body level 
+    depending on the headings used in the current buffer. Otherwise 
+    |b:vikiHeadingMaxLevel| + 1 will be used.
+
+                                                    *g:vikiFolds*
+g:vikiFolds                    (default: 'hf')
+    Define which elements should be folded:
+        h :: Heading
+        H :: Headings (but inverse folding)
+        l :: Lists
+        b :: The body has max heading level + 1. This is slightly faster 
+          than the other version as vim never has to scan the text; but 
+          the behaviour may vary depending on the sequence of headings if 
+          |vikiFoldBodyLevel| is set to 0.
+        f :: Files regions.
+        s :: ???
+    This variable is only used if |g:vikiFoldMethodVersion| is 1.
 
                                                     *g:viki#files_head_rx*
 g:viki#files_head_rx           (default: '^\(\*\s\+\)')
@@ -1989,10 +2013,11 @@ viki#SelectListItem(lnum)
     items a and b.
 
 
-The following two functions can be used with the tinymode plugin to 
-move around list items. 
+If the |tinykeymap| plugin is installed, a gl map is created to move 
+around list items.
 
-Example configuration: >
+If you use the tinymode plugin, add the following to lines to your 
+|vimrc| file:
 
   call tinymode#EnterMap("listitem_move", "gl")
   call tinymode#ModeMsg("listitem_move", "Move list item: h/j/k/l")
@@ -2000,13 +2025,21 @@ Example configuration: >
   call tinymode#Map("listitem_move", "l", "silent call viki#ShiftListItem('>')")
   call tinymode#Map("listitem_move", "j", "silent call viki#MoveListItem('down')")
   call tinymode#Map("listitem_move", "k", "silent call viki#MoveListItem('up')")
-<
 
                                                     *viki#ShiftListItem()*
 viki#ShiftListItem(direction)
 
                                                     *viki#MoveListItem()*
 viki#MoveListItem(direction)
+
+                                                    *viki#FoldLevel()*
+viki#FoldLevel(lnum)
+
+                                                    *viki#FoldText()*
+viki#FoldText()
+
+                                                    *viki#UpdateHeadings()*
+viki#UpdateHeadings()
 
 
 ========================================================================
@@ -2037,29 +2070,6 @@ b:vikiInverseFold              (default: 0)
     fixed structure where the important things happen in subsections 
     while the top sections change little.
 
-                                                    *g:vikiFoldBodyLevel*
-g:vikiFoldBodyLevel            (default: 6)
-    Consider fold levels bigger that this as text body, levels smaller 
-    than this as headings
-    This variable is only used if |g:vikiFoldMethodVersion| is 1.
-    If set to 0, the "b" mode in |vikiFolds| will set the body level 
-    depending on the headings used in the current buffer. Otherwise 
-    |b:vikiHeadingMaxLevel| + 1 will be used.
-
-                                                    *g:vikiFolds*
-g:vikiFolds                    (default: 'hf')
-    Define which elements should be folded:
-        h :: Heading
-        H :: Headings (but inverse folding)
-        l :: Lists
-        b :: The body has max heading level + 1. This is slightly faster 
-          than the other version as vim never has to scan the text; but 
-          the behaviour may vary depending on the sequence of headings if 
-          |vikiFoldBodyLevel| is set to 0.
-        f :: Files regions.
-        s :: ???
-    This variable is only used if |g:vikiFoldMethodVersion| is 1.
-
                                                     *[[*
 [[ ... :call viki#FindPrevHeading()<cr>
 
@@ -2077,12 +2087,6 @@ v_<expr> ... ii viki#ListItemTextObject()
 
                                                     *o_ii*
 o_ii ... :normal Vii<cr>
-
-                                                    *VikiFoldText()*
-VikiFoldText()
-
-                                                    *VikiFoldLevel()*
-VikiFoldLevel(lnum)
 
 
 
