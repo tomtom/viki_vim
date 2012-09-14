@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-09-07.
-" @Revision:    0.1029
+" @Last Change: 2012-09-13.
+" @Revision:    0.1060
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -209,6 +209,12 @@ endif
 if !exists("g:vikiExplorer")
     " Which directory explorer to use to edit directories
     let g:vikiExplorer = "Sexplore" "{{{2
+endif
+
+if !exists('g:viki#cmd_no_fnameescape')
+    " A |regexp| matching commands for which the filename should not be 
+    " pre-processed with |fnameescape()| when opening a file.
+    let g:viki#cmd_no_fnameescape = '^\(\ue\|E\)xplore\>'   "{{{2
 endif
 
 if !exists("g:vikiHide")
@@ -758,29 +764,37 @@ endf
 " this function.
 function! s:EditWrapper(cmd, fname) "{{{3
     " TLogVAR a:cmd, a:fname
-    let fname = escape(simplify(a:fname), ' %#')
+    let fname = simplify(a:fname)
     if g:vikiDirSeparator == '\' && fname !~ '^\w\+://'
         let fname = substitute(fname, '/', '\\', 'g')
         " TLogVAR fname
     endif
-    if a:cmd =~ '^\(silent\s\+\)\?!'
+    if a:cmd =~ '^\(silent!\?\s\+\)\?!'
+        " TLogVAR 1
+        let fname = escape(fname, '%#')
         let fname = shellescape(fname)
         " TLogVAR fname
+    elseif a:cmd !~ g:viki#cmd_no_fnameescape
+        " TLogVAR 2
+        let fname = fnameescape(fname)
+    else
+        " TLogVAR 3
+        let fname = escape(fname, '%#')
     endif
     " let fname = escape(simplify(a:fname), '%#')
     if a:cmd =~ g:vikiNoWrapper
         " TLogDBG a:cmd .' '. fname
         " echom 'No wrapper: '. a:cmd .' '. fname
-        exec a:cmd .' '. fname
+        exec a:cmd fname
     else
         try
             if g:vikiHide == 'hide'
                 " TLogDBG 'hide '. a:cmd .' '. fname
-                exec 'hide '. a:cmd .' '. fname
+                exec 'hide' a:cmd fname
             elseif g:vikiHide == 'update'
+                " TLogDBG 'update | '. a:cmd .' '. fname
                 update
-                " TLogDBG a:cmd .' '. fname
-                exec a:cmd .' '. fname
+                exec a:cmd fname
             else
                 let pre = ''
                 if &modified && !&hidden
@@ -1734,7 +1748,7 @@ endf
 " Open a filename in a certain window and jump to an anchor if any
 " viki#OpenLink(filename, anchor, ?create=0, ?postcmd='', ?wincmd=0)
 function! viki#OpenLink(filename, anchor, ...) "{{{3
-    " TLogVAR a:filename
+    " TLogVAR a:filename, a:anchor
     let create  = a:0 >= 1 ? a:1 : 0
     let postcmd = a:0 >= 2 ? a:2 : ''
     if a:0 >= 3
@@ -1754,8 +1768,8 @@ function! viki#OpenLink(filename, anchor, ...) "{{{3
     if exists('*simplify')
         let filename = simplify(filename)
     endif
-    " TLogVAR filename
     let buf = bufnr('^'. filename .'$')
+    " TLogVAR filename, buf, bufloaded(buf), create, exists('b:editVikiPage')
     call viki#SetWindow(winNr)
     if buf >= 0 && bufloaded(buf)
         call s:EditLocalFile('buffer', buf, fi, li, co, a:anchor)
@@ -1775,7 +1789,7 @@ endf
 
 " Open a local file in vim
 function! s:EditLocalFile(cmd, fname, fi, li, co, anchor) "{{{3
-    " TLogVAR a:cmd, a:fname
+    " TLogVAR a:cmd, a:fname, a:fi, a:li, a:co, a:anchor
     let vf = viki#Family()
     let cb = bufnr('%')
     call tlib#dir#Ensure(fnamemodify(a:fname, ':p:h'))
@@ -1923,6 +1937,11 @@ function! s:OpenLink(dest, anchor, winNr)
     let b:vikiNextWindow = a:winNr
     " TLogVAR a:dest, a:anchor, a:winNr
     try
+        " TLogVAR viki#IsSpecialProtocol(a:dest)
+        " TLogVAR viki#IsSpecialFile(a:dest)
+        " TLogVAR isdirectory(a:dest)
+        " TLogVAR filereadable(a:dest)
+        " TLogVAR bufexists(a:dest), buflisted(a:dest)
         if viki#IsSpecialProtocol(a:dest)
             let url = viki#MakeUrl(a:dest, a:anchor)
             " TLogVAR url
