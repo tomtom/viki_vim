@@ -690,19 +690,18 @@ Example: >
 The filenames are stored as extended viki names. Each line can take a comment 
 that is restored upon automatic update.
 
-If a "head" argument is passed to the #Files region, the first N lines will be 
-shown after the reference.
+For a list of available arguments, see |viki#DirListing()|.
 
-There are a few special commands to deal with this region.
-
-If in the following commands a "!" is added, the command works only on files 
-in the same directory or a subdirectory as the file on the current line.
+The following arguments can be used to deal with #Files regions. An 
+additional <bang> ("!") makes these command work on just files in the 
+same directory or a subdirectory as the file on the current line.
 
 Default Key Binding~
-<LocalLeader>vu ... :VikiFilesUpdate
-<LocalLeader>vU ... :VikiFilesUpdateAll
-<LocalLeader>vx ... :VikiFilesExec
-<LocalLeader>vX ... :VikiFilesExec!
+
+    <LocalLeader>vu ... :VikiFilesUpdate
+    <LocalLeader>vU ... :VikiFilesUpdateAll
+    <LocalLeader>vx ... :VikiFilesExec
+    <LocalLeader>vX ... :VikiFilesExec!
 
 Example: >
     Use ":VikiFilesExec! e" (<LocalLeader>vXe<cr>) to edit all the files in 
@@ -906,6 +905,7 @@ Contents~
         g:vikiPostFindAnchor ................ |g:vikiPostFindAnchor|
         g:vikiNameTypes ..................... |g:vikiNameTypes|
         g:vikiExplorer ...................... |g:vikiExplorer|
+        g:viki#cmd_no_fnameescape ........... |g:viki#cmd_no_fnameescape|
         g:vikiHide .......................... |g:vikiHide|
         g:vikiNoWrapper ..................... |g:vikiNoWrapper|
         g:vikiCacheInexistent ............... |g:vikiCacheInexistent|
@@ -1312,6 +1312,11 @@ g:vikiNameTypes                (default: "csSeuixwf")
                                                     *g:vikiExplorer*
 g:vikiExplorer                 (default: "Sexplore")
     Which directory explorer to use to edit directories
+
+                                                    *g:viki#cmd_no_fnameescape*
+g:viki#cmd_no_fnameescape      (default: '^\(\ue\|E\)xplore\>')
+    A |regexp| matching commands for which the filename should not be 
+    pre-processed with |fnameescape()| when opening a file.
 
                                                     *g:vikiHide*
 g:vikiHide                     (default: '')
@@ -1972,6 +1977,23 @@ viki#FilesUpdate()
 
                                                     *viki#DirListing()*
 viki#DirListing(lhs, lhb, indent)
+    Update a #Files region. The following arguments are allowed to specify 
+    how the file list should be displayed:
+
+        glob=PATTERN ... A file pattern with |wildcards|. % and # (see 
+                         |cmdline-special|) are expanded too.
+        head=NUMBER .... Display the first N lines of the file's content
+        list=detail .... Include additional file info
+        list=flat ...... Display a flat list
+        types=[fd] ..... Whether to display files (f) and directories (d)
+        filter=REGEXP .. List only those files matching a |regexp|
+        exclude=REGEXP . Don't list files matching a |regexp|
+        sort=name|time|head ... Sort the list on the files' names, times, 
+                         or head lines. If the argument begins with "-", 
+                         the list is displayed in reverse order.
+
+    Comments (i.e. text after the file link) are maintained if possible 
+    and if list is not "detail".
 
                                                     *viki#FilesGetFilename()*
 viki#FilesGetFilename(t)

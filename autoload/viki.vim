@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-09-13.
-" @Revision:    0.1060
+" @Last Change: 2012-09-24.
+" @Revision:    0.1112
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2894,6 +2894,23 @@ fun! viki#FilesUpdate() "{{{3
     call viki#DirListing(lh, lb, indent)
 endf
 
+" Update a #Files region. The following arguments are allowed to specify 
+" how the file list should be displayed:
+"
+"     glob=PATTERN ... A file pattern with |wildcards|. % and # (see 
+"                      |cmdline-special|) are expanded too.
+"     head=NUMBER .... Display the first N lines of the file's content
+"     list=detail .... Include additional file info
+"     list=flat ...... Display a flat list
+"     types=[fd] ..... Whether to display files (f) and directories (d)
+"     filter=REGEXP .. List only those files matching a |regexp|
+"     exclude=REGEXP . Don't list files matching a |regexp|
+"     sort=name|time|head ... Sort the list on the files' names, times, 
+"                      or head lines. If the argument begins with "-", 
+"                      the list is displayed in reverse order.
+"
+" Comments (i.e. text after the file link) are maintained if possible 
+" and if list is not "detail".
 fun! viki#DirListing(lhs, lhb, indent) "{{{3
     let args = s:GetRegionArgs(a:lhs, a:lhb - 1)
     " TLogVAR args
