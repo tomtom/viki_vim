@@ -2940,9 +2940,35 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
             endif
             if !empty(ls)
                 let list = split(get(args, 'list', ''), ',\s*')
-                let head = 0 + get(args, 'head', '0')
+                let head = str2nr(get(args, 'head', '0'))
+                let s:files_options = {}
+                let sort = get(args, 'sort', '')
+                if !empty(sort)
+                    if sort =~ '^-'
+                        let s:files_options.sort_order = -1
+                    else
+                        let s:files_options.sort_order = 1
+                    endif
+                    let sort = substitute(sort, '^[+-]', '', '')
+                    if sort == 'name'
+                        let s:files_options.sort_on = 'filename'
+                    elseif sort == 'time'
+                        let s:files_options.ftime = 1
+                        let s:files_options.sort_on = 'ftime'
+                    elseif sort == 'head'
+                        let s:files_options.head = 1
+                        let s:files_options.sort_on = 'head'
+                    else
+                        throw "viki: #Files: sort must be either name, time, or head but was ". string(sort)
+                    endif
+                endif
                 let s:getfileentry_deep = 0
-                call map(ls, 'a:indent.s:GetFileEntry(v:val, deep, list, head)')
+                let ls = map(ls, 's:GetFileEntry(v:val, deep, list, head, s:files_options)')
+                if !empty(sort)
+                    let ls = sort(ls, 's:SortFiles')
+                endif
+                unlet s:files_options
+                let ls = map(ls, 'a:indent . v:val.filename')
                 let @t = join(ls, "\<c-j>") ."\<c-j>"
                 " TLogVAR a:lhb
                 exec 'norm! '. a:lhb .'G"t'. (a:lhb > line('$') ? 'p' : 'P')
@@ -2954,22 +2980,35 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
     endif
 endf
 
-fun! s:GetFileEntry(file, deep, list, head) "{{{3
+
+function! s:SortFiles(i1, i2) "{{{3
+    let sort_on = s:files_options.sort_on
+    let i1 = get(a:i1, sort_on)
+    let i2 = get(a:i2, sort_on)
+    let rv = i1 == i2 ? 0 : i1 > i2 ? 1 : -1
+    return rv * s:files_options.sort_order
+endf
+
+
+fun! s:GetFileEntry(file, deep, list, head, options) "{{{3
     let f = []
+    let props = {}
     let d = s:GetDepth(a:file) - s:dirlisting_depth0
     let attr = []
     let is_dir = 0
     if index(a:list, 'detail') != -1
-        let type = getftype(a:file)
-        if type != 'file'
-            if type == 'dir'
+        let props.type = getftype(a:file)
+        if props.type != 'file'
+            if props.type == 'dir'
                 let is_dir = 1
             else
-                call add(attr, type)
+                call add(attr, props.type)
             endif
         endif
-        call add(attr, strftime('%c', getftime(a:file)))
-        call add(attr, getfperm(a:file))
+        let props.ftime = strftime('%Y-%m-%d %H:%M:%S', getftime(a:file))
+        call add(attr, props.ftime)
+        let props.fperm = getfperm(a:file)
+        call add(attr, props.fperm)
     else
         if isdirectory(a:file)
             let is_dir = 1
@@ -2999,23 +3038,36 @@ fun! s:GetFileEntry(file, deep, list, head) "{{{3
         call add(f, ' {'. join(attr, '|') .'}')
     endif
     if a:head > 0 && !isdirectory(a:file)
-        let lines = readfile(a:file, '', a:head)
-        let lines = filter(lines, 'v:val =~ ''\S''')
-        let lines = map(lines, 'substitute(v:val, g:viki#files_head_rx, "", "g")')
-        let head_text = join(lines, '|')
-        " TLogVAR &l:fenc, &l:enc, head_text
-        if &l:fenc != &l:enc && has('iconv')
-            let head_text = iconv(head_text, &l:fenc, &l:enc)
-            " TLogVAR head_text
-        endif
-        call add(f, ' -- '. head_text)
+        let props.head = s:GetHead(a:file, a:head)
+        call add(f, ' -- '. props.head)
     else
+        if get(a:options, 'head', 0)
+            let props.head = s:GetHead(a:file, a:options.head)
+        endif
         let c = get(s:savedComments, a:file, '')
+        " TLogVAR a:file, c
         if !empty(c)
             call add(f, c)
         endif
     endif
-    return join(f, '')
+    if get(a:options, 'ftime', 0) && !has_key(props, 'ftime')
+        let props.ftime = strftime('%Y-%m-%d %H:%M:%S', getftime(a:file))
+    endif
+    let props.filename = join(f, '')
+    return props
+endf
+
+function! s:GetHead(file, head) "{{{3
+    let lines = readfile(a:file, '', a:head)
+    let lines = filter(lines, 'v:val =~ ''\S''')
+    let lines = map(lines, 'substitute(v:val, g:viki#files_head_rx, "", "g")')
+    let head_text = join(lines, '|')
+    " TLogVAR &l:fenc, &l:enc, head_text
+    if &l:fenc != &l:enc && has('iconv')
+        let head_text = iconv(head_text, &l:fenc, &l:enc)
+        " TLogVAR head_text
+    endif
+    return head_text
 endf
 
 fun! s:GetDepth(file) "{{{3
@@ -3148,17 +3200,19 @@ fun! s:SaveComments(lb, le) "{{{3
         let t = getline(l)
         let k = viki#FilesGetFilename(t)
         if !empty(k)
-            let s:savedComments[k] = viki#FilesGetComment(t)
+            let comment = viki#FilesGetComment(t)
+            let s:savedComments[k] = comment
+            " TLogVAR k, t, comment
         endif
     endfor
 endf
 
 fun! viki#FilesGetFilename(t) "{{{3
-    return matchstr(a:t, '^\s*\[\[\zs.\{-}\ze\]!\]')
+    return matchstr(a:t, '^\s*[`_+|\\-]*\s*\[\[\zs.\{-}\ze\]\(\[\|!\]\)')
 endf
 
 fun! viki#FilesGetComment(t) "{{{3
-    return matchstr(a:t, '^\s*\[\[.\{-}\]!\]\( {.\{-}}\)\?\zs.*')
+    return matchstr(a:t, '^\s*[`_+|\\-]*\s*\[\[.\{-}\]!\]\( {.\{-}}\)\?\zs.*')
 endf
 
 
