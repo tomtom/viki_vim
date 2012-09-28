@@ -635,3 +635,14 @@ version: "4.02"
   MD5 checksum: 44dbf4bf6d6a985e3b140781636f8fdc
 version: "4.03"
 
+  - #Files: error when the region started/ended at last line
+  - Support for tinykeymaps plugin (move list item)
+  - Moved definitions of functions and global variables from ftplugin/viki.vim to autoload/viki.vim (fixes #5)
+  - Moved listitem_move to autoload/tinykeymap/map
+  - g:viki#cmd_no_fnameescape: Don't pre-process arguments for some file-viewer commands
+  - vikiPriorityLists syntax: Make date more explicit; allow dates in tags
+  - tinykeymap: listitem_move: Highlight the current line
+  - #Files: improved display of file properties; sort argument
+  MD5 checksum: e90c38e13fd9dc00edab65879dde2967
+version: "4.04"
+
