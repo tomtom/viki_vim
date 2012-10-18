@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-09-24.
-" @Revision:    0.1112
+" @Revision:    0.1125
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2890,7 +2890,7 @@ endf
 fun! viki#FilesUpdate() "{{{3
     let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
     " TLogVAR lh, lb, le, indent
-    call s:DeleteRegionBody(lb, le)
+    call s:SaveRegionBody(lb, le)
     call viki#DirListing(lh, lb, indent)
 endf
 
@@ -2986,9 +2986,14 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
                 endif
                 unlet s:files_options
                 let ls = map(ls, 'a:indent . v:val.filename')
-                let @t = join(ls, "\<c-j>") ."\<c-j>"
-                " TLogVAR a:lhb
-                exec 'norm! '. a:lhb .'G"t'. (a:lhb > line('$') ? 'p' : 'P')
+                if ls != get(s:savedLines, 'lines', [])
+                    call s:DeleteFilesRegion()
+                    let @t = join(ls, "\<c-j>") ."\<c-j>"
+                    " TLogVAR a:lhb
+                    exec 'silent norm! '. a:lhb .'G"t'. (a:lhb > line('$') ? 'p' : 'P')
+                endif
+            else
+                call s:DeleteFilesRegion()
             endif
         finally
             let @t = t
@@ -3194,34 +3199,37 @@ fun! s:GetRegionGeometry(...) "{{{3
     endtry
 endf
 
-fun! s:DeleteRegionBody(...) "{{{3
+function! s:DeleteFilesRegion() "{{{3
+    if !empty(s:savedLines) && s:savedLines.lb <= s:savedLines.le1
+        exec 'norm! '. s:savedLines.lb .'Gd'. s:savedLines.le1 .'G'
+    endif
+endf
+
+fun! s:SaveRegionBody(...) "{{{3
     if a:0 >= 2
         let lb = a:1
         let le = a:2
     else
         let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
     endif
-    " TLogVAR lb, le
-    if le <= line('$') + 1
-        call s:SaveComments(lb, le - 1)
-        if le > lb
-            exec 'norm! '. lb .'Gd'. (le - 1) .'G'
-        endif
+    let le1 = le - 1
+    " TLogVAR lb, le, le1, line('$')
+    if le1 <= line('$')
+        let s:savedLines = {'lb': lb, 'le1': le1, 'lines': getline(lb, le1)}
+        let s:savedComments = {}
+        for l in range(lb, le1)
+            let t = getline(l)
+            let k = viki#FilesGetFilename(t)
+            if !empty(k)
+                let comment = viki#FilesGetComment(t)
+                let s:savedComments[k] = comment
+                " TLogVAR k, t, comment
+            endif
+        endfor
+    else
+        let s:savedLines = {}
+        let s:savedComments = {}
     endif
-endf
-
-fun! s:SaveComments(lb, le) "{{{3
-    " TLogVAR a:lb, a:le
-    let s:savedComments = {}
-    for l in range(a:lb, a:le)
-        let t = getline(l)
-        let k = viki#FilesGetFilename(t)
-        if !empty(k)
-            let comment = viki#FilesGetComment(t)
-            let s:savedComments[k] = comment
-            " TLogVAR k, t, comment
-        endif
-    endfor
 endf
 
 fun! viki#FilesGetFilename(t) "{{{3
