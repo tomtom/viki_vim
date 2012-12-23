@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
 " @Last Change: 2012-08-28.
-" @Revision:    2748
+" @Revision:    2749
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -113,6 +113,7 @@ endif
 " Can also be buffer-local.
 " :read: let g:vikiSplit = NO DEFAULT
 
+" :doc:
 " If non-nil, simple viki names are disabled.
 " :read: let b:vikiNoSimpleNames = 0 "{{{2
 

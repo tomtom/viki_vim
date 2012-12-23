@@ -1132,6 +1132,8 @@ g:vikiIndentedPriorityLists    (default: 1)
 b:vikiNoSimpleNames            (default: 0)
     If non-nil, simple viki names are disabled.
 
+
+
                                                     *b:vikiDisableType*
 b:vikiDisableType              (default: "")
     Disable certain viki name types (see |vikiNameTypes|).
@@ -1589,7 +1591,6 @@ viki#Mode(...)
 
                                                     *VikiOpenAsWorkspace()*
 VikiOpenAsWorkspace(file)
-    Special file handlers
 
                                                     *g:vikiOpenFileWith_ANY*
 g:vikiOpenFileWith_ANY         (default: "exec 'silent !'. g:netrw_browsex_viewer .' '. shellescape('%{FILE}')")
@@ -1610,7 +1611,6 @@ VikiOpenSpecialFile(file)
 
                                                     *g:vikiOpenUrlWith_mailbox*
 g:vikiOpenUrlWith_mailbox      (default: "call VikiOpenMailbox('%{URL}')")
-    Special protocol handlers
 
                                                     *VikiOpenMailbox()*
 VikiOpenMailbox(url)
@@ -1676,11 +1676,9 @@ viki#RxFromCollection(coll)
 viki#HighlightInexistent()
     Actually highlight inexistent file names
 
-
-    Check a text element for inexistent names
-
                                                     *viki#MarkInexistentInElement()*
 viki#MarkInexistentInElement(elt)
+    Check a text element for inexistent names
 
                                                     *viki#ExprMarkInexistentInElement()*
 viki#ExprMarkInexistentInElement(elt, key)

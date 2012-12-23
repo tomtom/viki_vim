@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-09-24.
-" @Revision:    0.1130
+" @Revision:    0.1133
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -54,10 +54,10 @@ endif
 "     search text. The expression has to conform to the very nomagic |/\V| 
 "     syntax.
 
-" Characters allowed in anchors
-" Defaults to:
-" [b:vikiLowerCharacters][b:vikiLowerCharacters +  b:vikiUpperCharacters + '_0-9]*
 if !exists('g:vikiAnchorNameRx')
+    " Characters allowed in anchors
+    " Defaults to:
+    " [b:vikiLowerCharacters][b:vikiLowerCharacters +  b:vikiUpperCharacters + '_0-9]*
     let g:vikiAnchorNameRx = '' "{{{2
 endif
 
@@ -1066,13 +1066,13 @@ function! viki#HighlightInexistent() "{{{3
     endif
 endf
 
-" Check a text element for inexistent names
 if v:version == 700 && !has('patch8')
     function! s:SID()
         let fullname = expand("<sfile>")
         return matchstr(fullname, '<SNR>\d\+_')
     endf
 
+    " Check a text element for inexistent names
     function! viki#MarkInexistentInElement(elt) "{{{3
         if exists('b:vikiEnabled') && b:vikiEnabled <= 1
             finish
