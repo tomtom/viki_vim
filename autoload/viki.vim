@@ -664,7 +664,7 @@ if !exists("g:vikiOpenUrlWith_ANY")
     elseif has("mac")
         let g:vikiOpenUrlWith_ANY = "exec 'silent !open '. escape('%{URL}', ' &!%')"
     elseif exists('$XDG_CURRENT_DESKTOP') && !empty($XDG_CURRENT_DESKTOP)
-        let g:vikiOpenFileWith_ANY = "exec 'silent !xdg-open '. shellescape('%{URL}')"
+        let g:vikiOpenUrlWith_ANY = "exec 'silent !xdg-open '. shellescape('%{URL}')"
     elseif $GNOME_DESKTOP_SESSION_ID != ""
         let g:vikiOpenUrlWith_ANY = "exec 'silent !gnome-open '. shellescape('%{URL}')"
     elseif $KDEDIR != ""
