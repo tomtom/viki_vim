@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-09-24.
-" @Revision:    0.1133
+" @Revision:    0.1140
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2698,6 +2698,11 @@ fun! viki#GetIndent()
             " TLogVAR plCont, cind
             return cind
         end
+
+        if pline =~ '^\s*\(+++\|!!!\|???\|###\)\s'
+            " TLogVAR "marker:", pline
+            return pind + &sw
+        endif
         
         if cind > 0
             " TLogVAR cind
