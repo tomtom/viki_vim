@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2012-09-24.
-" @Revision:    0.1140
+" @Revision:    0.1143
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2699,10 +2699,10 @@ fun! viki#GetIndent()
             return cind
         end
 
-        if pline =~ '^\s*\(+++\|!!!\|???\|###\)\s'
-            " TLogVAR "marker:", pline
-            return pind + &sw
-        endif
+        " if pline =~ '^\s*\(+++\|!!!\|???\|###\)\s'
+        "     " TLogVAR "marker:", pline
+        "     return pind + 4
+        " endif
         
         if cind > 0
             " TLogVAR cind
@@ -2725,7 +2725,8 @@ fun! viki#GetIndent()
             let clDesc = matchend(cline, descRx)
             " let cln    = clList >= 0 ? clList : clDesc
 
-			let swhalf = &sw / 2
+			" let swhalf = &sw / 2
+			let swhalf = 2
 
             if clList >= 0 || clDesc >= 0 || clMark >= 0 || clPri >= 0
                 " let spaceEnd = matchend(cline, '^\s\+')
