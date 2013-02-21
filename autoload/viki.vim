@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2012-09-24.
-" @Revision:    0.1143
+" @Last Change: 2013-02-19.
+" @Revision:    0.1145
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -91,6 +91,7 @@ if !exists("g:vikiSpecialFiles") "{{{2
     let g:vikiSpecialFiles = [
                 \ '3gp',
                 \ 'aac',
+                \ 'accdb',
                 \ 'aif',
                 \ 'aiff',
                 \ 'au',
@@ -108,6 +109,7 @@ if !exists("g:vikiSpecialFiles") "{{{2
                 \ 'jpeg',
                 \ 'jpg',
                 \ 'm3u',
+                \ 'mdb',
                 \ 'mhtml',
                 \ 'mp1',
                 \ 'mp2',
