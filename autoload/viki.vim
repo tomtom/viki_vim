@@ -432,6 +432,13 @@ if !exists('g:viki#use_texmath')
     let g:viki#use_texmath = 1   "{{{2
 endif
 
+if !exists('g:viki#code_syntax')
+    " Properly highlight #Code regions if the filetype is included in 
+    " the list below.
+    let g:viki#code_syntax = ['sql']   "{{{2
+endif
+
+
 let g:viki#quit = 0
 
 let s:positions = {}

@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2013-02-18.
-" @Revision: 0.1054
+" @Last Change: 2013-02-28.
+" @Revision: 0.1057
 
 if version < 600
     syntax clear
@@ -200,6 +200,19 @@ syn region vikiTexRegion matchgroup=vikiMacroDelim
             \ start=/^[[:blank:]]*#Ltx\>\(\\\n\|.\)\{-}<<\z(.*\)$/ 
             \ end=/^[[:blank:]]*\z1[[:blank:]]*$/ 
             \ contains=@texmathMath
+
+
+" for s:filetype in g:viki#code_syntax
+"     exec 'syntax include @vikiCode_'. s:filetype 'syntax/'. s:filetype .'.vim'
+"     syn region vikiCodeRegion_ s:filetype 
+"         start=/^\s*#Code\s\_.\{-}\<syntax='. s:filetype .'\><<\z(.*\)\n/
+"         \ end=/^[[:blank:]]*\z1\([[:blank:]].*\)\?$/ 
+"         \ contains
+"             \ start=/^[[:blank:]]*#Code\>\|!!!\)\(\\\n\|.\)\{-}<<\z(.*\)$/ 
+"             \ end=/^[[:blank:]]*\z1[[:blank:]]*$/ 
+"             \ contains=@vikiText,vikiRegionNames
+" endfor
+" unlet! s:filetype
 
 
 syn match vikiList /^[[:blank:]]\+\([-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\)\ze[[:blank:]]/
