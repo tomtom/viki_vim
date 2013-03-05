@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2013-02-19.
-" @Revision:    0.1145
+" @Last Change: 2013-03-04.
+" @Revision:    0.1152
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -3525,16 +3525,17 @@ endf
 
 
 function! viki#UpdateHeadings() "{{{3
-    let viki_headings = {}
+    let b:viki_headings = {}
     let pos = getpos('.')
     try
-        silent! g/^\*\+\s/let viki_headings[line('.')] = matchend(getline('.'), '^\*\+\s')
+        " silent! g/^\*\+ /let b:viki_headings[line('.')] = matchend(getline('.'), '^\*\+\s')
+        silent! g/^\*\+ /let b:viki_headings[line('.')] = stridx(getline('.'), ' ')
     finally
         call setpos('.', pos)
     endtry
-    if !exists('b:viki_headings') || b:viki_headings != viki_headings
-        let b:viki_headings = viki_headings
-    endif
+    " if !exists('b:viki_headings') || b:viki_headings != viki_headings
+    "     let b:viki_headings = viki_headings
+    " endif
     " TLogVAR len(viki_headings)
 endf
 
