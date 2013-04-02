@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
 " @Last Change: 2013-02-28.
-" @Revision: 0.1057
+" @Revision: 0.1059
 
 if version < 600
     syntax clear
@@ -60,10 +60,10 @@ if has('conceal') && &enc == 'utf-8'
                 \ ]
         
         exec 'syn match vikiSymbol'. s:name .' /\V'. s:chars .'/ conceal cchar='. s:cchar
-        call add(s:sym_cluster, s:name)
+        call add(s:sym_cluster, 'vikiSymbol'. s:name)
     endfor
-    syn match vikiSymbols /\V\(&\(#\d\+\|\w\+\);\)/
-    exec 'syn cluster vikiSymbols contains=vikiSymbols,'. join(s:sym_cluster, ',')
+    syn match vikiSymbolExtra /\V\(&\(#\d\+\|\w\+\);\)/
+    exec 'syn cluster vikiSymbols contains=vikiSymbolExtra,'. join(s:sym_cluster, ',')
     unlet s:name s:chars s:cchar s:sym_cluster
 else
     " syn match vikiSymbols /\(--\|!=\|==\+\|\~\~\+\|<-\+>\|<=\+>\|<\~\+>\|<-\+\|-\+>\|<=\+\|=\+>\|<\~\+\|\~\+>\|\.\.\.\)/
