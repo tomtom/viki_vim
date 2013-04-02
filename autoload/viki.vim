@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2013-03-04.
-" @Revision:    0.1152
+" @Revision:    0.1153
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -3527,10 +3527,12 @@ endf
 function! viki#UpdateHeadings() "{{{3
     let b:viki_headings = {}
     let pos = getpos('.')
+    let sreg = @/
     try
         " silent! g/^\*\+ /let b:viki_headings[line('.')] = matchend(getline('.'), '^\*\+\s')
         silent! g/^\*\+ /let b:viki_headings[line('.')] = stridx(getline('.'), ' ')
     finally
+        let @/ = sreg
         call setpos('.', pos)
     endtry
     " if !exists('b:viki_headings') || b:viki_headings != viki_headings
