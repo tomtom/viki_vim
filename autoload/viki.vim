@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2013-03-04.
-" @Revision:    0.1153
+" @Last Change: 2013-05-22.
+" @Revision:    0.1154
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -1787,7 +1787,7 @@ function! viki#OpenLink(filename, anchor, ...) "{{{3
     elseif exists('b:editVikiPage')
         call s:EditLocalFile(b:editVikiPage, filename, fi, li, co, g:vikiDefNil)
     elseif isdirectory(filename)
-        call s:EditLocalFile(g:vikiExplorer, tlib#dir#PlainName(filename), fi, li, co, g:vikiDefNil)
+        call s:EditLocalFile(g:vikiExplorer, tlib#dir#NativeName(tlib#dir#PlainName(filename)), fi, li, co, g:vikiDefNil)
     else
         call s:EditLocalFile('edit', filename, fi, li, co, a:anchor)
     endif
