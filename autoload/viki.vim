@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2013-05-22.
-" @Revision:    0.1154
+" @Last Change: 2013-09-05.
+" @Revision:    0.1156
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -3066,8 +3066,9 @@ fun! s:GetFileEntry(file, deep, list, head, options) "{{{3
         let prefix .= ' '
         call add(f, prefix)
     endif
-    if g:viki_viki#conceal_extended_link_markup && has('conceal')
-        call add(f, '[['. a:file .']['. fnamemodify(a:file, ':t') .']!]')
+    let file_t = fnamemodify(a:file, ':t')
+    if a:file != file_t && g:viki_viki#conceal_extended_link_markup && has('conceal')
+        call add(f, '[['. a:file .']['. file_t .']!]')
     else
         call add(f, '[['. a:file .']!]')
     endif
