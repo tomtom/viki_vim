@@ -679,13 +679,13 @@ catalogs for viki files in a directory.
 
 Example: >
     #Files glob=lib/** types=f <<
-    [[example1.rb]]     This is an example file
-    [[example2.rb]]     This is another example
-    [[lib/example1.rb]]
-    [[lib/example2.rb]]
+    [[example1.rb]!]     This is an example file
+    [[example2.rb]!]     This is another example
+    [[lib/example1.rb]!]
+    [[lib/example2.rb]!]
 
     #Files glob=*.viki types=f <<
-    [[example.viki]] The manual
+    [[example.viki]!] The manual
 
 The filenames are stored as extended viki names. Each line can take a comment 
 that is restored upon automatic update.
@@ -932,6 +932,7 @@ Contents~
         g:vikiFolds ......................... |g:vikiFolds|
         g:viki#files_head_rx ................ |g:viki#files_head_rx|
         g:viki#use_texmath .................. |g:viki#use_texmath|
+        g:viki#code_syntax .................. |g:viki#code_syntax|
         :VikiFindNext ....................... |:VikiFindNext|
         :VikiFindPrev ....................... |:VikiFindPrev|
         :VikiMarkInexistent ................. |:VikiMarkInexistent|
@@ -1483,6 +1484,11 @@ g:viki#files_head_rx           (default: '^\(\*\s\+\)')
 g:viki#use_texmath             (default: 1)
     If true, load syntax/texmath.vim for a prettier display of 
     mathematical formulas.
+
+                                                    *g:viki#code_syntax*
+g:viki#code_syntax             (default: ['sql'])
+    Properly highlight #Code regions if the filetype is included in 
+    the list below.
 
                                                     *:VikiFindNext*
 :VikiFindNext
