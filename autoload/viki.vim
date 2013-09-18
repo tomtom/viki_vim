@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2013-09-05.
-" @Revision:    0.1156
+" @Revision:    0.1159
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2924,6 +2924,7 @@ endf
 "     sort=name|time|head ... Sort the list on the files' names, times, 
 "                      or head lines. If the argument begins with "-", 
 "                      the list is displayed in reverse order.
+"     format=expr      Filename format string (see |expand()|)
 "
 " Comments (i.e. text after the file link) are maintained if possible 
 " and if list is not "detail".
@@ -2998,7 +2999,7 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
                     endif
                 endif
                 let s:getfileentry_deep = 0
-                let ls = map(ls, 's:GetFileEntry(v:val, deep, list, head, s:files_options)')
+                let ls = map(ls, 's:GetFileEntry(v:val, deep, list, head, args)')
                 if !empty(sort)
                     let ls = sort(ls, 's:SortFiles')
                 endif
@@ -3030,7 +3031,7 @@ function! s:SortFiles(i1, i2) "{{{3
 endf
 
 
-fun! s:GetFileEntry(file, deep, list, head, options) "{{{3
+fun! s:GetFileEntry(file, deep, list, head, args) "{{{3
     let f = []
     let props = {}
     let d = s:GetDepth(a:file) - s:dirlisting_depth0
@@ -3069,7 +3070,8 @@ fun! s:GetFileEntry(file, deep, list, head, options) "{{{3
         let prefix .= ' '
         call add(f, prefix)
     endif
-    let file_t = fnamemodify(a:file, ':t')
+    let format = get(a:args, 'format', ':t')
+    let file_t = fnamemodify(a:file, format)
     if a:file != file_t && g:viki_viki#conceal_extended_link_markup && has('conceal')
         call add(f, '[['. a:file .']['. file_t .']!]')
     else
@@ -3082,8 +3084,8 @@ fun! s:GetFileEntry(file, deep, list, head, options) "{{{3
         let props.head = s:GetHead(a:file, a:head)
         call add(f, ' -- '. props.head)
     else
-        if get(a:options, 'head', 0)
-            let props.head = s:GetHead(a:file, a:options.head)
+        if get(s:files_options, 'head', 0)
+            let props.head = s:GetHead(a:file, s:files_options.head)
         endif
         let c = get(s:savedComments, a:file, '')
         " TLogVAR a:file, c
@@ -3091,7 +3093,7 @@ fun! s:GetFileEntry(file, deep, list, head, options) "{{{3
             call add(f, c)
         endif
     endif
-    if get(a:options, 'ftime', 0) && !has_key(props, 'ftime')
+    if get(s:files_options, 'ftime', 0) && !has_key(props, 'ftime')
         let props.ftime = strftime('%Y-%m-%d %H:%M:%S', getftime(a:file))
     endif
     let props.filename = join(f, '')
@@ -3103,7 +3105,7 @@ function! s:GetHead(file, head) "{{{3
     let lines = filter(lines, 'v:val =~ ''\S''')
     let lines = map(lines, 'substitute(v:val, g:viki#files_head_rx, "", "g")')
     let head_text = join(lines, '|')
-    " TLogVAR &l:fenc, &l:enc, head_text
+    let head_text = substitute(head_text, "[[:cntrl:]]", "", "g")
     if &l:fenc != &l:enc && has('iconv')
         let head_text = iconv(head_text, &l:fenc, &l:enc)
         " TLogVAR head_text
