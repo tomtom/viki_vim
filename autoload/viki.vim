@@ -2913,7 +2913,8 @@ endf
 " how the file list should be displayed:
 "
 "     glob=PATTERN ... A file pattern with |wildcards|. % and # (see 
-"                      |cmdline-special|) are expanded too.
+"                      |cmdline-special|) are expanded too. The pattern 
+"                      can also refer to an |interviki| (e.g. NOTES::*.txt)
 "     head=NUMBER .... Display the first N lines of the file's content
 "     list=detail .... Include additional file info
 "     list=flat ...... Display a flat list
@@ -2936,8 +2937,10 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
     else
         let deep = patt =~ '\*\*'
         let bufdir = expand('%:p:h')
-        if patt !~ '^\([%\\/]\|\w\+:\)' && !&autochdir && bufdir != getcwd()
-            let patt = tlib#file#Join([expand('%:p:h'), patt])
+        if viki#IsInterViki(patt)
+            let patt = viki#InterVikiDest(patt)
+        elseif patt !~ '^\([%\\/]\|\w\+:\)' && !&autochdir && bufdir != getcwd()
+            let patt = tlib#file#Join([bufdir, patt])
         endif
         " TLogVAR patt
         if patt =~ '^[^\\/*?]*[*?]'
