@@ -1985,7 +1985,8 @@ viki#DirListing(lhs, lhb, indent)
     how the file list should be displayed:
 
         glob=PATTERN ... A file pattern with |wildcards|. % and # (see 
-                         |cmdline-special|) are expanded too.
+                         |cmdline-special|) are expanded too. The pattern 
+                         can also refer to an |interviki| (e.g. NOTES::*.txt)
         head=NUMBER .... Display the first N lines of the file's content
         list=detail .... Include additional file info
         list=flat ...... Display a flat list
@@ -1995,6 +1996,7 @@ viki#DirListing(lhs, lhb, indent)
         sort=name|time|head ... Sort the list on the files' names, times, 
                          or head lines. If the argument begins with "-", 
                          the list is displayed in reverse order.
+        format=expr      Filename format string (see |expand()|)
 
     Comments (i.e. text after the file link) are maintained if possible 
     and if list is not "detail".
