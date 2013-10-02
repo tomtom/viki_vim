@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2013-02-28.
-" @Revision: 0.1059
+" @Last Change: 2013-09-30.
+" @Revision: 0.1060
 
 if version < 600
     syntax clear
@@ -175,7 +175,7 @@ syn match vikiCommand /^\C[[:blank:]]*#\([A-Z]\{2,}\)\>\(\\\n\|.\)*/
 " syn match vikiFilesMarkers /\[\[\([^\/]\+\/\)*\|\]!\]/ contained containedin=vikiFiles
 " syn match vikiFilesIndicators /{.\{-}}/ contained containedin=vikiFiles
 syn match vikiFilesIndicators /^\s*[`_+|\\-]\+\s/ contained containedin=vikiFiles
-syn match vikiFiles /^\s*[`_+|\\-]\+\s\+\[\[.\{-}\]!\].*$/
+syn match vikiFiles /^\(\s*[`_+|\\-]\+\s\+\)\?\[\[.\{-}\]!\].*$/
             \ contained containedin=vikiFilesRegion contains=vikiExtendedLink,vikiFilesIndicators
 syn region vikiFilesRegion matchgroup=vikiMacroDelim
             \ start=/^[[:blank:]]*#Files\>\(\\\n\|.\)\{-}<<\z(.*\)$/ 

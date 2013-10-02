@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2013-09-05.
-" @Revision:    0.1159
+" @Last Change: 2013-09-30.
+" @Revision:    0.1215
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2865,6 +2865,7 @@ fun! viki#FilesCall(cmd, bang) "{{{3
 endf
 
 fun! s:CollectFileNames(lb, le, bang) "{{{3
+    let s:isdir = {}
     let afile = viki#FilesGetFilename(getline('.'))
     let acc   = []
     for l in range(a:lb, a:le - 1)
@@ -2876,6 +2877,18 @@ fun! s:CollectFileNames(lb, le, bang) "{{{3
     endfor
     return acc
 endf
+
+let s:isdir = {}
+
+fun! s:IsDir(filename) "{{{3
+    let rv = get(s:isdir, a:filename, -2)
+    if rv == -2
+        let rv = isdirectory(a:filename)
+        let s:isdir[a:filename] = rv
+    endif
+    return rv
+endf
+
 
 fun! s:IsEligibleLine(afile, bfile, bang) "{{{3
     if empty(a:bang)
@@ -2957,14 +2970,49 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
             let ls = split(glob(patt), '\n')
             " TLogVAR ls
             let types = get(args, 'types', '')
-            if !empty(types)
-                let show_files = stridx(types, 'f') != -1
+            if empty(types)
+                let show_dirs  = 1
+                let show_files = 1
+            else
                 let show_dirs  = stridx(types, 'd') != -1
-                if show_files || show_dirs
-                    call filter(ls, '(show_files && !isdirectory(v:val)) || (show_dirs && isdirectory(v:val))')
+                let show_files = stridx(types, 'f') != -1
+            endif
+            if show_files || show_dirs
+                " if empty(fnamemodify(patt, ':e'))
+                TLogVAR patt
+                if stridx(patt, '**') == -1
+                    call filter(ls, '(show_files && !s:IsDir(v:val)) || (show_dirs && s:IsDir(v:val))')
                 else
-                    let ls = []
+                    let ls1 = []
+                    let rootdir = ''
+                    for lsitem in ls
+                        let lsdir = s:IsDir(lsitem)
+                        if lsdir
+                            if show_dirs
+                                call add(ls1, lsitem)
+                            endif
+                        elseif show_files
+                            if show_dirs
+                                let lsdirname = fnamemodify(lsitem, ':p:h')
+                                " TLogVAR lsdirname, index(ls1,lsdirname)
+                                if empty(rootdir) || strwidth(lsdirname) < strwidth(rootdir)
+                                    let rootdir = lsdirname
+                                endif
+                                if index(ls1, lsdirname) == -1
+                                    call add(ls1, lsdirname)
+                                endif
+                            endif
+                            call add(ls1, lsitem)
+                        endif
+                    endfor
+                    if !empty(rootdir)
+                        call remove(ls1, index(ls1, rootdir))
+                    endif
+                    " TLogVAR rootdir
+                    let ls = ls1
                 endif
+            else
+                let ls = []
             endif
             let filter = get(args, 'filter', '')
             if !empty(filter)
@@ -3051,19 +3099,23 @@ fun! s:GetFileEntry(file, deep, list, head, args) "{{{3
         let props.fperm = getfperm(a:file)
         call add(attr, props.fperm)
     else
-        if isdirectory(a:file)
+        if s:IsDir(a:file)
             let is_dir = 1
         endif
     endif
     if index(a:list, 'flat') == -1
         let prefix  = repeat(' ', d)
         if a:deep
-            if s:getfileentry_deep == d
-                let prefix .= is_dir ? ' +' : ' |'
-            else
+            if s:getfileentry_deep < d
                 let prefix .= is_dir ? '`+' : '`|'
+            else
+                let prefix .= is_dir ? ' +' : ' |'
             endif
-            let s:getfileentry_deep = d
+            if is_dir
+                let s:getfileentry_deep = max([0, d - 1])
+            else
+                let s:getfileentry_deep = d
+            endif
         else
             let prefix .= is_dir ? '+' : '|'
         endif
@@ -3072,6 +3124,9 @@ fun! s:GetFileEntry(file, deep, list, head, args) "{{{3
     endif
     let format = get(a:args, 'format', ':t')
     let file_t = fnamemodify(a:file, format)
+    if is_dir
+        let file_t .= '/'
+    endif
     if a:file != file_t && g:viki_viki#conceal_extended_link_markup && has('conceal')
         call add(f, '[['. a:file .']['. file_t .']!]')
     else
@@ -3080,7 +3135,7 @@ fun! s:GetFileEntry(file, deep, list, head, args) "{{{3
     if !empty(attr)
         call add(f, ' {'. join(attr, '|') .'}')
     endif
-    if a:head > 0 && !isdirectory(a:file)
+    if a:head > 0 && !s:IsDir(a:file)
         let props.head = s:GetHead(a:file, a:head)
         call add(f, ' -- '. props.head)
     else
