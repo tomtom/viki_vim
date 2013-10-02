@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
 " @Last Change: 2013-03-04.
-" @Revision: 523
+" @Revision: 524
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -72,7 +72,7 @@ let b:undo_ftplugin = 'setlocal iskeyword< expandtab< foldtext< foldexpr< foldme
             \ .'| unmap <buffer> []'
 
 if g:vikiAutoupdateFiles
-    call viki#FilesUpdateAll()
+    call viki#FilesRegionUpdateAll()
 endif
 
 if g:vikiFoldMethodVersion == 0 "{{{2

@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2013-09-30.
-" @Revision:    0.1215
+" @Last Change: 2013-10-02.
+" @Revision:    0.1299
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -368,6 +368,7 @@ if !exists("g:vikiMapFunctionality")
     " q     ... quote
     " tF    ... tab as find
     " Files ... #Files related
+    " Grep  ... #Grep related
     " let g:vikiMapFunctionality      = 'mf mb tF c q e i I Files'
     let g:vikiMapFunctionality      = 'ALL' "{{{2
 endif
@@ -509,10 +510,16 @@ command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin3 :c
 command! -nargs=1 -bang -complete=customlist,viki#EditComplete VikiEditInWin4 :call viki#Edit(<q-args>, !empty("<bang>"), 4)
 
 " Update the current |viki-files| #Files region under the cursor.
-command! VikiFilesUpdate call viki#FilesUpdate()
+command! VikiFilesUpdate call viki#FilesRegionUpdate()
     
 " Update all |viki-files| #Files regions in the current buffer.
-command! VikiFilesUpdateAll call viki#FilesUpdateAll()
+command! VikiFilesUpdateAll call viki#FilesRegionUpdateAll()
+
+" Update the current |viki-grep| #Grep region under the cursor.
+command! VikiGrepUpdate call viki#GrepRegionUpdate()
+    
+" Update all |viki-grep| #Grep regions in the current buffer.
+command! VikiGrepUpdateAll call viki#GrepRegionUpdateAll()
 
 command! -nargs=* -bang -complete=command VikiFileExec call viki#FilesExec(<q-args>, '<bang>', 1)
 " |:execute| a vim command after doing some replacements with the command 
@@ -2808,15 +2815,29 @@ function! viki#ExecExternal(cmd) "{{{3
 endf
 
 
+fun! viki#RegionUpdate() "{{{3
+    let [lh, lb, le, indent, regname] = s:GetRegionGeometry('')
+    let fn = printf('viki#%sRegionUpdate', regname)
+    if exists('*'. fn)
+        call call(fn, [])
+    endif
+endf
+
+
+fun! viki#RegionUpdateAll() "{{{3
+    call s:UpdateAllRegions('Files\|Grep', function('viki#RegionUpdate'))
+endf
+
+
 " :doc:
 " #Files related stuff
 
-fun! viki#FilesUpdateAll() "{{{3
+fun! s:UpdateAllRegions(name, update) "{{{3
     let view = winsaveview()
     try
         norm! gg
-        while viki#FindNextRegion('Files')
-            call viki#FilesUpdate()
+        while viki#FindNextRegion(a:name)
+            call call(a:update, [])
             norm! j
         endwh
     finally
@@ -2827,7 +2848,7 @@ fun! viki#FilesUpdateAll() "{{{3
 endf
 
 fun! viki#FilesExec(cmd, bang, ...) "{{{3
-    let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
+    let [lh, lb, le, indent, regname] = s:GetRegionGeometry('Files')
     if a:0 >= 1 && a:1
         let lb = line('.')
         let le = line('.') + 1
@@ -2849,7 +2870,7 @@ fun! viki#FilesExec(cmd, bang, ...) "{{{3
 endf
 
 fun! viki#FilesCmd(cmd, bang) "{{{3
-    let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
+    let [lh, lb, le, indent, regname] = s:GetRegionGeometry('Files')
     let ilen = len(indent)
     for t in s:CollectFileNames(lb, le, a:bang)
         exec VikiCmd_{a:cmd} .' '. escape(t, '%#\ ')
@@ -2857,7 +2878,7 @@ fun! viki#FilesCmd(cmd, bang) "{{{3
 endf
 
 fun! viki#FilesCall(cmd, bang) "{{{3
-    let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
+    let [lh, lb, le, indent, regname] = s:GetRegionGeometry('Files')
     let ilen = len(indent)
     for t in s:CollectFileNames(lb, le, a:bang)
         call VikiCmd_{a:cmd}(t)
@@ -2915,11 +2936,15 @@ fun! s:IsSubdir(adir, bdir) "{{{3
     endif
 endf
 
-fun! viki#FilesUpdate() "{{{3
-    let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
+fun! viki#FilesRegionUpdateAll() "{{{3
+    call s:UpdateAllRegions('Files', function('viki#FilesRegionUpdate'))
+endf
+
+fun! viki#FilesRegionUpdate() "{{{3
+    let [lh, lb, le, indent, regname] = s:GetRegionGeometry('Files')
     " TLogVAR lh, lb, le, indent
-    call s:SaveRegionBody(lb, le)
-    call viki#DirListing(lh, lb, indent)
+    let region = s:SaveRegionBody(1, lb, le)
+    call viki#DirListing(lh, lb, indent, region)
 endf
 
 " Update a #Files region. The following arguments are allowed to specify 
@@ -2941,7 +2966,7 @@ endf
 "
 " Comments (i.e. text after the file link) are maintained if possible 
 " and if list is not "detail".
-fun! viki#DirListing(lhs, lhb, indent) "{{{3
+fun! viki#DirListing(lhs, lhb, indent, region) "{{{3
     let args = s:GetRegionArgs(a:lhs, a:lhb - 1)
     " TLogVAR args
     let patt = get(args, 'glob', '')
@@ -2979,7 +3004,7 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
             endif
             if show_files || show_dirs
                 " if empty(fnamemodify(patt, ':e'))
-                TLogVAR patt
+                " TLogVAR patt
                 if stridx(patt, '**') == -1
                     call filter(ls, '(show_files && !s:IsDir(v:val)) || (show_dirs && s:IsDir(v:val))')
                 else
@@ -3047,20 +3072,15 @@ fun! viki#DirListing(lhs, lhb, indent) "{{{3
                     endif
                 endif
                 let s:getfileentry_deep = 0
-                let ls = map(ls, 's:GetFileEntry(v:val, deep, list, head, args)')
+                let ls = map(ls, 's:GetFileEntry(v:val, a:region, deep, list, head, args)')
                 if !empty(sort)
                     let ls = sort(ls, 's:SortFiles')
                 endif
                 unlet s:files_options
                 let ls = map(ls, 'a:indent . v:val.filename')
-                if ls != get(s:savedLines, 'lines', [])
-                    call s:DeleteFilesRegion()
-                    let @t = join(ls, "\<c-j>") ."\<c-j>"
-                    " TLogVAR a:lhb
-                    exec 'silent norm! '. a:lhb .'G"t'. (a:lhb > line('$') ? 'p' : 'P')
-                endif
+                call s:UpdateRegionContent(a:region, ls, a:lhb)
             else
-                call s:DeleteFilesRegion()
+                call s:DeleteRegionContent(a:region)
             endif
         finally
             let @t = t
@@ -3079,7 +3099,7 @@ function! s:SortFiles(i1, i2) "{{{3
 endf
 
 
-fun! s:GetFileEntry(file, deep, list, head, args) "{{{3
+fun! s:GetFileEntry(file, region, deep, list, head, args) "{{{3
     let f = []
     let props = {}
     let d = s:GetDepth(a:file) - s:dirlisting_depth0
@@ -3142,7 +3162,7 @@ fun! s:GetFileEntry(file, deep, list, head, args) "{{{3
         if get(s:files_options, 'head', 0)
             let props.head = s:GetHead(a:file, s:files_options.head)
         endif
-        let c = get(s:savedComments, a:file, '')
+        let c = get(a:region.comments, a:file, '')
         " TLogVAR a:file, c
         if !empty(c)
             call add(f, c)
@@ -3222,6 +3242,7 @@ fun! s:GetBrokenLine(ls, le) "{{{3
         exec 'norm! '. a:ls .'G"ty'. a:le .'G'
         let @t = substitute(@t, '[^\\]\zs\\\n\s*', '', 'g')
         let @t = substitute(@t, '\n*$', '', 'g')
+        let @t = substitute(@t, '^\n', '', 'g')
         return @t
     finally
         let @t = t
@@ -3230,7 +3251,7 @@ endf
 
 fun! s:GetRegionStartRx(...) "{{{3
     let name = a:0 >= 1 && !empty(a:1) ? '\(\('. a:1 .'\>\)\)' : '\([A-Z]\([a-z][A-Za-z]*\)\?\>\|!!!\)'
-    let rx_start = '^\([[:blank:]]*\)#'. name .'\(\\\n\|.\)\{-}<<\(.*\)$'
+    let rx_start = '^\([[:blank:]]*\)#\('. name .'\)\(\\\n\|.\)\{-}<<\(.*\)$'
     return rx_start
 endf
 
@@ -3251,61 +3272,87 @@ fun! s:GetRegionGeometry(...) "{{{3
             let hdt = s:GetBrokenLine(hds, hde)
             let hdm = matchlist(hdt, rx_start)
             let hdi = hdm[1]
-            let rx_end = '\V\^\[[:blank:]]\*'. escape(hdm[5], '\') .'\[[:blank:]]\*\$'
+            let hdn = hdm[2]
+            let rx_end = '\V\^\[[:blank:]]\*'. escape(hdm[6], '\') .'\[[:blank:]]\*\$'
             if hds == line('$')
                 let hbe = hds + 1
             else
                 let hbe = search(rx_end, 'W')
             endif
-            if hbe == 0 && empty(hdm[5])
+            if hbe == 0 && empty(hdm[6])
                 let hbe = line('$') + 1
             endif
             " TLogVAR hdm, hds, hde, hbe
             if hds > 0 && hde > 0 && hbe > 0
-                return [hds, hde + 1, hbe, hdi]
+                return [hds, hde + 1, hbe, hdi, hdn]
             else
                 echoerr "Viki: Can't determine region geometry: ". string([hds, hde, hbe, hdi, hdm, rx_start, rx_end])
             endif
         else
             echoerr "Viki: Can't determine region geometry: ". join([rx_start], ', ')
         endif
-        return [0, 0, 0, '']
+        return [0, 0, 0, '', '']
     finally
         call winrestview(view)
     endtry
 endf
 
-function! s:DeleteFilesRegion() "{{{3
-    if !empty(s:savedLines) && s:savedLines.lb <= s:savedLines.le1
-        exec 'norm! '. s:savedLines.lb .'Gd'. s:savedLines.le1 .'G'
+function! s:DeleteRegionContent(region) "{{{3
+    " TLogVAR a:region
+    if !empty(a:region.lines) && a:region.lines.lb <= a:region.lines.le1
+        " TLogVAR a:region.lines.lb, a:region.lines.le1
+        exec 'norm! '. a:region.lines.lb .'Gd'. a:region.lines.le1 .'G'
     endif
 endf
 
-fun! s:SaveRegionBody(...) "{{{3
+
+function! s:UpdateRegionContent(region, lines, lhb) "{{{3
+    if a:lines != get(a:region.lines, 'lines', [])
+        call s:DeleteRegionContent(a:region)
+        if !empty(a:lines)
+            let t = @t
+            try
+                let @t = join(a:lines, "\<c-j>") ."\<c-j>"
+                " TLogVAR @t
+                exec 'silent norm! '. a:lhb .'G"t'. (a:lhb > line('$') ? 'p' : 'P')
+            finally
+                let @t = t
+            endtry
+        endif
+    endif
+endf
+
+
+fun! s:SaveRegionBody(savecomments, ...) "{{{3
     if a:0 >= 2
         let lb = a:1
         let le = a:2
     else
-        let [lh, lb, le, indent] = s:GetRegionGeometry('Files')
+        let [lh, lb, le, indent, regname] = s:GetRegionGeometry('Files')
     endif
     let le1 = le - 1
-    " TLogVAR lb, le, le1, line('$')
+    " TLogVAR a:savecomments, lb, le, le1, line('$')
     if le1 <= line('$')
-        let s:savedLines = {'lb': lb, 'le1': le1, 'lines': getline(lb, le1)}
-        let s:savedComments = {}
-        for l in range(lb, le1)
-            let t = getline(l)
-            let k = viki#FilesGetFilename(t)
-            if !empty(k)
-                let comment = viki#FilesGetComment(t)
-                let s:savedComments[k] = comment
-                " TLogVAR k, t, comment
-            endif
-        endfor
+        let savedLines = {'lb': lb, 'le1': le1, 'lines': getline(lb, le1)}
+        let savedComments = {}
+        if a:savecomments
+            for l in range(lb, le1)
+                let t = getline(l)
+                let k = viki#FilesGetFilename(t)
+                if !empty(k)
+                    let comment = viki#FilesGetComment(t)
+                    let savedComments[k] = comment
+                    " TLogVAR k, t, comment
+                endif
+            endfor
+        endif
     else
-        let s:savedLines = {}
-        let s:savedComments = {}
+        let savedLines = {}
+        let savedComments = {}
     endif
+    " TLogVAR savedLines
+    " TLogVAR savedComments
+    return {'lines': savedLines, 'comments': savedComments}
 endf
 
 fun! viki#FilesGetFilename(t) "{{{3
@@ -3600,5 +3647,61 @@ function! viki#UpdateHeadings() "{{{3
     "     let b:viki_headings = viki_headings
     " endif
     " TLogVAR len(viki_headings)
+endf
+
+
+function! viki#GrepRegionUpdateAll() "{{{3
+    call s:UpdateAllRegions('Grep', function('viki#GrepRegionUpdate'))
+endf
+
+
+function! viki#GrepRegionUpdate() "{{{3
+    let [lh, lb, le, indent, regname] = s:GetRegionGeometry('Grep')
+    " TLogVAR lh, lb, le, indent
+    let args = s:GetRegionArgs(lh, lb - 1)
+    " TLogVAR lh, args
+    let rx  = get(args, 'rx', '')
+    let glob = get(args, 'glob', '')
+    if empty(rx) || empty(glob)
+        throw '#Grep: Must have rx and glob arguments'
+    endif
+    if viki#IsInterViki(glob)
+        let glob = viki#InterVikiDest(glob)
+    endif
+    let region = s:SaveRegionBody(0, lb, le)
+    " TLogVAR region
+    let qfl = tlib#grep#List(rx, [glob])
+    " TLogVAR qfl
+    let lines = []
+    let bufnr = bufnr('%')
+    for item in qfl
+        " let valid = get(item, 'valid', 0)
+        " if valid
+        if item.bufnr != bufnr
+            let filename = fnamemodify(bufname(item.bufnr), ':p')
+            let lnum = get(item, 'lnum', -1)
+            let dfname = filename
+            if lnum != -1
+                let dfname .= '#l='. lnum
+            endif
+            if g:viki_viki#conceal_extended_link_markup && has('conceal')
+                let lnk = printf('[[%s][%s]]', dfname, fnamemodify(filename, ':t'))
+            else
+                let lnk = printf('[[%s]]', dfname)
+            endif
+            let err = get(item, 'nr', '') . get(item, 'type', '')
+            let text = substitute(get(item, 'text', ''), '^\s\+', '', '')
+            if empty(err) || err == '0'
+                let msg = text
+            else
+                let msg = printf('%s: %s', err, text)
+            endif
+            call add(lines, printf('  %s :: %s', lnk, msg))
+            unlet! err text
+        endif
+        " endif
+    endfor
+    " TLogVAR lines
+    call s:UpdateRegionContent(region, lines, lb)
 endf
 

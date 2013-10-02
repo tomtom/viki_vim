@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2012-08-23.
-" @Revision:    0.0.186
+" @Last Change: 2013-10-02.
+" @Revision:    0.0.192
 
 
 if !exists('g:viki_viki#conceal_extended_link_markup')
@@ -374,11 +374,16 @@ function! viki_viki#MapKeys(state) "{{{3
         nnoremap <buffer> <silent> <c-tab>   :VikiFindNext<cr>
         nnoremap <buffer> <silent> <c-s-tab> :VikiFindPrev<cr>
     endif
-    if viki#MapFunctionality(mf, 'Files')
-        exec 'nnoremap <buffer> <silent> '. g:vikiMapLeader .'u :VikiFilesUpdate<cr>'
-        exec 'nnoremap <buffer> <silent> '. g:vikiMapLeader .'U :VikiFilesUpdateAll<cr>'
-        exec 'nnoremap <buffer> '. g:vikiMapLeader .'x :VikiFilesExec '
-        exec 'nnoremap <buffer> '. g:vikiMapLeader .'X :VikiFilesExec! '
+    if viki#MapFunctionality(mf, 'Files') || viki#MapFunctionality(mf, 'Grep')
+        exec 'nnoremap <buffer> <silent> '. g:vikiMapLeader .'u :call viki#RegionUpdate()<cr>'
+        exec 'nnoremap <buffer> <silent> '. g:vikiMapLeader .'U :call viki#RegionUpdateAll()<cr>'
+        if viki#MapFunctionality(mf, 'Files')
+            exec 'nnoremap <buffer> '. g:vikiMapLeader .'x :VikiFilesExec '
+            exec 'nnoremap <buffer> '. g:vikiMapLeader .'X :VikiFilesExec! '
+        endif
+        " if viki#MapFunctionality(mf, 'Grep')
+        "     exec 'nnoremap <buffer> <silent> '. g:vikiMapLeader .'G :VikiGrepUpdateAll<cr>'
+        " endif
     endif
     let b:vikiDidMapKeys = 1
 endf
