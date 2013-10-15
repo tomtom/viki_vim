@@ -948,6 +948,8 @@ Contents~
         :VikiEditInWin4 ..................... |:VikiEditInWin4|
         :VikiFilesUpdate .................... |:VikiFilesUpdate|
         :VikiFilesUpdateAll ................. |:VikiFilesUpdateAll|
+        :VikiGrepUpdate ..................... |:VikiGrepUpdate|
+        :VikiGrepUpdateAll .................. |:VikiGrepUpdateAll|
         :VikiFileExec ....................... |:VikiFileExec|
         :VikiFilesExec ...................... |:VikiFilesExec|
         :VikiFilesCmd ....................... |:VikiFilesCmd|
@@ -1037,11 +1039,13 @@ Contents~
         viki#FindNextRegion ................. |viki#FindNextRegion()|
         viki#GetIndent ...................... |viki#GetIndent()|
         viki#ExecExternal ................... |viki#ExecExternal()|
-        viki#FilesUpdateAll ................. |viki#FilesUpdateAll()|
+        viki#RegionUpdate ................... |viki#RegionUpdate()|
+        viki#RegionUpdateAll ................ |viki#RegionUpdateAll()|
         viki#FilesExec ...................... |viki#FilesExec()|
         viki#FilesCmd ....................... |viki#FilesCmd()|
         viki#FilesCall ...................... |viki#FilesCall()|
-        viki#FilesUpdate .................... |viki#FilesUpdate()|
+        viki#FilesRegionUpdateAll ........... |viki#FilesRegionUpdateAll()|
+        viki#FilesRegionUpdate .............. |viki#FilesRegionUpdate()|
         viki#DirListing ..................... |viki#DirListing()|
         viki#FilesGetFilename ............... |viki#FilesGetFilename()|
         viki#FilesGetComment ................ |viki#FilesGetComment()|
@@ -1054,6 +1058,8 @@ Contents~
         viki#FoldLevel ...................... |viki#FoldLevel()|
         viki#FoldText ....................... |viki#FoldText()|
         viki#UpdateHeadings ................. |viki#UpdateHeadings()|
+        viki#GrepRegionUpdateAll ............ |viki#GrepRegionUpdateAll()|
+        viki#GrepRegionUpdate ............... |viki#GrepRegionUpdate()|
         b:vikiCommentStart .................. |b:vikiCommentStart|
         b:vikiCommentEnd .................... |b:vikiCommentEnd|
         b:vikiHeadingMaxLevel ............... |b:vikiHeadingMaxLevel|
@@ -1445,6 +1451,7 @@ g:vikiMapFunctionality         (default: 'ALL')
     q     ... quote
     tF    ... tab as find
     Files ... #Files related
+    Grep  ... #Grep related
     let g:vikiMapFunctionality      = 'mf mb tF c q e i I Files'
 
                                                     *g:vikiMapFunctionalityMinor*
@@ -1569,6 +1576,14 @@ VikiEdit[!] NAME
                                                     *:VikiFilesUpdateAll*
 :VikiFilesUpdateAll
     Update all |viki-files| #Files regions in the current buffer.
+
+                                                    *:VikiGrepUpdate*
+:VikiGrepUpdate
+    Update the current |viki-grep| #Grep region under the cursor.
+
+                                                    *:VikiGrepUpdateAll*
+:VikiGrepUpdateAll
+    Update all |viki-grep| #Grep regions in the current buffer.
 
                                                     *:VikiFileExec*
 :VikiFileExec
@@ -1961,11 +1976,14 @@ viki#GetIndent()
                                                     *viki#ExecExternal()*
 viki#ExecExternal(cmd)
 
+                                                    *viki#RegionUpdate()*
+viki#RegionUpdate()
+
+                                                    *viki#RegionUpdateAll()*
+viki#RegionUpdateAll()
+
 
 #Files related stuff
-
-                                                    *viki#FilesUpdateAll()*
-viki#FilesUpdateAll()
 
                                                     *viki#FilesExec()*
 viki#FilesExec(cmd, bang, ...)
@@ -1976,11 +1994,14 @@ viki#FilesCmd(cmd, bang)
                                                     *viki#FilesCall()*
 viki#FilesCall(cmd, bang)
 
-                                                    *viki#FilesUpdate()*
-viki#FilesUpdate()
+                                                    *viki#FilesRegionUpdateAll()*
+viki#FilesRegionUpdateAll()
+
+                                                    *viki#FilesRegionUpdate()*
+viki#FilesRegionUpdate()
 
                                                     *viki#DirListing()*
-viki#DirListing(lhs, lhb, indent)
+viki#DirListing(lhs, lhb, indent, region)
     Update a #Files region. The following arguments are allowed to specify 
     how the file list should be displayed:
 
@@ -2068,6 +2089,12 @@ viki#FoldText()
 
                                                     *viki#UpdateHeadings()*
 viki#UpdateHeadings()
+
+                                                    *viki#GrepRegionUpdateAll()*
+viki#GrepRegionUpdateAll()
+
+                                                    *viki#GrepRegionUpdate()*
+viki#GrepRegionUpdate()
 
 
 ========================================================================
