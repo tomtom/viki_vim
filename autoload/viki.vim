@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2013-10-16.
-" @Revision:    0.1333
+" @Revision:    0.1334
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -576,7 +576,7 @@ if !exists("g:vikiOpenFileWith_ANY")
     elseif has("mac")
         let g:vikiOpenFileWith_ANY = "exec 'silent !open '. shellescape('%{FILE}')"
     elseif exists('$XDG_CURRENT_DESKTOP') && !empty($XDG_CURRENT_DESKTOP)
-        let g:vikiOpenFileWith_ANY = "exec 'silent !xdg-open '. shellescape('%{FILE}')"
+        let g:vikiOpenFileWith_ANY = "exec 'silent !xdg-open '. shellescape('%{FILE}') .'&'"
     elseif $GNOME_DESKTOP_SESSION_ID != "" || $DESKTOP_SESSION == 'gnome'
         let g:vikiOpenFileWith_ANY = "exec 'silent !gnome-open '. shellescape('%{FILE}')"
     elseif exists("$KDEDIR") && !empty($KDEDIR)
