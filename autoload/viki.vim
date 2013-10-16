@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2013-10-02.
-" @Revision:    0.1303
+" @Last Change: 2013-10-16.
+" @Revision:    0.1333
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -431,12 +431,6 @@ if !exists('g:viki#use_texmath')
     " If true, load syntax/texmath.vim for a prettier display of 
     " mathematical formulas.
     let g:viki#use_texmath = 1   "{{{2
-endif
-
-if !exists('g:viki#code_syntax')
-    " Properly highlight #Code regions if the filetype is included in 
-    " the list below.
-    let g:viki#code_syntax = ['sql']   "{{{2
 endif
 
 
@@ -3813,5 +3807,28 @@ function! viki#GrepRegionUpdate() "{{{3
     endfor
     " TLogVAR lines
     call s:UpdateRegionContent(region, lines, lb)
+endf
+
+
+let s:valid_filetypes = {}
+
+function! viki#CollectSyntaxRegionsFiletypes() "{{{3
+    let rx = '^\s*#Code\>.\{-}\<syntax=\zs\w\+\ze\>\(\\\n\|.\)\{-}<<'
+    let view = winsaveview()
+    let ftypes = {}
+    try
+        exec 'silent g/'. rx .'/ let ftypes[matchstr(getline("."), rx)] = 1'
+    finally
+        call winrestview(view)
+    endtry
+    for ftype in keys(ftypes)
+        if !has_key(s:valid_filetypes, ftype)
+            let s:valid_filetypes[ftype] = !empty(globpath(&rtp, 'syntax/'. ftype .'.vim') . globpath(&rtp, 'after/syntax/'. ftype .'.vim'))
+        endif
+        if !s:valid_filetypes[ftype]
+            call remove(ftypes, ftype)
+        endif
+    endfor
+    return keys(ftypes)
 endf
 

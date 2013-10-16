@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2013-09-30.
-" @Revision: 0.1060
+" @Last Change: 2013-10-16.
+" @Revision: 0.1097
 
 if version < 600
     syntax clear
@@ -202,17 +202,26 @@ syn region vikiTexRegion matchgroup=vikiMacroDelim
             \ contains=@texmathMath
 
 
-" for s:filetype in g:viki#code_syntax
-"     exec 'syntax include @vikiCode_'. s:filetype 'syntax/'. s:filetype .'.vim'
-"     syn region vikiCodeRegion_ s:filetype 
-"         start=/^\s*#Code\s\_.\{-}\<syntax='. s:filetype .'\><<\z(.*\)\n/
-"         \ end=/^[[:blank:]]*\z1\([[:blank:]].*\)\?$/ 
-"         \ contains
-"             \ start=/^[[:blank:]]*#Code\>\|!!!\)\(\\\n\|.\)\{-}<<\z(.*\)$/ 
-"             \ end=/^[[:blank:]]*\z1[[:blank:]]*$/ 
-"             \ contains=@vikiText,vikiRegionNames
-" endfor
-" unlet! s:filetype
+if &ft == 'viki'
+    let s:is_keyword = &l:iskeyword
+    for s:filetype in viki#CollectSyntaxRegionsFiletypes()
+        unlet! b:current_syntax
+        setl iskeyword&
+        exec 'syntax include @vikiCode_'. s:filetype 'syntax/'. s:filetype .'.vim'
+        exec 'silent! syntax include @vikiCode_'. s:filetype 'after/syntax/'. s:filetype .'.vim'
+        exec 'syn region vikiCodeRegion_'. s:filetype
+                    \ 'matchgroup=vikiMacroDelim'
+                    \ 'start=/^\s*#Code\>.\{-}\<syntax='. s:filetype .'\>\(\\\n\|.\)\{-}<<\z(.*\)$/'
+                    \ 'end=/^[[:blank:]]*\z1\([[:blank:]].*\)\?$/'
+                    \ 'contains=@vikiCode_'. s:filetype
+        " Workaround based on vimviki Issue 115
+        if s:filetype =~ 'perl'
+            syntax clear perlFunctionName
+        endif
+    endfor
+    let &l:iskeyword = s:is_keyword
+    unlet! s:filetype s:is_keyword
+endif
 
 
 syn match vikiList /^[[:blank:]]\+\([-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\)\ze[[:blank:]]/
