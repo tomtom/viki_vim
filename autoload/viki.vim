@@ -3052,7 +3052,9 @@ endf
 "
 "     glob=PATTERN ... A file pattern with |wildcards|. % and # (see 
 "                      |cmdline-special|) are expanded too. The pattern 
-"                      can also refer to an |interviki| (e.g. NOTES::*.txt)
+"                      can also refer to an |interviki| (e.g. NOTES::*.txt).
+"                      Multiple patterns are separated by "|" (e.g. 
+"                      *.txt|*.viki).
 "     head=NUMBER .... Display the first N lines of the file's content
 "     list=detail .... Include additional file info
 "     list=flat ...... Display a flat list
@@ -3092,7 +3094,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
         let view = winsaveview()
         let t = @t
         try
-            let ls = split(glob(patt), '\n')
+            let ls = split(glob(patt), '|')
             " TLogVAR ls
             let types = get(args, 'types', '')
             if empty(types)
@@ -3770,16 +3772,15 @@ function! viki#GrepRegionUpdate() "{{{3
     let args = s:GetRegionArgs(lh, lb - 1)
     " TLogVAR lh, args
     let rx  = get(args, 'rx', '')
-    let glob = get(args, 'glob', '')
+    let glob = split(get(args, 'glob', ''), '|')
     if empty(rx) || empty(glob)
         throw '#Grep: Must have rx and glob arguments'
     endif
-    if viki#IsInterViki(glob)
-        let glob = viki#InterVikiDest(glob)
-    endif
+    let glob = map(glob, 'viki#IsInterViki(v:val) ? viki#InterVikiDest(v:val) : v:val')
+    " TLogVAR glob
     let region = s:SaveRegionBody(0, lb, le)
     " TLogVAR region
-    let qfl = tlib#grep#List(rx, [glob])
+    let qfl = tlib#grep#List(rx, glob)
     " TLogVAR qfl
     let lines = []
     let bufnr = bufnr('%')
