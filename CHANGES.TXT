@@ -646,3 +646,32 @@ version: "4.03"
   MD5 checksum: e90c38e13fd9dc00edab65879dde2967
 version: "4.04"
 
+version: "4.05"
+  - Files region: replace listing only if it has changed
+  - Fix possible typo that breaks a default configuration on some systems - 'Please define g:vikiOpenUrlWith_http or g:vikiOpenUrlWith_ANY'
+  - In region header: allow space after <<
+  - Merge branch 'master' of https://github.com/NickHu/viki_vim
+  - addon-info
+  - tinykeymap: p, n: move to previous/next list item
+  - viki#GetIndent(): special handling of !!!|+++|???|### markers
+  - viki#GetIndent(): Fixed indentation for marker list items (???, !!!, +++, ###)
+  - Syntax: Accept tags (:word) and contacts (@name) anywhere in a priority list item
+  - Add accdb & mdb to g:vikiSpecialFiles
+  - g:viki#code_syntax (prepare for syntax highlighting in #Code regions)
+  - Don't call viki#UpdateHeadings() on InsertLeave events
+  - viki#UpdateHeadings(): Avoid superfluous checks
+  - FIX: Highlighting of symbols within strings and similar syntax groups
+  - viki#UpdateHeadings(): Restore the search register (@/)
+  - viki#OpenLink(): Use tlib#dir#NativeName() when opening directories
+  - Require tlib 1.05
+  - #Files: Files in the cd are inserted as [[basename.ext]!] not as [[basename.ext][basename.ext]!] when conceal is enabled
+  - #Files: glob can refer to an interviki
+  - #Files takes an optional "format" argument
+  - viki#Files: slightly improved file tree display; cache isdirectory() info
+  - NEW #Grep regions; <LL>vu and <LL>vU update #Files and #Grep regions; require tlib 1.06
+  - #Files, #Grep regions: separate multiple patterns with "|"
+  - Finally enable support for proper highlighting of #Code regions
+  - Use xdg-open with &
+  - g:viki#code_syntax: Always enable these filetypes for #Code; g:viki#code_syntax_map: map #Code syntax arg to vim filetypes
+  MD5 checksum: 8b08d2dd760471dd912511da3ad62818
+
