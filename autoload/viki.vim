@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2013-10-16.
-" @Revision:    0.1334
+" @Revision:    1336
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -431,6 +431,23 @@ if !exists('g:viki#use_texmath')
     " If true, load syntax/texmath.vim for a prettier display of 
     " mathematical formulas.
     let g:viki#use_texmath = 1   "{{{2
+endif
+
+if !exists('g:viki#code_syntax')
+    " A list of filetypes for which to always enable syntax highlighting 
+    " of #Code regions.
+    "
+    " The buffer is scanned once for #Code regions with known filetypes. 
+    " New #Code regions may not be properly highlighted. You can 
+    " circumvent this problem by adding names of frequently used 
+    " syntaxes/filetypes.
+    let g:viki#code_syntax = []   "{{{2
+endif
+
+if !exists('g:viki#code_syntax_map')
+    " A dictionary that maps syntaxes for #Code regions to vim 
+    " filetypes.
+    let g:viki#code_syntax_map = {}   "{{{2
 endif
 
 
@@ -3816,6 +3833,9 @@ function! viki#CollectSyntaxRegionsFiletypes() "{{{3
     let rx = '^\s*#Code\>.\{-}\<syntax=\zs\w\+\ze\>\(\\\n\|.\)\{-}<<'
     let view = winsaveview()
     let ftypes = {}
+    for ft in g:viki#code_syntax + keys(g:viki#code_syntax_map)
+        let ftypes[ft] = 1
+    endfor
     try
         exec 'silent g/'. rx .'/ let ftypes[matchstr(getline("."), rx)] = 1'
     finally
@@ -3823,12 +3843,14 @@ function! viki#CollectSyntaxRegionsFiletypes() "{{{3
     endtry
     for ftype in keys(ftypes)
         if !has_key(s:valid_filetypes, ftype)
-            let s:valid_filetypes[ftype] = !empty(globpath(&rtp, 'syntax/'. ftype .'.vim') . globpath(&rtp, 'after/syntax/'. ftype .'.vim'))
+            let ftype1 = get(g:viki#code_syntax_map, ftype, ftype)
+            let s:valid_filetypes[ftype] = !empty(globpath(&rtp, 'syntax/'. ftype1 .'.vim') . globpath(&rtp, 'after/syntax/'. ftype1 .'.vim'))
         endif
         if !s:valid_filetypes[ftype]
             call remove(ftypes, ftype)
         endif
     endfor
+    " echom "DBG" string(s:valid_filetypes)
     return keys(ftypes)
 endf
 

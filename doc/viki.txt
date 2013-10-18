@@ -931,6 +931,8 @@ Contents~
         g:vikiFolds .......................... |g:vikiFolds|
         g:viki#files_head_rx ................. |g:viki#files_head_rx|
         g:viki#use_texmath ................... |g:viki#use_texmath|
+        g:viki#code_syntax ................... |g:viki#code_syntax|
+        g:viki#code_syntax_map ............... |g:viki#code_syntax_map|
         :VikiFindNext ........................ |:VikiFindNext|
         :VikiFindPrev ........................ |:VikiFindPrev|
         :VikiMarkInexistent .................. |:VikiMarkInexistent|
@@ -1490,6 +1492,21 @@ g:viki#files_head_rx           (default: '^\(\*\s\+\)')
 g:viki#use_texmath             (default: 1)
     If true, load syntax/texmath.vim for a prettier display of 
     mathematical formulas.
+
+                                                    *g:viki#code_syntax*
+g:viki#code_syntax             (default: [])
+    A list of filetypes for which to always enable syntax highlighting 
+    of #Code regions.
+
+    The buffer is scanned once for #Code regions with known filetypes. 
+    New #Code regions may not be properly highlighted. You can 
+    circumvent this problem by adding names of frequently used 
+    syntaxes/filetypes.
+
+                                                    *g:viki#code_syntax_map*
+g:viki#code_syntax_map         (default: {})
+    A dictionary that maps syntaxes for #Code regions to vim 
+    filetypes.
 
                                                     *:VikiFindNext*
 :VikiFindNext
