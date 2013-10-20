@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2013-10-16.
-" @Revision:    1336
+" @Revision:    1337
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2917,6 +2917,7 @@ function! viki#ExecExternal(cmd) "{{{3
 endf
 
 
+" Update the current #Files or #Grep region.
 function! viki#RegionUpdate() "{{{3
     let [lh, lb, le, indent, regname] = s:GetRegionGeometry('')
     let fn = printf('viki#%sRegionUpdate', regname)
@@ -2926,6 +2927,7 @@ function! viki#RegionUpdate() "{{{3
 endf
 
 
+" Update all #Files or #Grep in the current buffer.
 function! viki#RegionUpdateAll() "{{{3
     call s:UpdateAllRegions('Files\|Grep', function('viki#RegionUpdate'))
 endf
