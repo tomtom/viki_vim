@@ -670,6 +670,19 @@ The colors are tested using color scheme with a white background.
 
 
 -----------------------------------------------------------------------
+Generated regions~
+
+Viki provides the following region types with programmatically generated 
+contents:
+
+    #Files ... List files matching a pattern
+    #Grep  ... List lines in files matching a pattern
+
+Default Key Binding~
+
+    <LocalLeader>vu ... Update the current #Files or #Grep region
+    <LocalLeader>vU ... Update all #Files or #Grep regions
+
                                                     *viki-files*
 Files Region~
 
@@ -686,8 +699,9 @@ Example: >
     #Files glob=*.viki types=f <<
     [[example.viki]!] The manual
 
-The filenames are stored as extended viki names. Each line can take a comment 
-that is restored upon automatic update.
+Multiple patterns are separated by a pipe ("|") character. The filenames 
+are stored as extended viki names. Each line can take a comment that is 
+restored upon automatic update.
 
 For a list of available arguments, see |viki#DirListing()|.
 
@@ -697,14 +711,24 @@ same directory or a subdirectory as the file on the current line.
 
 Default Key Binding~
 
-    <LocalLeader>vu ... :VikiFilesUpdate
-    <LocalLeader>vU ... :VikiFilesUpdateAll
     <LocalLeader>vx ... :VikiFilesExec
     <LocalLeader>vX ... :VikiFilesExec!
 
 Example: >
     Use ":VikiFilesExec! e" (<LocalLeader>vXe<cr>) to edit all the files in 
     the same directory or a subdirectory of the current file under the cursor.
+
+                                                    *viki-grep*
+Grep Region~
+
+#Grep regions can be used to list files matching a pattern.
+
+Example: >
+#Grep glob=*.viki rx=test <<
+  [[/home/user/Wiki/Tester.viki#l=53][Tester.viki]] :: How to test!
+  [[/home/user/Wiki/Tests.viki#l=12][Tests.viki]] :: This is another test.
+
+The #Grep region can e.g. be used get a list of back-references.
 
 
 -----------------------------------------------------------------------
@@ -1989,9 +2013,11 @@ viki#ExecExternal(cmd)
 
                                                     *viki#RegionUpdate()*
 viki#RegionUpdate()
+    Update the current #Files or #Grep region.
 
                                                     *viki#RegionUpdateAll()*
 viki#RegionUpdateAll()
+    Update all #Files or #Grep in the current buffer.
 
 
 #Files related stuff
