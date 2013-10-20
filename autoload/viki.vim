@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2013-10-16.
-" @Revision:    1337
+" @Revision:    1338
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -3107,7 +3107,10 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
         let view = winsaveview()
         let t = @t
         try
-            let ls = split(glob(patt), '|')
+            let ls = []
+            for pattern in split(patt, '|')
+                let ls += split(glob(pattern), '\n')
+            endfor
             " TLogVAR ls
             let types = get(args, 'types', '')
             if empty(types)
