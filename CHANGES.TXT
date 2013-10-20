@@ -675,3 +675,8 @@ version: "4.05"
   - g:viki#code_syntax: Always enable these filetypes for #Code; g:viki#code_syntax_map: map #Code syntax arg to vim filetypes
   MD5 checksum: 8b08d2dd760471dd912511da3ad62818
 
+version: "4.06"
+  - Help template
+  - FIX viki#DirListing(): correctly process file patterns
+  MD5 checksum: 0bdb3097b73a9855892d60124d0d581f
+
