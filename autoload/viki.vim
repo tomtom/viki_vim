@@ -2046,7 +2046,7 @@ function! s:OpenLink(dest, anchor, winNr)
         elseif bufexists(a:dest) && buflisted(a:dest)
             call s:EditWrapper('buffer!', a:dest)
         else
-            let ok = input("File doesn't exists. Create '".a:dest."'? (Y/n) ", "y")
+            let ok = input("File doesn't exist. Create '".a:dest."'? (Y/n) ", "y")
             if ok != "" && ok != "n"
                 let b:vikiCheckInexistent = line(".")
                 call viki#OpenLink(a:dest, a:anchor, 1, '', a:winNr)
