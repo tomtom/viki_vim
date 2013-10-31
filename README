@@ -7,7 +7,7 @@ an external viewer.
 
 From http://sourceforge.net/projects/deplate/ you can download a ruby based 
 tool to convert viki markup to LaTeX, HTML, or DocBook. On its homepage 
-(http://deplate.sf.net) you can read a more detailled specification of the 
+(http://deplate.sf.net) you can read a more detailed specification of the 
 markup.
 
 MINOR WIKI MODE:
@@ -51,15 +51,15 @@ looks like:
 
 And some wikis provide tools for translating this markup to other formats 
 (like viki does in the form of the "deplate" program, which can translate viki 
-markup to LaTeX, HTML, and Docbook). Unfortunately, about every wiki has its 
-own markup. 
+markup to LaTeX, HTML, and Docbook).  Unfortunately, just about every wiki has
+its own markup. 
 
                                                     *viki-support*
 VIKI Forum (questions, feature requests):
 http://sourceforge.net/projects/deplate/forums/forum/700962
 
 Bug tracker:
-http://sourceforge.net/tracker/?group_id=108085&atid=649488
+https://github.com/tomtom/deplate/issues
 
 Demo:
 http://vimsomnia.blogspot.com/2010/11/vikitasks-viki-demonstration-personal.html 

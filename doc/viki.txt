@@ -54,8 +54,8 @@ looks like:
 
 And some wikis provide tools for translating this markup to other formats 
 (like viki does in the form of the "deplate" program, which can translate viki 
-markup to LaTeX, HTML, and Docbook). Unfortunately, about every wiki has its 
-own markup. 
+markup to LaTeX, HTML, and Docbook).  Unfortunately, just about every wiki has
+its own markup. 
 
                                                     *viki-support*
 VIKI Forum (questions, feature requests):
@@ -88,7 +88,8 @@ Requirements:
                                                     *viki-related-plugins*
 Optional enhancements:
 - vikitasks (vimscript #2894): Distributed TODO lists
-- hookcursormoved (vimscript #2037): Enhanced detection of hyperlinks to inexistent destinations.
+- hookcursormoved (vimscript #2037): Enhanced detection of hyperlinks to
+  nonexistent destinations.
 - vxfold (vimscript #3004): Provides org-mode like fold cycling
 - VOoM (vimscript #2657): A two-pane outliner with support for viki
 - kpsewhich (not a vim plugin :-) for LaTeX support
