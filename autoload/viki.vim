@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2013-10-16.
-" @Revision:    1338
+" @Revision:    1339
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2046,7 +2046,7 @@ function! s:OpenLink(dest, anchor, winNr)
         elseif bufexists(a:dest) && buflisted(a:dest)
             call s:EditWrapper('buffer!', a:dest)
         else
-            let ok = input("File doesn't exists. Create '".a:dest."'? (Y/n) ", "y")
+            let ok = input("File doesn't exist. Create '".a:dest."'? (Y/n) ", "y")
             if ok != "" && ok != "n"
                 let b:vikiCheckInexistent = line(".")
                 call viki#OpenLink(a:dest, a:anchor, 1, '', a:winNr)
