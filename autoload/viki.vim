@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2013-10-16.
-" @Revision:    1339
+" @Last Change: 2014-01-28.
+" @Revision:    1347
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2313,11 +2313,19 @@ function! viki#InterVikiDest(vikiname, ...)
         elseif i_type == 'fmt'
             let v_dest = s:sprintf1(f, v_dest)
         else
-            if empty(v_dest) && exists('i_index')
+            let i_dest = fnamemodify(i_dest, ':p')
+            if empty(v_dest)
+                if !exists('i_index')
+                    let suffix = viki#InterVikiSuffix(a:vikiname)
+                    let findex = fnamemodify(i_dest .'/'. g:vikiIndex . suffix, ':p')
+                    " TLogVAR a:vikiname, suffix, g:vikiIndex, findex
+                    if filereadable(findex)
+                        let i_index = g:vikiIndex
+                    endif
+                endif
                 let v_dest = i_index
                 " TLogVAR v_dest, i_index
             endif
-            let i_dest = fnamemodify(i_dest, ':p')
             " TLogVAR i_dest, rx
             if !empty(rx)
                 if i_dest !~ '[\/]$'
@@ -2745,13 +2753,19 @@ function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
 endf
 
 
-" Edit the current directory's index page
-function! viki#Index() "{{{3
+function! s:IndexName() "{{{3
     if exists('b:vikiIndex')
         let fname = viki#WithSuffix(b:vikiIndex)
     else
         let fname = viki#WithSuffix(g:vikiIndex)
     endif
+    return fname
+endf
+
+
+" Edit the current directory's index page
+function! viki#Index() "{{{3
+    let fname = s:IndexName()
     if filereadable(fname)
         return viki#OpenLink(fname, '')
     else
