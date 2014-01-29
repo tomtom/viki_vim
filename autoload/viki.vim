@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2014-01-28.
-" @Revision:    1347
+" @Last Change: 2014-01-29.
+" @Revision:    1348
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2323,7 +2323,9 @@ function! viki#InterVikiDest(vikiname, ...)
                         let i_index = g:vikiIndex
                     endif
                 endif
-                let v_dest = i_index
+                if exists('i_index')
+                    let v_dest = i_index
+                endif
                 " TLogVAR v_dest, i_index
             endif
             " TLogVAR i_dest, rx
