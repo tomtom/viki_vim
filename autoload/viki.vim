@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2014-01-29.
-" @Revision:    1348
+" @Revision:    1353
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -623,6 +623,7 @@ if !exists('*VikiOpenSpecialFile')
         else
             let prot = ''
         endif
+        " TLogVAR prot
         if prot != ''
             " let openFile = viki#SubstituteArgs(prot, 'FILE', fnameescape(a:file))
             let openFile = viki#SubstituteArgs(prot, 'FILE', a:file)
@@ -2037,16 +2038,21 @@ function! s:OpenLink(dest, anchor, winNr)
             " TLogVAR url
             call VikiOpenSpecialProtocol(url)
         elseif viki#IsSpecialFile(a:dest)
+            " TLogVAR viki#IsSpecialFile(a:dest)
             call VikiOpenSpecialFile(a:dest)
         elseif isdirectory(a:dest)
+            " TLogVAR isdirectory(a:dest)
             " exec g:vikiExplorer .' '. a:dest
             call viki#OpenLink(a:dest, a:anchor, 0, '', a:winNr)
         elseif filereadable(a:dest) "reference to a local, already existing file
+            " TLogVAR filereadable(a:dest)
             call viki#OpenLink(a:dest, a:anchor, 0, '', a:winNr)
         elseif bufexists(a:dest) && buflisted(a:dest)
+            " TLogVAR bufexists(a:dest)
             call s:EditWrapper('buffer!', a:dest)
         else
             let ok = input("File doesn't exist. Create '".a:dest."'? (Y/n) ", "y")
+            " TLogVAR ok
             if ok != "" && ok != "n"
                 let b:vikiCheckInexistent = line(".")
                 call viki#OpenLink(a:dest, a:anchor, 1, '', a:winNr)
@@ -2532,6 +2538,7 @@ function! viki#MaybeFollowLink(oldmap, ignoreSyntax, ...) "{{{3
     let winNr = a:0 >= 1 ? a:1 : 0
     " TLogVAR winNr
     let def = viki#GetLink(a:ignoreSyntax)
+    " TLogVAR def
     " TAssert IsList(def)
     if empty(def)
         return s:LinkNotFoundEtc(a:oldmap, a:ignoreSyntax)

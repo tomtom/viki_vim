@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
 " @Last Change: 2013-10-02.
-" @Revision:    0.0.192
+" @Revision:    0.0.210
 
 
 if !exists('g:viki_viki#conceal_extended_link_markup')
@@ -456,6 +456,7 @@ endf
 function! viki_viki#CompleteExtendedNameDef(def) "{{{3
     " TLogVAR a:def
     exec viki#SplitDef(a:def)
+    " TLogVAR v_dest
     if v_dest == g:vikiDefNil
         if v_anchor == g:vikiDefNil
             call viki#MalformedName("extended name (no destination): ". string(a:def))
@@ -463,6 +464,7 @@ function! viki_viki#CompleteExtendedNameDef(def) "{{{3
             let v_dest = g:vikiSelfRef
         endif
     elseif viki#IsInterViki(v_dest)
+        " TLogVAR viki#IsInterViki(v_dest)
         let useSuffix = viki#InterVikiSuffix(v_dest)
         let v_dest = viki#InterVikiDest(v_dest)
         " TLogVAR v_dest
@@ -474,10 +476,16 @@ function! viki_viki#CompleteExtendedNameDef(def) "{{{3
             " TLogVAR v_dest
         endif
     else
-        if v_dest =~? '^[a-z]:'                      " an absolute dos path
-        elseif v_dest =~? '^\/'                          " an absolute unix path
-        elseif v_dest =~? '^'.b:vikiSpecialProtocols.':' " some protocol
-        elseif v_dest =~ '^\~'                           " user home
+        " TLogVAR 0, v_dest
+        " TLogVAR v_dest[0 : 1]
+        " TLogVAR v:charconvert_from, v:charconvert_to, v:ctype, v:lang
+        " TLogDBG v_dest =~? '^[a-zA-Z]:'
+        " TLogDBG match(v_dest, '\c^[a-zA-Z]:')
+        " TLogDBG match(v_dest[0 : 1], '\c^[a-zA-Z]:')
+        if match(v_dest, '\c^[a-zA-Z]:') != -1                          " an absolute dos path
+        elseif match(v_dest, '^\/') != -1                               " an absolute unix path
+        elseif match(v_dest, '\c^'.b:vikiSpecialProtocols.':') != -1    " some protocol
+        elseif match(v_dest, '^\~') != -1                               " user home
             " let v_dest = $HOME . strpart(v_dest, 1)
             let v_dest = fnamemodify(v_dest, ':p')
             let v_dest = viki#CanonicFilename(v_dest)
@@ -485,18 +493,23 @@ function! viki_viki#CompleteExtendedNameDef(def) "{{{3
             let v_dest = expand("%:p:h") .g:vikiDirSeparator. v_dest
             let v_dest = viki#CanonicFilename(v_dest)
         endif
+        " TLogVAR 1, v_dest
         if v_dest != '' && v_dest != g:vikiSelfRef
+            " TLogVAR viki#IsSpecial(v_dest)
             if !viki#IsSpecial(v_dest)
                 let mod = viki#ExtendedModifier(v_part)
                 if fnamemodify(v_dest, ':e') == '' && mod !~# '!'
                     let v_dest = viki#WithSuffix(v_dest)
                 endif
             endif
+            " TLogVAR viki#IsSpecialProtocol(v_dest)
             if !viki#IsSpecialProtocol(v_dest)
                 let v_dest = tlib#url#Decode(v_dest)
             endif
         endif
+        " TLogVAR 2, v_dest
     endif
+    " TLogVAR v_name
     if v_name == g:vikiDefNil
         let v_name = fnamemodify(v_dest, ':t:r')
     endif
