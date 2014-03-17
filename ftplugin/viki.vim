@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
 " @Last Change: 2013-03-04.
-" @Revision: 524
+" @Revision: 527
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -41,6 +41,7 @@ exec "setlocal comments=fb:-,fb:+,fb:*,fb:#,fb:?,fb:@,:". b:vikiCommentStart
 setlocal expandtab
 " setlocal iskeyword+=#,{
 setlocal iskeyword+={
+setlocal iskeyword+=192-255
 setlocal iskeyword-=_
 let &l:include='\(^\s*#INC.\{-}\(\sfile=\|:\)\)'
 let &l:define='^\s*\(#Def.\{-}id=\|#\(Fn\|Footnote\).\{-}\(:\|id=\)\|#VAR.\{-}\s\)'
