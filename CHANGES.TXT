@@ -680,3 +680,11 @@ version: "4.06"
   - FIX viki#DirListing(): correctly process file patterns
   MD5 checksum: 0bdb3097b73a9855892d60124d0d581f
 
+  - Incoporate changes from pull request 12
+  - viki#InterVikiDest(): Use g:vikiIndex (again)
+  - viki#InterVikiDest: FIX check if i_index exists
+  - viki_viki#CompleteExtendedNameDef(): Use match() instead of =~ (work-around)
+  - iskeyword+=192-255
+  MD5 checksum: 64d81aebd79f239ea8be3a201e38cbef
+version: "4.07"
+
