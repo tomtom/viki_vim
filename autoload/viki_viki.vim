@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2013-10-02.
-" @Revision:    0.0.210
+" @Last Change: 2014-05-13.
+" @Revision:    0.0.223
 
 
 if !exists('g:viki_viki#conceal_extended_link_markup')
@@ -77,7 +77,12 @@ function! viki_viki#SetupBuffer(state, ...) "{{{3
     endif
     " TLogVAR b:vikiAnchorNameRx
     
-    let interviki = '\<['. b:vikiUpperCharacters .']\+::'
+    let interviki_names = viki#GetInterVikis()
+    if empty(interviki_names)
+        let interviki_rx = '\<['. b:vikiUpperCharacters .'0-9]\+::'
+    else
+        let interviki_rx = '\<\%('. join(interviki_names, '\|') .'\)::'
+    endif
 
     " if viki#IsSupportedType("sSc") && !(dontSetup =~? "s")
     if viki#IsSupportedType("s") && !(dontSetup =~? "s")
@@ -109,7 +114,7 @@ function! viki_viki#SetupBuffer(state, ...) "{{{3
                 let simpleHyperWords = substitute(simpleHyperWords, ' \+', '\\s\\+', 'g')
             endif
         endif
-        let b:vikiSimpleNameRx = '\C\(\('. interviki .'\)\?'.
+        let b:vikiSimpleNameRx = '\C\(\('. interviki_rx .'\)\?'.
                     \ '\('. simpleHyperWords . quotedVikiName . simpleWikiName .'\)\)'.
                     \ '\(#\('. b:vikiAnchorNameRx .'\)\>\)\?'
         let b:vikiSimpleNameSimpleRx = '\C\(\<['.b:vikiUpperCharacters.']\+::\)\?'.

@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2014-01-28.
-" @Revision:    2759
+" @Last Change: 2014-05-08.
+" @Revision:    2760
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -149,7 +149,7 @@ endf
 " VikiDefine(name, prefix, ?suffix="*", ?index="Index.${suffix}")
 " suffix == "*" -> g:vikiNameSuffix
 function! VikiDefine(name, prefix, ...) "{{{3
-    if a:name =~ '[^A-Z]'
+    if a:name =~ '[^A-Z0-9]'
         throw 'Invalid interviki name: '. a:name
     endif
     call add(g:vikiInterVikiNames, a:name .'::')

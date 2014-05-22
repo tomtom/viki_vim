@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2014-01-29.
-" @Revision:    1353
+" @Last Change: 2014-05-13.
+" @Revision:    1361
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -454,7 +454,8 @@ endif
 let g:viki#quit = 0
 
 let s:positions = {}
-let s:InterVikiRx = '^\(['. g:vikiUpperCharacters .']\+\)::\(.*\)$'
+let s:InterVikiNameRx = '^\(['. g:vikiUpperCharacters .'0-9]\+\)'
+let s:InterVikiRx = s:InterVikiNameRx .'::\(.*\)$'
 let s:hookcursormoved_oldpos = []
 " let s:vikiSelfEsc = '\'
 " let s:vikiEnabledID = loaded_viki .'_'. strftime('%c')
@@ -751,6 +752,15 @@ endf
 
 function! viki#GetInterVikis() "{{{3
     return g:vikiInterVikiNames
+endf
+
+
+" Get a rx that matches a simple word
+function! viki#GetSimpleRx4SimpleWikiWord() "{{{3
+    let upper = s:UpperCharacters()
+    let lower = s:LowerCharacters()
+    let rx = '['.upper.lower.'0-9]\+'
+    return rx
 endf
 
 
@@ -2299,13 +2309,18 @@ endf
 function! viki#InterVikiDest(vikiname, ...)
     TVarArg 'ow', ['rx', 0]
     " TLogVAR ow, rx
-    if empty(ow)
-        let ow     = viki#InterVikiName(a:vikiname)
-        let v_dest = viki#InterVikiPart(a:vikiname)
+    if a:vikiname =~ s:InterVikiNameRx .'$'
+        let vikiname = a:vikiname .'::'
     else
-        let v_dest = a:vikiname
+        let vikiname = a:vikiname
     endif
-    let vd = s:InterVikiDef(a:vikiname, ow)
+    if empty(ow)
+        let ow     = viki#InterVikiName(vikiname)
+        let v_dest = viki#InterVikiPart(vikiname)
+    else
+        let v_dest = vikiname
+    endif
+    let vd = s:InterVikiDef(vikiname, ow)
     " TLogVAR vd
     if vd != ''
         exec vd
@@ -2322,9 +2337,9 @@ function! viki#InterVikiDest(vikiname, ...)
             let i_dest = fnamemodify(i_dest, ':p')
             if empty(v_dest)
                 if !exists('i_index')
-                    let suffix = viki#InterVikiSuffix(a:vikiname)
+                    let suffix = viki#InterVikiSuffix(vikiname)
                     let findex = fnamemodify(i_dest .'/'. g:vikiIndex . suffix, ':p')
-                    " TLogVAR a:vikiname, suffix, g:vikiIndex, findex
+                    " TLogVAR vikiname, suffix, g:vikiIndex, findex
                     if filereadable(findex)
                         let i_index = g:vikiIndex
                     endif
