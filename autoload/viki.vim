@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2014-05-13.
-" @Revision:    1361
+" @Revision:    1371
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2164,15 +2164,15 @@ endf
 " If txt matches a viki name typed as defined by compound return a 
 " structure defining this viki name.
 function! viki#LinkDefinition(txt, col, compound, ignoreSyntax, type) "{{{3
-    " TLogVAR a:txt, a:compound, a:col
+    " TLogVAR a:txt, a:col, a:compound, a:ignoreSyntax, a:type
     exe a:compound
     if erx != ''
         let ebeg = -1
         let cont = match(a:txt, erx, 0)
-        " TLogDBG 'cont='. cont .'('. a:col .')'
+        " TLogVAR cont
         while (ebeg >= 0 || (0 <= cont) && (cont <= a:col))
             let contn = matchend(a:txt, erx, cont)
-            " TLogDBG 'contn='. contn .'('. cont.')'
+            " TLogVAR ebeg, cont, elen, contn
             if (cont <= a:col) && (a:col < contn)
                 let ebeg = match(a:txt, erx, cont)
                 let elen = contn - ebeg
@@ -2181,7 +2181,7 @@ function! viki#LinkDefinition(txt, col, compound, ignoreSyntax, type) "{{{3
                 let cont = match(a:txt, erx, contn)
             endif
         endwh
-        " TLogDBG 'ebeg='. ebeg
+        " TLogVAR ebeg
         if ebeg >= 0
             let part   = strpart(a:txt, ebeg, elen)
             let match  = matchlist(part, '^\C'. erx .'$')
@@ -2459,6 +2459,7 @@ endf
 function! viki#GetLink(ignoreSyntax, ...) "{{{3
     let col   = a:0 >= 2 ? a:2 : 0
     let types = a:0 >= 3 ? a:3 : b:vikiNameTypes
+    " TLogVAR a:ignoreSyntax, col, types
     if a:0 >= 1 && a:1 != ''
         let txt      = a:1
         let vikiType = a:ignoreSyntax
@@ -2486,11 +2487,9 @@ function! viki#GetLink(ignoreSyntax, ...) "{{{3
         let txt = getline('.')
         let col = col('.') - 1
     endif
-    " TLogDBG "txt=". txt
-    " TLogDBG "col=". col
-    " TLogDBG "tryAll=". tryAll
-    " TLogDBG "vikiType=". tryAll
+    " TLogVAR txt, col, tryAll, vikiType
     if (tryAll || vikiType == 2) && viki#IsSupportedType('e', types)
+        " TLogDBG 'vikiType 2'
         if exists('b:getExtVikiLink')
             exe 'let def = ' . b:getExtVikiLink.'()'
         else
@@ -2502,6 +2501,7 @@ function! viki#GetLink(ignoreSyntax, ...) "{{{3
         endif
     endif
     if (tryAll || vikiType == 3) && viki#IsSupportedType('u', types)
+        " TLogDBG 'vikiType 3'
         if exists('b:getURLViki')
             exe 'let def = ' . b:getURLViki . '()'
         else
@@ -2513,6 +2513,7 @@ function! viki#GetLink(ignoreSyntax, ...) "{{{3
         endif
     endif
     if (tryAll || vikiType == 4) && viki#IsSupportedType('x', types)
+        " TLogDBG 'vikiType 4'
         if exists('b:getCmdViki')
             exe 'let def = ' . b:getCmdViki . '()'
         else
@@ -2524,6 +2525,7 @@ function! viki#GetLink(ignoreSyntax, ...) "{{{3
         endif
     endif
     if (tryAll || vikiType == 1) && viki#IsSupportedType('s', types)
+        " TLogDBG 'vikiType 1'
         if exists('b:getVikiLink')
             exe 'let def = ' . b:getVikiLink.'()'
         else

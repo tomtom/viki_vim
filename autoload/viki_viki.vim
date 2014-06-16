@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
 " @Last Change: 2014-05-13.
-" @Revision:    0.0.223
+" @Revision:    0.0.226
 
 
 if !exists('g:viki_viki#conceal_extended_link_markup')
@@ -77,7 +77,7 @@ function! viki_viki#SetupBuffer(state, ...) "{{{3
     endif
     " TLogVAR b:vikiAnchorNameRx
     
-    let interviki_names = viki#GetInterVikis()
+    let interviki_names = map(copy(viki#GetInterVikis()), 'substitute(v:val, ''::$'', "", "")')
     if empty(interviki_names)
         let interviki_rx = '\<['. b:vikiUpperCharacters .'0-9]\+::'
     else
