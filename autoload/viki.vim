@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2014-05-13.
-" @Revision:    1371
+" @Revision:    1381
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -345,12 +345,22 @@ endif
 
 
 if v:version >= 700 && !exists("g:vikiHyperWordsFiles")
-    " A list of files that contain special viki names
+    " A list of files that contain special viki names.
+    " Can also be buffer-local.
+    " See also |g:vikiBaseDirs|.
     " :read: let g:vikiHyperWordsFiles = [...] "{{{2
     let g:vikiHyperWordsFiles = [
                 \ get(split(&rtp, ','), 0).'/vikiWords.txt',
                 \ './.vikiWords',
                 \ ]
+endif
+
+
+if !exists('g:vikiBaseDirs')
+    " Where |g:vikiHyperWordsFiles| are looked for.
+    " Can also be buffer-local.
+    " '.' will be expanded to the directory of the current buffer.
+    let g:vikiBaseDirs = ['.']   "{{{2
 endif
 
 
@@ -1367,39 +1377,49 @@ function! viki#CollectFileWords(table, simpleWikiName) "{{{3
         call add(patterns, suffix)
     end
     for p in patterns
-        let files = glob(expand('%:p:h').'/*'. p)
-        if files != ''
-            let files_l = split(files, '\n')
-            call filter(files_l, '!isdirectory(v:val) && v:val != expand("%:p")')
-            if !empty(files_l)
-                for w in files_l
-                    let ww = s:CanonicHyperWord(fnamemodify(w, ":t:r"))
-                    if !has_key(a:table, ww) && 
-                                \ (a:simpleWikiName == '' || ww !~# a:simpleWikiName)
-                        let a:table[ww] = w
-                    endif
-                endfor
+        for base_dir in tlib#var#Get('vikiBaseDirs', 'bg')
+            " TLogVAR base_dir
+            let files = glob(base_dir .'/*'. p)
+            " TLogVAR files
+            if files != ''
+                let files_l = split(files, '\n')
+                call filter(files_l, '!isdirectory(v:val) && v:val != expand("%:p")')
+                " TLogVAR files_l
+                if !empty(files_l)
+                    for w in files_l
+                        let ww = s:CanonicHyperWord(fnamemodify(w, ":t:r"))
+                        " TLogVAR w, ww
+                        if !has_key(a:table, ww) && 
+                                    \ (a:simpleWikiName == '' || ww !~# a:simpleWikiName)
+                            let a:table[ww] = w
+                        endif
+                    endfor
+                endif
             endif
-        endif
+        endfor
     endfor
 endf
 
 
 function! viki#CollectHyperWords(table) "{{{3
-    let vikiWordsBaseDir = expand('%:p:h')
-    for filename in g:vikiHyperWordsFiles
-        if filename =~ '^\./'
-            let bn  = fnamemodify(filename, ':t')
-            let filename = vikiWordsBaseDir . filename[1:-1]
-            let acc = []
-            for dir in tlib#file#Split(vikiWordsBaseDir)
-                call add(acc, dir)
-                let fn = tlib#file#Join(add(copy(acc), bn))
-                call s:CollectVikiWords(a:table, fn, vikiWordsBaseDir)
-            endfor
-        else
-            call s:CollectVikiWords(a:table, filename, vikiWordsBaseDir)
+    for base_dir in tlib#var#Get('vikiBaseDirs', 'bg')
+        if base_dir == '.'
+            let base_dir = expand('%:p:h')
         endif
+        for filename in tlib#var#Get('vikiHyperWordsFiles', 'bg')
+            if filename =~ '^\./'
+                let bn  = fnamemodify(filename, ':t')
+                let filename = base_dir . filename[1:-1]
+                let acc = []
+                for dir in tlib#file#Split(base_dir)
+                    call add(acc, dir)
+                    let fn = tlib#file#Join(add(copy(acc), bn))
+                    call s:CollectVikiWords(a:table, fn, base_dir)
+                endfor
+            else
+                call s:CollectVikiWords(a:table, filename, base_dir)
+            endif
+        endfor
     endfor
 endf
 

@@ -950,6 +950,7 @@ Contents~
         g:vikiBalloon .............................. |g:vikiBalloon|
         g:vikiBalloonEncoding ...................... |g:vikiBalloonEncoding|
         g:vikiHyperWordsFiles ...................... |g:vikiHyperWordsFiles|
+        g:vikiBaseDirs ............................. |g:vikiBaseDirs|
         g:vikiMapFunctionality ..................... |g:vikiMapFunctionality|
         g:vikiMapFunctionalityMinor ................ |g:vikiMapFunctionalityMinor|
         g:vikiFoldBodyLevel ........................ |g:vikiFoldBodyLevel|
@@ -990,6 +991,7 @@ Contents~
         VikiOpenFileUrl ............................ |VikiOpenFileUrl()|
         VikiOpenSpecialProtocol .................... |VikiOpenSpecialProtocol()|
         viki#GetInterVikis ......................... |viki#GetInterVikis()|
+        viki#GetSimpleRx4SimpleWikiWord ............ |viki#GetSimpleRx4SimpleWikiWord()|
         viki#GetSimpleRx4SimpleWikiName ............ |viki#GetSimpleRx4SimpleWikiName()|
         viki#CanonicFilename ....................... |viki#CanonicFilename()|
         viki#FindRx ................................ |viki#FindRx()|
@@ -1498,7 +1500,15 @@ g:vikiBalloonEncoding          (default: &enc)
 
                                                     *g:vikiHyperWordsFiles*
 g:vikiHyperWordsFiles          (default: [...])
-    A list of files that contain special viki names
+    A list of files that contain special viki names.
+    Can also be buffer-local.
+    See also |g:vikiBaseDirs|.
+
+                                                    *g:vikiBaseDirs*
+g:vikiBaseDirs                 (default: ['.'])
+    Where |g:vikiHyperWordsFiles| are looked for.
+    Can also be buffer-local.
+    '.' will be expanded to the directory of the current buffer.
 
                                                     *g:vikiMapFunctionality*
 g:vikiMapFunctionality         (default: 'ALL')
@@ -1736,6 +1746,10 @@ VikiOpenSpecialProtocol(url)
 
                                                     *viki#GetInterVikis()*
 viki#GetInterVikis()
+
+                                                    *viki#GetSimpleRx4SimpleWikiWord()*
+viki#GetSimpleRx4SimpleWikiWord()
+    Get a rx that matches a simple word
 
                                                     *viki#GetSimpleRx4SimpleWikiName()*
 viki#GetSimpleRx4SimpleWikiName()
