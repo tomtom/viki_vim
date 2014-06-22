@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2014-05-13.
-" @Revision:    1381
+" @Revision:    1393
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -1425,10 +1425,11 @@ endf
 
 
 function! s:CollectVikiWords(table, filename, basedir) "{{{3
-    " TLogVAR a:filename, a:basedir
+    " TLogVAR a:filename, a:basedir, filereadable(a:filename)
     if filereadable(a:filename)
         let dir = fnamemodify(a:filename, ':p:h')
-        " TLogVAR dir
+        let cwd = getcwd()
+        " TLogVAR dir, a:filename, a:basedir
         call tlib#dir#Push(dir, 1)
         try
             let hyperWords = readfile(a:filename)
@@ -1445,8 +1446,7 @@ function! s:CollectVikiWords(table, filename, basedir) "{{{3
                             call remove(a:table, mkey)
                         endif
                     elseif !has_key(a:table, mkey)
-                        " TLogVAR mval
-                        " call TLogDBG(viki#IsInterViki(mval))
+                        " TLogVAR mval, viki#IsInterViki(mval)
                         if viki#IsInterViki(mval)
                             let interviki = viki#InterVikiName(mval)
                             let suffix    = viki#InterVikiSuffix(mval, interviki)
@@ -1458,7 +1458,7 @@ function! s:CollectVikiWords(table, filename, basedir) "{{{3
                                         \ 'name':      name,
                                         \ }
                         else
-                            let a:table[mkey] = tlib#file#Relative(mval, a:basedir)
+                            let a:table[mkey] = tlib#file#Relative(mval, cwd)
                             " TLogVAR mkey, mval, a:basedir, a:table[mkey]
                         endif
                     endif
