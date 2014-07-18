@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
 " @Last Change: 2013-10-17.
-" @Revision: 0.1102
+" @Revision: 0.1103
 
 if version < 600
     syntax clear
@@ -256,7 +256,7 @@ let s:plquant = g:vikiIndentedPriorityLists ? '\+' : '*'
 
 exec 'syn match vikiPriorityListTodoGen /^[[:blank:]]'. s:plquant .'\zs#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\(\s\+'. s:progress .'\)\?\)\s.*$/ contains=vikiContact,vikiTag,@vikiPriorityListTodo,@vikiText'
 exec 'syn match vikiPriorityListDoneGen /^[[:blank:]]'. s:plquant .'\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}\u.\{-}:\|\(T: \+\)\?\d*\u\d* \+x'. s:progress .'\?\):\? .*/'
-exec 'syn match vikiPriorityListDoneX /^[[:blank:]]'. s:plquant .'\zs#X\d\?\s.*/'
+exec 'syn match vikiPriorityListDoneX /^[[:blank:]]'. s:plquant .'\zs#[X-Z]\d\?\s.*/'
 
 unlet s:plquant
 
