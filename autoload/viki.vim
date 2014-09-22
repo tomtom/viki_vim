@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2014-05-13.
-" @Revision:    1393
+" @Revision:    1428
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -3054,7 +3054,7 @@ endf
 
 
 function! s:CollectFileNames(lb, le, bang) "{{{3
-    let s:isdir = {}
+    call s:InitIsDir()
     let afile = viki#FilesGetFilename(getline('.'))
     let acc   = []
     for l in range(a:lb, a:le - 1)
@@ -3065,6 +3065,14 @@ function! s:CollectFileNames(lb, le, bang) "{{{3
         endif
     endfor
     return acc
+endf
+
+
+function! s:InitIsDir() "{{{3
+    let cd = getcwd()
+    if get(s:isdir, '.', '') != cd
+        let s:isdir = {'.': cd}
+    endif
 endf
 
 
@@ -3142,6 +3150,7 @@ endf
 " Comments (i.e. text after the file link) are maintained if possible 
 " and if list is not "detail".
 function! viki#DirListing(lhs, lhb, indent, region) "{{{3
+    call s:InitIsDir()
     let args = s:GetRegionArgs(a:lhs, a:lhb - 1)
     " TLogVAR args
     let patt = get(args, 'glob', '')
@@ -3156,6 +3165,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
         elseif patt !~ '^\([%\\/]\|\w\+:\)' && !&autochdir && bufdir != getcwd()
             let patt = tlib#file#Join([bufdir, patt])
         endif
+        let s:dirlisting_depth_cwd = s:GetDepth(getcwd())
         " TLogVAR patt
         if patt =~ '^[^\\/*?]*[*?]'
             let s:dirlisting_depth0 = 0
@@ -3164,6 +3174,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
             " TLogVAR patt_parts
             let s:dirlisting_depth0 = s:GetDepth(patt_parts[0])
         endif
+        " echom "DBG dirlisting_depth0" s:dirlisting_depth0
         let view = winsaveview()
         let t = @t
         try
@@ -3190,6 +3201,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
                     let rootdir = ''
                     for lsitem in ls
                         let lsdir = s:IsDir(lsitem)
+                        " TLogVAR lsitem, lsdir, show_dirs
                         if lsdir
                             if show_dirs
                                 call add(ls1, lsitem)
@@ -3200,8 +3212,13 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
                                 " TLogVAR lsdirname, index(ls1,lsdirname)
                                 if empty(rootdir) || strwidth(lsdirname) < strwidth(rootdir)
                                     let rootdir = lsdirname
+                                    let rootdirn = len(lsdirname)
+                                    " TLogVAR rootdir
                                 endif
-                                if index(ls1, lsdirname) == -1
+                                if strpart(lsdirname, 0, rootdirn) ==# rootdir
+                                    let lsdirname = './'. strpart(lsdirname, rootdirn)
+                                endif
+                                if lsdirname != './' && index(ls1, lsdirname) == -1
                                     call add(ls1, lsdirname)
                                 endif
                             endif
@@ -3278,11 +3295,13 @@ endf
 
 
 function! s:GetFileEntry(file, region, deep, list, head, args) "{{{3
+    " TLogVAR a:file, a:deep, a:list, a:head, a:args
+    " TLogVAR a:region
     let f = []
     let props = {}
+    let is_dir = 0
     let d = s:GetDepth(a:file) - s:dirlisting_depth0
     let attr = []
-    let is_dir = 0
     if index(a:list, 'detail') != -1
         let props.type = getftype(a:file)
         if props.type != 'file'
@@ -3304,6 +3323,7 @@ function! s:GetFileEntry(file, region, deep, list, head, args) "{{{3
     if index(a:list, 'flat') == -1
         let prefix  = repeat(' ', d)
         if a:deep
+            " echom "DBG" s:getfileentry_deep d
             if s:getfileentry_deep < d
                 let prefix .= is_dir ? '`+' : '`|'
             else
@@ -3369,7 +3389,13 @@ endf
 
 
 function! s:GetDepth(file) "{{{3
-    return len(substitute(a:file, '[^\/]', '', 'g'))
+    let depth = len(substitute(a:file, '[^\/]', '', 'g'))
+    if s:IsDir(a:file)
+        let depth -= 1
+    else
+        let depth += 1
+    endif
+    return depth
 endf
 
 
