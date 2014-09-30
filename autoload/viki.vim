@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2014-05-13.
-" @Revision:    1428
+" @Last Change: 2014-09-30.
+" @Revision:    1429
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -386,18 +386,6 @@ endif
 if !exists("g:vikiMapFunctionalityMinor")
     " Define which keys to map in minor mode (invoked via :VikiMinorMode)
     let g:vikiMapFunctionalityMinor = 'f b p mf mb tF c q e' "{{{2
-endif
-
-if !exists("g:vikiFoldMethodVersion")
-    " :nodoc:
-    " Choose folding method version
-    " Viki supports several methods (1..7) for defining folds. If you 
-    " find that text entry is slowed down it is probably due to the 
-    " chosen fold method. You could try to use another method (see 
-    " ../ftplugin/viki.vim for alternative methods) or check out this 
-    " vim tip:
-    " http://vim.wikia.com/wiki/Keep_folds_closed_while_inserting_text
-    let g:vikiFoldMethodVersion = 8 "{{{2
 endif
 
 if !exists("g:vikiFoldBodyLevel")

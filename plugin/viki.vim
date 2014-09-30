@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2014-05-08.
-" @Revision:    2760
+" @Last Change: 2014-09-30.
+" @Revision:    2761
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -104,6 +104,18 @@ if !exists('g:vikiIndentedPriorityLists')
     " If true, priority lists must be indented by at least one 
     " whitespace character.
     let g:vikiIndentedPriorityLists = 1   "{{{2
+endif
+
+if !exists("g:vikiFoldMethodVersion")
+    " :nodoc:
+    " Choose folding method version
+    " Viki supports several methods (1..7) for defining folds. If you 
+    " find that text entry is slowed down it is probably due to the 
+    " chosen fold method. You could try to use another method (see 
+    " ../ftplugin/viki.vim for alternative methods) or check out this 
+    " vim tip:
+    " http://vim.wikia.com/wiki/Keep_folds_closed_while_inserting_text
+    let g:vikiFoldMethodVersion = 8 "{{{2
 endif
 
 
