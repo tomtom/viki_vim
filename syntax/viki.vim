@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2013-10-17.
-" @Revision: 0.1103
+" @Last Change: 2014-10-09.
+" @Revision: 0.1106
 
 if version < 600
     syntax clear
@@ -251,6 +251,7 @@ else
     syn match vikiContact /\s\+\zs@[^[:punct:][:space:]]\+/ contained containedin=vikiPriorityListTodoGen
 endif
 
+" syn cluster vikiPriorityListTodoInline contains=@vikiPriorityListTodo,vikiTag,vikiContact
 
 let s:plquant = g:vikiIndentedPriorityLists ? '\+' : '*'
 
