@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2014-10-09.
-" @Revision: 0.1106
+" @Last Change: 2014-10-14.
+" @Revision: 0.1109
 
 if version < 600
     syntax clear
@@ -253,7 +253,7 @@ endif
 
 " syn cluster vikiPriorityListTodoInline contains=@vikiPriorityListTodo,vikiTag,vikiContact
 
-let s:plquant = g:vikiIndentedPriorityLists ? '\+' : '*'
+let s:plquant = tlib#var#Get('vikiIndentedPriorityLists', 'wbg') ? '\+' : '*'
 
 exec 'syn match vikiPriorityListTodoGen /^[[:blank:]]'. s:plquant .'\zs#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\(\s\+'. s:progress .'\)\?\)\s.*$/ contains=vikiContact,vikiTag,@vikiPriorityListTodo,@vikiText'
 exec 'syn match vikiPriorityListDoneGen /^[[:blank:]]'. s:plquant .'\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}\u.\{-}:\|\(T: \+\)\?\d*\u\d* \+x'. s:progress .'\?\):\? .*/'
