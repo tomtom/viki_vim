@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2014-09-30.
-" @Revision:    2761
+" @Last Change: 2014-10-21.
+" @Revision:    2765
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -267,4 +267,9 @@ augroup viki
     " As viki uses its own styles, we have to reset &filetype.
     autocmd ColorScheme * if &filetype == 'viki' | set filetype=viki | endif
 augroup END
+
+
+if exists('g:loaded_setsyntax') && g:loaded_setsyntax > 0
+    let g:setsyntax_options['viki']['vikiPriorityListTodoGen'] = {'&l:tw': 0}
+endif
 

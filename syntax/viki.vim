@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2014-10-14.
-" @Revision: 0.1109
+" @Last Change: 2014-10-21.
+" @Revision: 0.1110
 
 if version < 600
     syntax clear
