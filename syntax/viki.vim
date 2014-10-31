@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2014-10-21.
-" @Revision: 0.1110
+" @Last Change: 2014-10-29.
+" @Revision: 0.1112
 
 if version < 600
     syntax clear
@@ -260,6 +260,8 @@ exec 'syn match vikiPriorityListDoneGen /^[[:blank:]]'. s:plquant .'\zs#\(T: \+x
 exec 'syn match vikiPriorityListDoneX /^[[:blank:]]'. s:plquant .'\zs#[X-Z]\d\?\s.*/'
 
 unlet s:plquant
+
+syn cluster vikiPriorityListGen contains=vikiPriorityListTodoGen,vikiPriorityListDoneX,vikiPriorityListDoneGen
 
 
 syntax sync minlines=2
