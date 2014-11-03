@@ -688,3 +688,16 @@ version: "4.06"
   MD5 checksum: 64d81aebd79f239ea8be3a201e38cbef
 version: "4.07"
 
+version: '4.07'
+  - Allow digits in interviki names
+  - FIX #13: viki_viki#SetupBuffer(): remove "::" from interviki names for use in interviki_rx
+  - vikiBaseDirs: A list of directories where to look for "file words" and "hyper words"
+  - CollectVikiWords(): Use correct directory for hypewords
+  - Priority lists: Highlight #Y, #Z as comments (like #X)
+  - viki#DirListing(): Improve display for "**/*.*" pattern (requires proper rewrite)
+  - FIX #14: Move definition of g:vikiFoldMethodVersion back to plugin/viki.vim
+  - syntax: g:vikiIndentedPriorityLists can also be window- or buffer-local
+  - If the SetSyntax plugin is installed, set tw to 0 the cursor is over priority lists
+  - syn cluster vikiPriorityListGen
+  MD5 checksum: a8145ac2f24be0c4fe8cd462853026d7
+
