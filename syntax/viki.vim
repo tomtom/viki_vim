@@ -1,9 +1,9 @@
-" viki.vim -- the viki syntax file
+" viki.vim -- the viki syntax fileviki_viki#SetupBuffer
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
 " @Last Change: 2014-10-29.
-" @Revision: 0.1112
+" @Revision: 0.1113
 
 if version < 600
     syntax clear

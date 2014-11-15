@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
 " @Last Change: 2014-10-21.
-" @Revision:    1433
+" @Revision:    1450
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -145,6 +145,12 @@ endif
 if !exists("g:vikiSpecialFilesExceptions")
     " Exceptions from g:vikiSpecialFiles
     let g:vikiSpecialFilesExceptions = "" "{{{2
+endif
+
+if !exists('g:viki#fileword_suffixes')
+    " Also search for files with theses suffixes in |viki#CollectFileWords()|.
+    " Can also be buffer-local as b:viki#fileword_suffixes.
+    let g:viki#fileword_suffixes = []   "{{{2
 endif
 
 if !exists('g:viki_highlight_hyperlink_light')
@@ -1313,6 +1319,7 @@ endf
 " viki#DispatchOnFamily(fn, ?family='', *args)
 function! viki#DispatchOnFamily(fn, ...) "{{{3
     let fam = a:0 >= 1 && a:1 != '' ? a:1 : viki#Family()
+    " TLogVAR fam, expand('%')
     if !exists('*viki_'. fam .'#SetupBuffer')
         exec 'runtime autoload/viki_'. fam .'.vim'
     endif
@@ -1360,16 +1367,24 @@ function! viki#CollectFileWords(table, simpleWikiName) "{{{3
     if g:vikiNameSuffix != '' && index(patterns, g:vikiNameSuffix) == -1
         call add(patterns, g:vikiNameSuffix)
     end
+    let fileword_suffixes = tlib#var#Get('viki#fileword_suffixes', 'bg', [])
+    " TLogVAR fileword_suffixes
+    if !empty(fileword_suffixes)
+        let patterns += fileword_suffixes
+    endif
     let suffix = '.'. expand('%:e')
     if suffix != '.' && index(patterns, suffix) == -1
         call add(patterns, suffix)
     end
     for p in patterns
         for base_dir in tlib#var#Get('vikiBaseDirs', 'bg')
-            " TLogVAR base_dir
+            if base_dir == '.'
+                let base_dir = expand('%:p:h')
+            endif
+            " TLogVAR p, base_dir, getcwd(), bufname('%')
             let files = glob(base_dir .'/*'. p)
             " TLogVAR files
-            if files != ''
+            if !empty(files)
                 let files_l = split(files, '\n')
                 call filter(files_l, '!isdirectory(v:val) && v:val != expand("%:p")')
                 " TLogVAR files_l

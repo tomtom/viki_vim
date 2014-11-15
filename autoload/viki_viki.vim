@@ -4,7 +4,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
 " @Last Change: 2014-05-13.
-" @Revision:    0.0.226
+" @Revision:    0.0.233
 
 
 if !exists('g:viki_viki#conceal_extended_link_markup')
@@ -24,7 +24,7 @@ endif
 " This also sets up the rx for the different viki name types.
 " viki_viki#SetupBuffer(state, ?dontSetup='')
 function! viki_viki#SetupBuffer(state, ...) "{{{3
-    " TLogDBG expand('%') .': '. (exists('b:vikiFamily') ? b:vikiFamily : 'default')
+    " TLogDBG 'viki_viki#SetupBuffer: '. expand('%') .': '. (exists('b:vikiFamily') ? b:vikiFamily : 'default')
 
     let dontSetup = a:0 > 0 ? a:1 : ""
     let noMatch = ""
@@ -102,6 +102,7 @@ function! viki_viki#SetupBuffer(state, ...) "{{{3
             let simpleWikiName = '\(\)'
         endif
         let simpleHyperWords = ''
+        " TLogVAR viki#IsSupportedType('w'), viki#IsSupportedType('f'), dontSetup
         if v:version >= 700 && viki#IsSupportedType('w') && !(dontSetup =~# 'w')
             let b:vikiHyperWordTable = {}
             if viki#IsSupportedType('f') && !(dontSetup =~# 'f')
@@ -397,6 +398,7 @@ endf
 " Initialize viki as minor mode (add-on to some buffer filetype)
 "state ... no-op:0, minor:1, major:2
 function! viki_viki#MinorMode(state) "{{{3
+    " TLogVAR a:state, expand('%')
     if a:state == 0
         return 0
     endif
