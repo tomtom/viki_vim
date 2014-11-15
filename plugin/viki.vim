@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
 " @Last Change: 2014-10-21.
-" @Revision:    2765
+" @Revision:    2766
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -31,7 +31,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 106
         finish
     endif
 endif
-let loaded_viki = 407
+let loaded_viki = 408
 
 
 if !exists("tlist_viki_settings")
