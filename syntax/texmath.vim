@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-15.
-" @Last Change: 2010-11-15.
-" @Revision:    0.0.75
+" @Last Change: 2015-01-15.
+" @Revision:    0.0.76
 
 " Use only as embedded syntax to be included from other syntax files.
 
@@ -14,17 +14,6 @@ elseif exists("b:current_syntax")
     finish
 endif
 scriptencoding utf-8
-
-if exists(':HiLink')
-    let s:delhilink = 0
-else
-    let s:delhilink = 1
-    if version < 508
-        command! -nargs=+ HiLink hi link <args>
-    else
-        command! -nargs=+ HiLink hi def link <args>
-    endif
-endif
 
 
 " syn match texmathArgDelimiters /[{}\[\]]/ contained containedin=texmathMath
@@ -466,19 +455,16 @@ endif
 syn cluster texmathMath contains=@texmath,texmathMathWord,texmathSup,texmathSub
 
 " Statement PreProc
-HiLink texmathSup Type
-HiLink texmathSub Type
-" HiLink texmathArgDelimiters Comment
-HiLink texmathCommand Statement
-HiLink texmathText Normal
-HiLink texmathMathFont Type
-HiLink texmathMathWord Identifier
-HiLink texmathUnword Constant
-HiLink texmathPairs PreProc
+hi def link texmathSup Type
+hi def link texmathSub Type
+" hi def link texmathArgDelimiters Comment
+hi def link texmathCommand Statement
+hi def link texmathText Normal
+hi def link texmathMathFont Type
+hi def link texmathMathWord Identifier
+hi def link texmathUnword Constant
+hi def link texmathPairs PreProc
 
 
-if s:delhilink
-    delcommand HiLink
-endif
 " let b:current_syntax = 'texmath'
 
