@@ -3,7 +3,7 @@
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
 " @Last Change: 2014-10-21.
-" @Revision:    2766
+" @Revision:    2767
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -21,7 +21,7 @@
 " - vikitasks.vim (vimscript #2894)
 " - kpsewhich (not a vim plugin :-) for vikiLaTeX
 
-if &cp || exists("loaded_viki")
+if &cp || exists("g:loaded_viki")
     finish
 endif
 if !exists('g:loaded_tlib') || g:loaded_tlib < 106
@@ -31,7 +31,7 @@ if !exists('g:loaded_tlib') || g:loaded_tlib < 106
         finish
     endif
 endif
-let loaded_viki = 408
+let g:loaded_viki = 408
 
 
 if !exists("tlist_viki_settings")
