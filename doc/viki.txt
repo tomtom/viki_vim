@@ -909,6 +909,7 @@ Contents~
         :VikiBrowse ................................ |:VikiBrowse|
         :VikiHome .................................. |:VikiHome|
         :VIKI ...................................... |:VIKI|
+        :Vikifind .................................. |:Vikifind|
         g:vikiUpperCharacters ...................... |g:vikiUpperCharacters|
         g:vikiLowerCharacters ...................... |g:vikiLowerCharacters|
         g:vikiAnchorNameRx ......................... |g:vikiAnchorNameRx|
@@ -918,6 +919,7 @@ Contents~
         g:vikiSpecialProtocolsExceptions ........... |g:vikiSpecialProtocolsExceptions|
         g:vikiSpecialFiles ......................... |g:vikiSpecialFiles|
         g:vikiSpecialFilesExceptions ............... |g:vikiSpecialFilesExceptions|
+        g:viki#fileword_suffixes ................... |g:viki#fileword_suffixes|
         g:viki_highlight_hyperlink_light ........... |g:viki_highlight_hyperlink_light|
         g:viki_highlight_hyperlink_dark ............ |g:viki_highlight_hyperlink_dark|
         g:viki_highlight_inexistent_light .......... |g:viki_highlight_inexistent_light|
@@ -991,6 +993,8 @@ Contents~
         VikiOpenFileUrl ............................ |VikiOpenFileUrl()|
         VikiOpenSpecialProtocol .................... |VikiOpenSpecialProtocol()|
         viki#GetInterVikis ......................... |viki#GetInterVikis()|
+        viki#GetInterVikiDef ....................... |viki#GetInterVikiDef()|
+        viki#GetInterVikiDefs ...................... |viki#GetInterVikiDefs()|
         viki#GetSimpleRx4SimpleWikiWord ............ |viki#GetSimpleRx4SimpleWikiWord()|
         viki#GetSimpleRx4SimpleWikiName ............ |viki#GetSimpleRx4SimpleWikiName()|
         viki#CanonicFilename ....................... |viki#CanonicFilename()|
@@ -1058,6 +1062,7 @@ Contents~
         viki#MaybeFollowLink ....................... |viki#MaybeFollowLink()|
         viki#InterEditArg .......................... |viki#InterEditArg()|
         viki#HomePage .............................. |viki#HomePage()|
+        viki#EnsureVikiBuffer ...................... |viki#EnsureVikiBuffer()|
         viki#Edit .................................. |viki#Edit()|
         viki#Browse ................................ |viki#Browse()|
         viki#BrowseComplete ........................ |viki#BrowseComplete()|
@@ -1088,6 +1093,8 @@ Contents~
         viki#GrepRegionUpdateAll ................... |viki#GrepRegionUpdateAll()|
         viki#GrepRegionUpdate ...................... |viki#GrepRegionUpdate()|
         viki#CollectSyntaxRegionsFiletypes ......... |viki#CollectSyntaxRegionsFiletypes()|
+        viki#Find .................................. |viki#Find()|
+        viki#Find .................................. |viki#Find()|
         viki_anyword#MinorMode ..................... |viki_anyword#MinorMode()|
         viki_anyword#SetupBuffer ................... |viki_anyword#SetupBuffer()|
         viki_anyword#DefineMarkup .................. |viki_anyword#DefineMarkup()|
@@ -1133,8 +1140,6 @@ Contents~
         [] ......................................... |[]|
         v_<expr> ................................... |v_<expr>|
         o_ii ....................................... |o_ii|
-        :HiLink .................................... |:HiLink|
-        :HiLink .................................... |:HiLink|
         :HiLink .................................... |:HiLink|
         :HiLink .................................... |:HiLink|
 
@@ -1265,6 +1270,13 @@ VikiDefine NAME BASE ?SUFFIX
 :VIKI
     Open the |viki-homepage|.
 
+                                                    *:Vikifind*
+:Vikifind[!] KIND PATTERN
+    Use |:Trag| to search the current directory or, with the optional [!] 
+    all intervikis. See |:Trag| for the allowed values for KIND.
+
+    NOTE: This command requires the trag plugin to be installed.
+
 
 ========================================================================
 autoload/viki.vim~
@@ -1330,6 +1342,11 @@ g:vikiSpecialFiles             (default: [...])
                                                     *g:vikiSpecialFilesExceptions*
 g:vikiSpecialFilesExceptions   (default: "")
     Exceptions from g:vikiSpecialFiles
+
+                                                    *g:viki#fileword_suffixes*
+g:viki#fileword_suffixes       (default: [])
+    Also search for files with theses suffixes in |viki#CollectFileWords()|.
+    Can also be buffer-local as b:viki#fileword_suffixes.
 
                                                     *g:viki_highlight_hyperlink_light*
 g:viki_highlight_hyperlink_light (default: 'term=underline cterm=underline gui=underline ctermfg=DarkBlue guifg=DarkBlue')
@@ -1747,6 +1764,12 @@ VikiOpenSpecialProtocol(url)
                                                     *viki#GetInterVikis()*
 viki#GetInterVikis()
 
+                                                    *viki#GetInterVikiDef()*
+viki#GetInterVikiDef(iv)
+
+                                                    *viki#GetInterVikiDefs()*
+viki#GetInterVikiDefs()
+
                                                     *viki#GetSimpleRx4SimpleWikiWord()*
 viki#GetSimpleRx4SimpleWikiWord()
     Get a rx that matches a simple word
@@ -1951,7 +1974,7 @@ viki#IsSpecialProtocol(dest)
     Check if dest uses a special protocol
 
                                                     *viki#IsSpecial()*
-viki#IsSpecial(dest)
+viki#IsSpecial(dest, ...)
     Check if dest is somehow special
 
                                                     *viki#MakeUrl()*
@@ -2035,6 +2058,9 @@ viki#InterEditArg(iname, name)
                                                     *viki#HomePage()*
 viki#HomePage(?winNr=0)
     Open the homepage.
+
+                                                    *viki#EnsureVikiBuffer()*
+viki#EnsureVikiBuffer()
 
                                                     *viki#Edit()*
 viki#Edit(name, ?ignoreSpecial=0, ?winNr=0)
@@ -2190,6 +2216,12 @@ viki#GrepRegionUpdate()
 
                                                     *viki#CollectSyntaxRegionsFiletypes()*
 viki#CollectSyntaxRegionsFiletypes()
+
+                                                    *viki#Find()*
+viki#Find(arg, ...)
+
+                                                    *viki#Find()*
+viki#Find(arg, ...)
 
 
 ========================================================================
@@ -2389,12 +2421,6 @@ syntax/viki.vim~
 
 ========================================================================
 syntax/texmath.vim~
-
-                                                    *:HiLink*
-:HiLink
-
-                                                    *:HiLink*
-:HiLink
 
 
     Copied from $VIMRUNTIME/syntax/tex.vim
