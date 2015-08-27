@@ -2,7 +2,7 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2014-10-21.
+" @Last Change: 2015-08-25.
 " @Revision:    2767
 "
 " GetLatestVimScripts: 861 1 viki.vim
@@ -248,7 +248,15 @@ command! VikiHome :call viki#HomePage()
 command! VIKI :call viki#HomePage()
 
 
-if !empty('g:vikiNameSuffix')
+" :display: :Vikifind[!] KIND PATTERN
+" Use |:Trag| to search the current directory or, with the optional [!] 
+" all intervikis. See |:Trag| for the allowed values for KIND.
+"
+" NOTE: This command requires the trag plugin to be installed.
+command! -nargs=1 -bang Vikifind call viki#Find(<q-args>, !empty('<bang>'))
+
+
+if !empty('g:vikiNameSuffix') && exists('#filetypedetect')
     exec 'autocmd filetypedetect BufRead,BufNewFile *'. g:vikiNameSuffix .' setf viki'
     let g:ft_ignore_pat = '\('. g:ft_ignore_pat .'\|'. tlib#rx#Escape(g:vikiNameSuffix) .'$\)'
 endif

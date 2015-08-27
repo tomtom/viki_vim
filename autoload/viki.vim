@@ -3,7 +3,7 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2014-10-21.
+" @Last Change: 2015-08-27.
 " @Revision:    1450
 
 
@@ -756,6 +756,35 @@ endf
 
 function! viki#GetInterVikis() "{{{3
     return g:vikiInterVikiNames
+endf
+
+
+function! viki#GetInterVikiDef(iv) abort "{{{3
+    let ivdef = {}
+    let ivdef.name = substitute(a:iv, '::$', '', '')
+    let ivdef.prefix = g:vikiInter{ivdef.name}
+    let ivdef.suffix = viki#InterVikiSuffix(a:iv)
+    let ivdef.special = viki#IsSpecial(ivdef.prefix, 0)
+    " TLogVAR ivdef.special
+    if !ivdef.special
+        let ivdef.filepattern = '*'. ivdef.suffix
+        let ivdef.glob = tlib#file#Join([fnamemodify(ivdef.prefix, ':p:h'), '**/'. ivdef.filepattern], 1)
+        " let ivdef.glob = tlib#file#Join([ivdef.prefix, '*'. ivdef.suffix])
+        " TLogVAR ivdef
+        " let ivdef.files = split(glob(ivdef.glob), '\n')
+    endif
+    return ivdef
+endf
+
+
+function! viki#GetInterVikiDefs() abort "{{{3
+    let defs = {}
+    for iv in viki#GetInterVikis()
+        let def = viki#GetInterVikiDef(iv)
+        " TLogVAR type(def), def
+        let defs[def.name] = def
+    endfor
+    return defs
 endf
 
 
@@ -2003,17 +2032,20 @@ endf
 
 " Check if dest uses a special protocol
 function! viki#IsSpecialProtocol(dest) "{{{3
-    return a:dest =~ '^\('.b:vikiSpecialProtocols.'\):' &&
-                \ (b:vikiSpecialProtocolsExceptions == "" ||
-                \ !(a:dest =~ b:vikiSpecialProtocolsExceptions))
+    let prots = tlib#var#Get('vikiSpecialProtocols', 'bg')
+    let excps = tlib#var#Get('vikiSpecialProtocolsExceptions', 'bg')
+    return a:dest =~ '^\('. prots .'\):' &&
+                \ (excps == "" ||
+                \ !(a:dest =~ excps))
 endf
 
 
 " Check if dest is somehow special
-function! viki#IsSpecial(dest) "{{{3
+function! viki#IsSpecial(dest, ...) "{{{3
+    let isdirectory = a:0 >= 1 ? a:1 : isdirectory(a:dest)
     return viki#IsSpecialProtocol(a:dest) || 
                 \ viki#IsSpecialFile(a:dest) ||
-                \ isdirectory(a:dest)
+                \ isdirectory
 endf
 
 
@@ -2610,9 +2642,16 @@ function! viki#HomePage(...) "{{{3
         endif
         return 1
     else
+        call tlib#notify#Echo('VIKI: Please set g:vikiHomePage', 'WarningMsg')
         return 0
     endif
 endf
+
+
+function viki#EnsureVikiBuffer() abort
+    return exists('b:vikiEnabled') || viki#HomePage()
+endf
+
 
 
 " :display: viki#Edit(name, ?ignoreSpecial=0, ?winNr=0)
@@ -2625,7 +2664,6 @@ function! viki#Edit(name, ...) "{{{3
     endif
     if exists('b:vikiEnabled') 
         if !viki#HomePage(winNr)
-            call tlib#notify#Echo('VIKI: Please set g:vikiHomePage', 'WarningMsg')
             call s:EditWrapper('buffer', 1)
         endif
     endif
@@ -3948,4 +3986,41 @@ function! viki#CollectSyntaxRegionsFiletypes() "{{{3
     return keys(ftypes)
 endf
 
+
+if exists(':TRagDefKind') == 2
+
+    function! viki#Find(arg, ...) abort "{{{3
+        let search_intervikis = a:0 >= 1 ? a:1 : 0
+        call viki#EnsureVikiBuffer()
+        if search_intervikis
+            let files = []
+            for def in values(viki#GetInterVikiDefs())
+                let fs = get(def, 'files', [])
+                if !empty(fs)
+                    let files = extend(files, fs)
+                endif
+            endfor
+            let items = trag#Grep(a:arg, 1, files)
+        else
+            let items = trag#Grep(a:arg)
+        endif
+        " let last_run_files = trag#LastRun('files')
+        let grep_defs = trag#LastRun('grep_defs')
+        for grep_def in grep_defs
+            " TLogVAR grep_def
+            let qfl = trag#ScanWithGrepDefs(grep_def, [grep_def.ff], 1)
+            " TLogVAR qfl
+        endfor
+        if len(items) > 0
+            call trag#QuickListMaybe(0)
+        endif
+    endf
+
+else
+
+    function! viki#Find(arg, ...) abort "{{{3
+        echoerr 'viki#Find() requires the trag plugin to be installed'
+    endf
+
+endif
 
