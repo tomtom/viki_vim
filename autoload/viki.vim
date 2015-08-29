@@ -3990,6 +3990,9 @@ endf
 if exists(':TRagDefKind') == 2
 
     function! viki#Find(arg, ...) abort "{{{3
+        if !exists('g:loaded_trag') || g:loaded_trag < 103
+            throw 'viki#Find: require trag >= 1.3'
+        endif
         let search_intervikis = a:0 >= 1 ? a:1 : 0
         call viki#EnsureVikiBuffer()
         if search_intervikis
@@ -4007,8 +4010,14 @@ if exists(':TRagDefKind') == 2
         " let last_run_files = trag#LastRun('files')
         let grep_defs = trag#LastRun('grep_defs')
         for grep_def in grep_defs
-            " TLogVAR grep_def
-            let qfl = trag#ScanWithGrepDefs(grep_def, [substitute(grep_def.ff, '^.\{-}\([^\/]\+\)$', '\1', '')], 1)
+            let grep_def1 = copy(grep_def)
+            let grep_def1.rxpos = substitute(grep_def1.rxpos, '\s', '[ _-]', 'g')
+            let grep_def1.rxneg = substitute(grep_def1.rxneg, '\s', '[ _-]', 'g')
+            " TLogVAR grep_def1
+            let qfl = trag#ScanWithGrepDefs(grep_def1, [substitute(grep_def1.ff, '^.\{-}\([^\/]\+\)$', '\1', '')], 1)
+            if !empty(qfl)
+                let items = extend(items, qfl)
+            endif
             " TLogVAR qfl
         endfor
         if len(items) > 0
