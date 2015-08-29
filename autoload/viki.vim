@@ -3,7 +3,7 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-08-27.
+" @Last Change: 2015-08-29.
 " @Revision:    1450
 
 
@@ -4008,7 +4008,7 @@ if exists(':TRagDefKind') == 2
         let grep_defs = trag#LastRun('grep_defs')
         for grep_def in grep_defs
             " TLogVAR grep_def
-            let qfl = trag#ScanWithGrepDefs(grep_def, [grep_def.ff], 1)
+            let qfl = trag#ScanWithGrepDefs(grep_def, [substitute(grep_def.ff, '^.\{-}\([^\/]\+\)$', '\1', '')], 1)
             " TLogVAR qfl
         endfor
         if len(items) > 0
