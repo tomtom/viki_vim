@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-08-29.
-" @Revision:    1450
+" @Last Change: 2015-09-29.
+" @Revision:    1451
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -759,7 +759,8 @@ function! viki#GetInterVikis() "{{{3
 endf
 
 
-function! viki#GetInterVikiDef(iv) abort "{{{3
+function! viki#GetInterVikiDef(iv, ...) abort "{{{3
+    let include_files = a:0 >= 1 ? a:1 : 0
     let ivdef = {}
     let ivdef.name = substitute(a:iv, '::$', '', '')
     let ivdef.prefix = g:vikiInter{ivdef.name}
@@ -771,16 +772,19 @@ function! viki#GetInterVikiDef(iv) abort "{{{3
         let ivdef.glob = tlib#file#Join([fnamemodify(ivdef.prefix, ':p:h'), '**/'. ivdef.filepattern], 1)
         " let ivdef.glob = tlib#file#Join([ivdef.prefix, '*'. ivdef.suffix])
         " TLogVAR ivdef
-        " let ivdef.files = split(glob(ivdef.glob), '\n')
+        if include_files
+            let ivdef.files = split(glob(ivdef.glob), '\n')
+        endif
     endif
     return ivdef
 endf
 
 
-function! viki#GetInterVikiDefs() abort "{{{3
+function! viki#GetInterVikiDefs(...) abort "{{{3
+    let include_files = a:0 >= 1 ? a:1 : 0
     let defs = {}
     for iv in viki#GetInterVikis()
-        let def = viki#GetInterVikiDef(iv)
+        let def = viki#GetInterVikiDef(iv, include_files)
         " TLogVAR type(def), def
         let defs[def.name] = def
     endfor
