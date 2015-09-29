@@ -3184,13 +3184,13 @@ endf
 "     head=NUMBER .... Display the first N lines of the file's content
 "     list=detail .... Include additional file info
 "     list=flat ...... Display a flat list
-"     types=[fd] ..... Whether to display files (f) and directories (d)
+"     types=f, d ..... Whether to display files (f) and directories (d)
 "     filter=REGEXP .. List only those files matching a |regexp|
 "     exclude=REGEXP . Don't list files matching a |regexp|
-"     sort=name|time|head ... Sort the list on the files' names, times, 
+"     sort=name, time, head ... Sort the list on the files' names, times, 
 "                      or head lines. If the argument begins with "-", 
 "                      the list is displayed in reverse order.
-"     format=expr      Filename format string (see |expand()|)
+"     format=EXPR      Filename format string (see |expand()|)
 "
 " Comments (i.e. text after the file link) are maintained if possible 
 " and if list is not "detail".
