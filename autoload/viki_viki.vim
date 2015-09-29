@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2014-05-13.
-" @Revision:    0.0.233
+" @Last Change: 2015-09-23.
+" @Revision:    13.0.233
 
 
 if !exists('g:viki_viki#conceal_extended_link_markup')
@@ -229,6 +229,18 @@ function! viki_viki#SetupBuffer(state, ...) "{{{3
                 call hookcursormoved#Register(cond, function('viki#HookCheckPreviousPosition'))
             endfor
         endif
+
+        let idefs = viki#GetInterVikiDefs()
+        let udpaths = split(&path, ';', 1)
+        let paths = split(udpaths[0], ',')
+        let idirs = map(values(idefs), 'v:val.special ? "" : substitute(fnamemodify(v:val.prefix, ":p"), ''\\'', "/", "g")')
+        let idirs = filter(idirs, '!empty(v:val) && index(paths, v:val) == -1')
+        let idirs = map(idirs, 'escape(v:val, ", ")')
+        let lpath = udpaths[0] .','. join(idirs, ',')
+        if len(udpaths) > 1
+            let lpath .= ';'. udpaths[1]
+        endif
+        let &l:path = lpath
     endif
 endf
 
