@@ -1808,7 +1808,7 @@ if !exists('*VikiAnchor_rx')
     " Example: [[index#rx=foo]]
     function! VikiAnchor_rx(arg) "{{{3
         let arg = escape(s:StripBackslash(a:arg), '/')
-        exec 'keepjumps norm! gg/'. arg .''
+        exec 'keepjumps norm! gg/'. arg ."\n"
     endf
 endif
 
