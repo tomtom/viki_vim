@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-09-29.
-" @Revision:    1451
+" @Last Change: 2015-10-01.
+" @Revision:    1540
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -3183,14 +3183,17 @@ endf
 "                      *.txt|*.viki).
 "     head=NUMBER .... Display the first N lines of the file's content
 "     list=detail .... Include additional file info
-"     list=flat ...... Display a flat list
+"     list=flat ...... Display a flat list (implies format=shorten)
 "     types=f, d ..... Whether to display files (f) and directories (d)
-"     filter=REGEXP .. List only those files matching a |regexp|
 "     exclude=REGEXP . Don't list files matching a |regexp|
 "     sort=name, time, head ... Sort the list on the files' names, times, 
 "                      or head lines. If the argument begins with "-", 
 "                      the list is displayed in reverse order.
-"     format=EXPR      Filename format string (see |expand()|)
+"     format=EXPR|shorten .. Filename format string (see |expand()|) or 
+"                      "shorten" to use |pathshorten()|
+"     filter=REGEXP .. List only those filenames matching a |regexp|
+"     +rx=REGEXP ..... Include only files whose text matches a |regexp|
+"     -rx=REGEXP ..... Exclude files whose text matches a |regexp|
 "
 " Comments (i.e. text after the file link) are maintained if possible 
 " and if list is not "detail".
@@ -3210,16 +3213,6 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
         elseif patt !~ '^\([%\\/]\|\w\+:\)' && !&autochdir && bufdir != getcwd()
             let patt = tlib#file#Join([bufdir, patt])
         endif
-        let s:dirlisting_depth_cwd = s:GetDepth(getcwd())
-        " TLogVAR patt
-        if patt =~ '^[^\\/*?]*[*?]'
-            let s:dirlisting_depth0 = 0
-        else
-            let patt_parts = split(patt, '[*?]')
-            " TLogVAR patt_parts
-            let s:dirlisting_depth0 = s:GetDepth(patt_parts[0])
-        endif
-        " echom "DBG dirlisting_depth0" s:dirlisting_depth0
         let view = winsaveview()
         let t = @t
         try
@@ -3243,7 +3236,6 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
                     call filter(ls, '(show_files && !s:IsDir(v:val)) || (show_dirs && s:IsDir(v:val))')
                 else
                     let ls1 = []
-                    let rootdir = ''
                     for lsitem in ls
                         let lsdir = s:IsDir(lsitem)
                         " TLogVAR lsitem, lsdir, show_dirs
@@ -3252,43 +3244,43 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
                                 call add(ls1, lsitem)
                             endif
                         elseif show_files
-                            if show_dirs
-                                let lsdirname = fnamemodify(lsitem, ':p:h')
-                                " TLogVAR lsdirname, index(ls1,lsdirname)
-                                if empty(rootdir) || strwidth(lsdirname) < strwidth(rootdir)
-                                    let rootdir = lsdirname
-                                    let rootdirn = len(lsdirname)
-                                    " TLogVAR rootdir
-                                endif
-                                if strpart(lsdirname, 0, rootdirn) ==# rootdir
-                                    let lsdirname = './'. strpart(lsdirname, rootdirn)
-                                endif
-                                if lsdirname != './' && index(ls1, lsdirname) == -1
-                                    call add(ls1, lsdirname)
-                                endif
-                            endif
                             call add(ls1, lsitem)
                         endif
                     endfor
-                    if !empty(rootdir)
-                        call remove(ls1, index(ls1, rootdir))
-                    endif
                     " TLogVAR rootdir
                     let ls = ls1
                 endif
             else
                 let ls = []
             endif
+            " TLogVAR ls
+            let list = split(get(args, 'list', ''), ',\s*')
+            let flat = index(list, 'flat') != -1
             let filter = get(args, 'filter', '')
             if !empty(filter)
-                call filter(ls, 'v:val =~ filter')
+                call filter(ls, '(!flat && s:IsDir(v:val)) || v:val =~ filter')
             endif
             let exclude = get(args, 'exclude', '')
             if !empty(exclude)
                 call filter(ls, 'v:val !~ exclude')
             endif
+            let incl_rx = get(args, '+rx', '')
+            " TLogVAR incl_rx
+            if !empty(incl_rx)
+                " TLogVAR len(ls)
+                call filter(ls, 'isdirectory(v:val) || !empty(filter(readfile(v:val), ''v:val =~ incl_rx''))')
+            endif
+            let excl_rx = get(args, '-rx', '')
+            " TLogVAR excl_rx
+            if !empty(excl_rx)
+                " TLogVAR len(ls)
+                call filter(ls, 'isdirectory(v:val) || empty(filter(readfile(v:val), ''v:val =~ excl_rx''))')
+            endif
             if !empty(ls)
-                let list = split(get(args, 'list', ''), ',\s*')
+                " TLogVAR ls
+                let cd = expand('%:p:h')
+                let lsd = map(copy(ls), 's:GetFileDef(v:val, cd)')
+                let s:dirlisting_depth0 = sort(map(copy(lsd), 'v:val.indent'))[0]
                 let head = str2nr(get(args, 'head', '0'))
                 let s:files_options = {}
                 let sort = get(args, 'sort', '')
@@ -3311,8 +3303,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
                         throw "viki: #Files: sort must be either name, time, or head but was ". string(sort)
                     endif
                 endif
-                let s:getfileentry_deep = 0
-                let ls = map(ls, 's:GetFileEntry(v:val, a:region, deep, list, head, args)')
+                let ls = map(lsd, 's:GetFileEntry(v:val, a:region, deep, flat, list, head, args)')
                 if !empty(sort)
                     let ls = sort(ls, 's:SortFiles')
                 endif
@@ -3330,6 +3321,12 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
 endf
 
 
+
+" function! s:FileMatches(fname, rx) abort "{{{3
+"     return !empty(filter(readfile(a:fname), 'v:val =~ a:rx'))
+" endf
+
+
 function! s:SortFiles(i1, i2) "{{{3
     let sort_on = s:files_options.sort_on
     let i1 = get(a:i1, sort_on)
@@ -3339,80 +3336,82 @@ function! s:SortFiles(i1, i2) "{{{3
 endf
 
 
-function! s:GetFileEntry(file, region, deep, list, head, args) "{{{3
-    " TLogVAR a:file, a:deep, a:list, a:head, a:args
+function! s:GetFileEntry(filedef, region, deep, flat, list, head, args) "{{{3
+    " TLogVAR a:filedef
+    " TLogVAR a:deep, a:list, a:head, a:args
     " TLogVAR a:region
+    let file = a:filedef.filename
+    let d = a:filedef.indent - s:dirlisting_depth0
     let f = []
     let props = {}
-    let is_dir = 0
-    let d = s:GetDepth(a:file) - s:dirlisting_depth0
+    let is_dir = s:IsDir(file)
     let attr = []
     if index(a:list, 'detail') != -1
-        let props.type = getftype(a:file)
+        let props.type = getftype(file)
         if props.type != 'file'
-            if props.type == 'dir'
-                let is_dir = 1
-            else
+            if props.type != 'dir'
                 call add(attr, props.type)
             endif
         endif
-        let props.ftime = strftime('%Y-%m-%d %H:%M:%S', getftime(a:file))
+        let props.ftime = strftime('%Y-%m-%d %H:%M:%S', getftime(file))
         call add(attr, props.ftime)
-        let props.fperm = getfperm(a:file)
+        let props.fperm = getfperm(file)
         call add(attr, props.fperm)
-    else
-        if s:IsDir(a:file)
-            let is_dir = 1
-        endif
     endif
-    if index(a:list, 'flat') == -1
-        let prefix  = repeat(' ', d)
-        if a:deep
-            " echom "DBG" s:getfileentry_deep d
-            if s:getfileentry_deep < d
-                let prefix .= is_dir ? '`+' : '`|'
-            else
-                let prefix .= is_dir ? ' +' : ' |'
-            endif
-            if is_dir
-                let s:getfileentry_deep = max([0, d - 1])
-            else
-                let s:getfileentry_deep = d
-            endif
+    let relname = a:filedef.relname
+    let format = get(a:args, 'format', '')
+    if a:flat
+        let file_t = relname
+        if empty(format)
+        elseif format == 'shorten'
         else
-            let prefix .= is_dir ? '+' : '|'
+            let file_t = fnamemodify(file_t, format)
         endif
-        let prefix .= ' '
-        call add(f, prefix)
+        let file_t = pathshorten(file_t)
+    else
+        if a:deep
+            let prefix = repeat(' ', d)
+            if is_dir
+                let prefix .= '\ '
+            else
+                let prefix .= '| '
+            endif
+            call add(f, prefix)
+        endif
+        if empty(format)
+            let file_t = a:filedef.basename
+        elseif format == 'shorten'
+            let file_t = pathshorten(relname)
+        else
+            let file_t = fnamemodify(file, format)
+        endif
     endif
-    let format = get(a:args, 'format', ':t')
-    let file_t = fnamemodify(a:file, format)
     if is_dir
         let file_t .= '/'
     endif
-    if a:file != file_t && g:viki_viki#conceal_extended_link_markup && has('conceal')
-        call add(f, '[['. a:file .']['. file_t .']!]')
+    if relname != file_t && g:viki_viki#conceal_extended_link_markup && has('conceal')
+        call add(f, '[['. relname .']['. file_t .']!]')
     else
-        call add(f, '[['. a:file .']!]')
+        call add(f, '[['. relname .']!]')
     endif
     if !empty(attr)
         call add(f, ' {'. join(attr, '|') .'}')
     endif
-    if a:head > 0 && !s:IsDir(a:file)
-        let props.head = s:GetHead(a:file, a:head)
+    if a:head > 0 && !is_dir
+        let props.head = s:GetHead(file, a:head)
         call add(f, ' -- '. props.head)
     else
         if get(s:files_options, 'head', 0)
-            let props.head = s:GetHead(a:file, s:files_options.head)
+            let props.head = s:GetHead(file, s:files_options.head)
         endif
-        let c = get(a:region.comments, a:file, '')
-        " TLogVAR a:file, c
+        let c = get(a:region.comments, file, '')
+        " TLogVAR file, c
         if !empty(c)
             call add(f, c)
         endif
     endif
     if get(s:files_options, 'ftime', 0) && !has_key(props, 'ftime')
-        let props.ftime = strftime('%Y-%m-%d %H:%M:%S', getftime(a:file))
+        let props.ftime = strftime('%Y-%m-%d %H:%M:%S', getftime(file))
     endif
     let props.filename = join(f, '')
     return props
@@ -3433,14 +3432,12 @@ function! s:GetHead(file, head) "{{{3
 endf
 
 
-function! s:GetDepth(file) "{{{3
-    let depth = len(substitute(a:file, '[^\/]', '', 'g'))
-    if s:IsDir(a:file)
-        let depth -= 1
-    else
-        let depth += 1
-    endif
-    return depth
+function! s:GetFileDef(file, cd) "{{{3
+    let relname = tlib#file#Relative(a:file, a:cd)
+    let dir = matchstr(a:file, '^.*[\/]\ze[^\/]*$')
+    let prefix = substitute(dir, '[^\/]*[\/]', ' ', 'g')
+    let filename = matchstr(a:file, '[^\/]\zs[^\/]*$')
+    return {'dir': dir, 'indent': len(prefix), 'prefix': prefix, 'filename': a:file, 'relname': relname, 'basename': filename}
 endf
 
 
