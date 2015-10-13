@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-10-01.
-" @Revision:    1540
+" @Last Change: 2015-10-13.
+" @Revision:    1563
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -590,21 +590,6 @@ if type(g:vikiSpecialFiles) != 3
 endif
 " TAssert IsList(g:vikiSpecialFiles)
 
-if !exists("g:vikiOpenFileWith_ANY")
-    if exists('g:netrw_browsex_viewer')
-        let g:vikiOpenFileWith_ANY = "exec 'silent !'. g:netrw_browsex_viewer .' '. shellescape('%{FILE}')" "{{{2
-    elseif has("win32") || has("win16") || has("win64")
-        let g:vikiOpenFileWith_ANY = "exec 'silent ! start \"\" '. shellescape('%{FILE}')"
-    elseif has("mac")
-        let g:vikiOpenFileWith_ANY = "exec 'silent !open '. shellescape('%{FILE}')"
-    elseif exists('$XDG_CURRENT_DESKTOP') && !empty($XDG_CURRENT_DESKTOP)
-        let g:vikiOpenFileWith_ANY = "exec 'silent !xdg-open '. shellescape('%{FILE}') .'&'"
-    elseif $GNOME_DESKTOP_SESSION_ID != "" || $DESKTOP_SESSION == 'gnome'
-        let g:vikiOpenFileWith_ANY = "exec 'silent !gnome-open '. shellescape('%{FILE}')"
-    elseif exists("$KDEDIR") && !empty($KDEDIR)
-        let g:vikiOpenFileWith_ANY = "exec 'silent !kfmclient exec '. shellescape('%{FILE}')"
-    endif
-endif
 
 if !exists('*VikiOpenSpecialFile')
     " Handles filenames that match |vikiSpecialFiles|.
@@ -614,28 +599,26 @@ if !exists('*VikiOpenSpecialFile')
     " 
     "     let g:vikiOpenFileWith_html = '!firefox %{FILE}'
     " 
-    " The contents of variable g:vikiOpenFileWith_ANY will be used as fallback
-    " command. Under Windows, g:vikiOpenFileWith_ANY defaults to "silent !cmd /c 
-    " start".
     " All suffixes are translated to lower case.
+    "
+    " |tlib#sys#Open()| will be used as fallback.
     function! VikiOpenSpecialFile(file) "{{{3
         " TLogVAR a:file
         let proto = tolower(fnamemodify(a:file, ':e'))
         if exists('g:vikiOpenFileWith_'. proto)
             let prot = g:vikiOpenFileWith_{proto}
-        elseif exists('g:vikiOpenFileWith_ANY')
-            let prot = g:vikiOpenFileWith_ANY
-        else
-            let prot = ''
-        endif
-        " TLogVAR prot
-        if prot != ''
-            " let openFile = viki#SubstituteArgs(prot, 'FILE', fnameescape(a:file))
             let openFile = viki#SubstituteArgs(prot, 'FILE', a:file)
-            " TLogVAR openFile
-            call viki#ExecExternal(openFile)
+            " TLogVAR prot
+            if !empty(prot)
+                " let openFile = viki#SubstituteArgs(prot, 'FILE', fnameescape(a:file))
+                let openFile = viki#SubstituteArgs(prot, 'FILE', a:file)
+                " TLogVAR openFile
+                call viki#ExecExternal(openFile)
+            else
+                throw 'Viki: Please define g:vikiOpenFileWith_'. proto .' or g:vikiOpenFileWith_ANY!'
+            endif
         else
-            throw 'Viki: Please define g:vikiOpenFileWith_'. proto .' or g:vikiOpenFileWith_ANY!'
+            call tlib#sys#Open(a:file)
         endif
     endf
 endif
@@ -3230,26 +3213,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
                 let show_files = stridx(types, 'f') != -1
             endif
             if show_files || show_dirs
-                " if empty(fnamemodify(patt, ':e'))
-                " TLogVAR patt
-                if stridx(patt, '**') == -1
-                    call filter(ls, '(show_files && !s:IsDir(v:val)) || (show_dirs && s:IsDir(v:val))')
-                else
-                    let ls1 = []
-                    for lsitem in ls
-                        let lsdir = s:IsDir(lsitem)
-                        " TLogVAR lsitem, lsdir, show_dirs
-                        if lsdir
-                            if show_dirs
-                                call add(ls1, lsitem)
-                            endif
-                        elseif show_files
-                            call add(ls1, lsitem)
-                        endif
-                    endfor
-                    " TLogVAR rootdir
-                    let ls = ls1
-                endif
+                call filter(ls, 's:IsDir(v:val) ? show_dirs : show_files')
             else
                 let ls = []
             endif
@@ -3258,7 +3222,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
             let flat = index(list, 'flat') != -1
             let filter = get(args, 'filter', '')
             if !empty(filter)
-                call filter(ls, '(!flat && s:IsDir(v:val)) || v:val =~ filter')
+                call filter(ls, 'v:val =~ filter')
             endif
             let exclude = get(args, 'exclude', '')
             if !empty(exclude)
@@ -3369,15 +3333,13 @@ function! s:GetFileEntry(filedef, region, deep, flat, list, head, args) "{{{3
         endif
         let file_t = pathshorten(file_t)
     else
-        if a:deep
-            let prefix = repeat(' ', d)
-            if is_dir
-                let prefix .= '\ '
-            else
-                let prefix .= '| '
-            endif
-            call add(f, prefix)
+        let prefix = repeat(' ', d)
+        if is_dir
+            let prefix .= '\ '
+        else
+            let prefix .= '| '
         endif
+        call add(f, prefix)
         if empty(format)
             let file_t = a:filedef.basename
         elseif format == 'shorten'
@@ -3387,9 +3349,8 @@ function! s:GetFileEntry(filedef, region, deep, flat, list, head, args) "{{{3
         endif
     endif
     if is_dir
-        let file_t .= '/'
-    endif
-    if relname != file_t && g:viki_viki#conceal_extended_link_markup && has('conceal')
+        call add(f, relname .'/')
+    elseif relname != file_t && g:viki_viki#conceal_extended_link_markup && has('conceal')
         call add(f, '[['. relname .']['. file_t .']!]')
     else
         call add(f, '[['. relname .']!]')
@@ -3436,8 +3397,8 @@ function! s:GetFileDef(file, cd) "{{{3
     let relname = tlib#file#Relative(a:file, a:cd)
     let dir = matchstr(a:file, '^.*[\/]\ze[^\/]*$')
     let prefix = substitute(dir, '[^\/]*[\/]', ' ', 'g')
-    let filename = matchstr(a:file, '[^\/]\zs[^\/]*$')
-    return {'dir': dir, 'indent': len(prefix), 'prefix': prefix, 'filename': a:file, 'relname': relname, 'basename': filename}
+    let basename = matchstr(a:file, '[^\/]*$')
+    return {'dir': dir, 'indent': len(prefix), 'prefix': prefix, 'filename': a:file, 'relname': relname, 'basename': basename}
 endf
 
 
@@ -3663,142 +3624,6 @@ function! viki#Balloon() "{{{3
         return text
     endif
     return ''
-endf
-
-
-function! viki#MatchList(lnum) "{{{3
-    let rx = '^[[:blank:]]\+\ze\(#[A-Z]\d\?\|#\d[A-Z]\?\|[-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\|.\{-1,}[[:blank:]]::\)[[:blank:]]'
-    return matchend(getline(a:lnum), rx)
-endf
-
-
-" "                                                     *viki-text-objects* *ii*
-" " Create a new text-object ii that works on a inner list item. Once the 
-" " maps are enabled, users may, e.g., visually select an item in a list 
-" " by typing vii. See |viki#SelectListItem()| for a definition of what is 
-" " considered a list item.
-" " 
-" " The maps are local to the current buffer. Add this line to your 
-" " |vimrc| file in order to enable the ii text-object for all viki 
-" " buffers:>
-" "   au FileType viki call viki#MapListItemTextObject()
-function! viki#ListItemTextObject() "{{{3
-    if indent('.') == 0
-        return "ip"
-    else
-        return ":\<c-u>silent! call viki#SelectListItem('.')\<cr>"
-    endif
-endf
-
-
-" Visually select the list item at line lnum.
-" A list item also contains all its child items. E.g. in a list like:>
-"
-"   1. Venenatis diam dignissim dui. Praesent risus.
-"   2. Tincidunt facilisis, est nisi pellentesque ligula.
-"       a. Adipiscing dui non quam.
-"       b. Duis posuere tortor.
-"   3. Massa lorem, dignissim at, vehicula et.
-"
-" If the cursor is placed on item #2, this function also selects the 
-" items a and b.
-function! viki#SelectListItem(lnum) "{{{3
-    let lnum = line(a:lnum)
-    if lnum == 0
-        let lnum = a:lnum
-    endif
-    let lbeg = lnum
-    let item_indent = -1
-    " TLogVAR lbeg, indent(lbeg)
-    while lbeg > 1 && indent(lbeg) > 0
-        " TLogVAR lbeg
-        let item_indent = viki#MatchList(lbeg)
-        if item_indent > 0
-            break
-        endif
-        let lbeg -= 1
-    endwh
-    " TLogVAR item_indent
-    if item_indent > 0
-        let lend = lnum
-        let lmax = line('$')
-        " TLogVAR lend, lmax
-        while lend < lmax && indent(lend + 1) > item_indent
-            " TLogVAR lend
-            let lend += 1
-        endwh
-        exec printf('norm! %dggV%dgg', lbeg, lend)
-        return item_indent
-    else
-        return -1
-    endif
-endf
-
-
-" :doc:
-" If the |tinykeymap| plugin is installed, a gl map is created to move 
-" around list items.
-"
-" If you use the tinymode plugin, add the following to lines to your 
-" |vimrc| file:
-"
-"   call tinymode#EnterMap("listitem_move", "gl")
-"   call tinymode#ModeMsg("listitem_move", "Move list item: h/j/k/l")
-"   call tinymode#Map("listitem_move", "h", "silent call viki#ShiftListItem('<')")
-"   call tinymode#Map("listitem_move", "l", "silent call viki#ShiftListItem('>')")
-"   call tinymode#Map("listitem_move", "j", "silent call viki#MoveListItem('down')")
-"   call tinymode#Map("listitem_move", "k", "silent call viki#MoveListItem('up')")
-
-
-function! viki#ShiftListItem(direction) "{{{3
-    call viki#SelectListItem('.')
-    exec 'norm!' a:direction
-endf
-
-
-function! viki#MoveListItem(direction) "{{{3
-    let t = @t
-    try
-        let item_indent = viki#SelectListItem('.')
-        if item_indent > 0
-            " TLogVAR 1, line('.')
-            norm! "td
-            let lnum = line('.')
-            if a:direction == 'up'
-                let lmove = -1
-                let lnum -= 1
-            else
-                let lmove = 1
-            endif
-            let lmax = line('$')
-            while lnum > 0 && lnum <= lmax && (indent(lnum) > item_indent || getline(lnum) !~ '\S')
-                let lnum += lmove
-            endwh
-            if lnum == 0 || lnum > lmax
-                norm! u
-            else
-                exec lnum
-                if viki#SelectListItem('.') > 0
-                    " TLogVAR 2, line('.')
-                    exec "norm! \<Esc>"
-                    if a:direction == 'up'
-                        exec line("'<")
-                        " TLogVAR 3, line('.')
-                        norm! "tP
-                    else
-                        exec line("'>")
-                        " TLogVAR 3, line('.')
-                        norm! "tp
-                    endif
-                    " TLogVAR 4, line('.')
-                else
-                    norm! u
-                endif
-            endif
-        endif
-    finally
-        let @t = t
-    endtry
 endf
 
 
