@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2015-08-29.
-" @Revision:    2767
+" @Last Change: 2015-10-13.
+" @Revision:    2768
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -24,10 +24,10 @@
 if &cp || exists("g:loaded_viki")
     finish
 endif
-if !exists('g:loaded_tlib') || g:loaded_tlib < 106
+if !exists('g:loaded_tlib') || g:loaded_tlib < 115
     runtime plugin/02tlib.vim
-    if !exists('g:loaded_tlib') || g:loaded_tlib < 106
-        echoerr 'tlib >= 1.06 is required'
+    if !exists('g:loaded_tlib') || g:loaded_tlib < 115
+        echoerr 'tlib >= 1.15 is required'
         finish
     endif
 endif
