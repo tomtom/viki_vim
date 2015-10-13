@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     12-Jän-2004.
-" @Last Change: 2013-03-04.
-" @Revision: 527
+" @Last Change: 2015-10-12.
+" @Revision: 528
 
 if exists("b:did_ftplugin") "{{{2
     finish
@@ -59,8 +59,6 @@ map <buffer> <silent> [[ :call viki#FindPrevHeading()<cr>
 map <buffer> <silent> ][ :call viki#FindNextHeading()<cr>
 map <buffer> <silent> ]] ][
 map <buffer> <silent> [] [[
-vnoremap <buffer> <expr> ii viki#ListItemTextObject()
-omap <buffer> ii :normal Vii<cr>
 
 
 let b:undo_ftplugin = 'setlocal iskeyword< expandtab< foldtext< foldexpr< foldmethod< comments< commentstring< '
