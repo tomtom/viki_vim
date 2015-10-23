@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-10-13.
-" @Revision:    1563
+" @Last Change: 2015-10-16.
+" @Revision:    1591
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -455,6 +455,12 @@ if !exists('g:viki#code_syntax_map')
 endif
 
 
+if !exists('g:viki#find_intervikis_rx')
+    " |:Vikifind| will include only intervikis matching this |regexp|.
+    let g:viki#find_intervikis_rx = '.'   "{{{2
+endif
+
+
 let g:viki#quit = 0
 
 let s:positions = {}
@@ -765,11 +771,15 @@ endf
 
 function! viki#GetInterVikiDefs(...) abort "{{{3
     let include_files = a:0 >= 1 ? a:1 : 0
+    let iv_rx = a:0 >= 2 ? a:2 : '.'
     let defs = {}
     for iv in viki#GetInterVikis()
-        let def = viki#GetInterVikiDef(iv, include_files)
-        " TLogVAR type(def), def
-        let defs[def.name] = def
+        let iv_name = substitute(iv, '::$', '', '')
+        if iv_name =~ iv_rx
+            let def = viki#GetInterVikiDef(iv, include_files)
+            " TLogVAR type(def), def
+            let defs[def.name] = def
+        endif
     endfor
     return defs
 endf
@@ -1907,7 +1917,9 @@ function! viki#OpenLink(filename, anchor, ...) "{{{3
     elseif exists('b:editVikiPage')
         call s:EditLocalFile(b:editVikiPage, filename, fi, li, co, g:vikiDefNil)
     elseif isdirectory(filename)
-        call s:EditLocalFile(g:vikiExplorer, tlib#dir#NativeName(tlib#dir#PlainName(filename)), fi, li, co, g:vikiDefNil)
+        let localfname = tlib#dir#PlainName(filename)
+        " let localfname = tlib#dir#NativeName(localfname)
+        call s:EditLocalFile(g:vikiExplorer, localfname, fi, li, co, g:vikiDefNil)
     else
         call s:EditLocalFile('edit', filename, fi, li, co, a:anchor)
     endif
@@ -2085,6 +2097,9 @@ function! s:OpenLink(dest, anchor, winNr)
         " TLogVAR isdirectory(a:dest)
         " TLogVAR filereadable(a:dest)
         " TLogVAR bufexists(a:dest), buflisted(a:dest)
+        " let ndest = tlib#file#NativeFilename(a:dest)
+        " let localfname = ndest.fs
+        let localfilename = a:dest
         if viki#IsSpecialProtocol(a:dest)
             let url = viki#MakeUrl(a:dest, a:anchor)
             " TLogVAR url
@@ -2092,17 +2107,19 @@ function! s:OpenLink(dest, anchor, winNr)
         elseif viki#IsSpecialFile(a:dest)
             " TLogVAR viki#IsSpecialFile(a:dest)
             call VikiOpenSpecialFile(a:dest)
-        elseif isdirectory(a:dest)
+        elseif isdirectory(localfilename)
             " TLogVAR isdirectory(a:dest)
             " exec g:vikiExplorer .' '. a:dest
-            call viki#OpenLink(a:dest, a:anchor, 0, '', a:winNr)
-        elseif filereadable(a:dest) "reference to a local, already existing file
+            call viki#OpenLink(localfilename, a:anchor, 0, '', a:winNr)
+        elseif filereadable(localfilename) "reference to a local, already existing file
             " TLogVAR filereadable(a:dest)
-            call viki#OpenLink(a:dest, a:anchor, 0, '', a:winNr)
+            call viki#OpenLink(localfilename, a:anchor, 0, '', a:winNr)
         elseif bufexists(a:dest) && buflisted(a:dest)
             " TLogVAR bufexists(a:dest)
             call s:EditWrapper('buffer!', a:dest)
         else
+            " TLogVAR a:dest
+            " let @* = a:dest " DBG
             let ok = input("File doesn't exist. Create '".a:dest."'? (Y/n) ", "y")
             " TLogVAR ok
             if ok != "" && ok != "n"
@@ -3819,17 +3836,19 @@ if exists(':TRagDefKind') == 2
         if !exists('g:loaded_trag') || g:loaded_trag < 103
             throw 'viki#Find: require trag >= 1.3'
         endif
+        " TLogVAR a:arg, a:000
         let search_intervikis = a:0 >= 1 ? a:1 : 0
         call viki#EnsureVikiBuffer()
         if search_intervikis
-            let files = []
-            for def in values(viki#GetInterVikiDefs())
-                let fs = get(def, 'files', [])
-                if !empty(fs)
-                    let files = extend(files, fs)
+            let globs = []
+            for def in values(viki#GetInterVikiDefs(0, g:viki#find_intervikis_rx))
+                " TLogVAR def
+                if has_key(def, 'glob')
+                    call add(globs, def.glob)
                 endif
             endfor
-            let items = trag#Grep(a:arg, 1, files)
+            " TLogVAR globs
+            let items = trag#Grep(a:arg, 1, globs)
         else
             let items = trag#Grep(a:arg)
         endif
