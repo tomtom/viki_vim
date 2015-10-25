@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-10-16.
-" @Revision:    1591
+" @Last Change: 2015-10-25.
+" @Revision:    1592
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -2652,7 +2652,7 @@ function! viki#HomePage(...) "{{{3
 endf
 
 
-function viki#EnsureVikiBuffer() abort
+function! viki#EnsureVikiBuffer() abort
     return exists('b:vikiEnabled') || viki#HomePage()
 endf
 
