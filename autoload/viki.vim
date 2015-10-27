@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-10-25.
-" @Revision:    1592
+" @Last Change: 2015-10-27.
+" @Revision:    1602
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -686,7 +686,7 @@ if !exists("g:vikiOpenUrlWith_ANY")
     elseif has("mac")
         let g:vikiOpenUrlWith_ANY = "exec 'silent !open '. escape('%{URL}', ' &!%')"
     elseif exists('$XDG_CURRENT_DESKTOP') && !empty($XDG_CURRENT_DESKTOP)
-        let g:vikiOpenUrlWith_ANY = "exec 'silent !xdg-open '. shellescape('%{URL}')"
+        let g:vikiOpenUrlWith_ANY = "exec 'silent !xdg-open' shellescape('%{URL}') '&'" 
     elseif $GNOME_DESKTOP_SESSION_ID != ""
         let g:vikiOpenUrlWith_ANY = "exec 'silent !gnome-open '. shellescape('%{URL}')"
     elseif $KDEDIR != ""
@@ -707,7 +707,6 @@ if !exists("*VikiOpenSpecialProtocol")
     " !rundll32 url.dll ...".
     " All protocol names are translated to lower case.
     function! VikiOpenSpecialProtocol(url) "{{{3
-        " TLogVAR a:url
         " TLogVAR a:url
         let proto = tolower(matchstr(a:url, '\c^[a-z]\{-}\ze:'))
         let prot  = 'g:vikiOpenUrlWith_'. proto
@@ -2100,6 +2099,7 @@ function! s:OpenLink(dest, anchor, winNr)
         " let ndest = tlib#file#NativeFilename(a:dest)
         " let localfname = ndest.fs
         let localfilename = a:dest
+        " TLogVAR viki#IsSpecialProtocol(a:dest), viki#IsSpecialFile(a:dest)
         if viki#IsSpecialProtocol(a:dest)
             let url = viki#MakeUrl(a:dest, a:anchor)
             " TLogVAR url
@@ -3014,6 +3014,7 @@ endf
 
 function! viki#ExecExternal(cmd) "{{{3
     " TLogVAR a:cmd
+    let @+ = a:cmd
     exec a:cmd
     if !has("gui_running")
         " Scrambled window with vim
