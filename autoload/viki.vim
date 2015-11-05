@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-10-27.
-" @Revision:    1602
+" @Last Change: 2015-11-05.
+" @Revision:    1619
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -394,10 +394,56 @@ if !exists("g:vikiMapFunctionalityMinor")
     let g:vikiMapFunctionalityMinor = 'f b p mf mb tF c q e' "{{{2
 endif
 
+
+if !exists("g:viki#highlight_math")
+    " If "latex", use the texmathMath |syn-cluster| to highlight 
+    " mathematical formulas.
+    let g:viki#highlight_math = 'latex' "{{{2
+endif
+
+
+if !exists("g:viki#fancy_headings")
+    " If non-nil, display headings of different levels in different colors
+    let g:viki#fancy_headings = 0 "{{{2
+endif
+
+
+if !exists("g:vikiIndex")
+    " The default filename for an interviki's index name
+    let g:vikiIndex = 'index' "{{{2
+endif
+
+
+if !exists('g:viki#autoupdate_files')
+    " If true, automatically update all |viki-files| regions.
+    let g:viki#autoupdate_files = 0   "{{{2
+endif
+
+
+if !exists("g:viki#fold_method_version")
+    " :nodoc:
+    " Choose folding method version
+    " Viki supports several methods (1..7) for defining folds. If you 
+    " find that text entry is slowed down it is probably due to the 
+    " chosen fold method. You could try to use another method (see 
+    " ../ftplugin/viki.vim for alternative methods) or check out this 
+    " vim tip:
+    " http://vim.wikia.com/wiki/Keep_folds_closed_while_inserting_text
+    let g:viki#fold_method_version = 8 "{{{2
+endif
+
+
+if !exists('g:viki#fold_level')
+    " If > 0, set the 'foldlevel' of viki files to this value. (This is 
+    " only useful if 'foldlevel' still has the default value of 0.)
+    let g:viki#fold_level = 5   "{{{2
+endif
+
+
 if !exists("g:vikiFoldBodyLevel")
     " Consider fold levels bigger that this as text body, levels smaller 
     " than this as headings
-    " This variable is only used if |g:vikiFoldMethodVersion| is 1.
+    " This variable is only used if |g:viki#fold_method_version| is 1.
     " If set to 0, the "b" mode in |vikiFolds| will set the body level 
     " depending on the headings used in the current buffer. Otherwise 
     " |b:vikiHeadingMaxLevel| + 1 will be used.
@@ -415,7 +461,7 @@ if !exists("g:vikiFolds")
     "       |vikiFoldBodyLevel| is set to 0.
     "     f :: Files regions.
     "     s :: ???
-    " This variable is only used if |g:vikiFoldMethodVersion| is 1.
+    " This variable is only used if |g:viki#fold_method_version| is 1.
     let g:vikiFolds = 'hf' "{{{2
 endif
 
@@ -761,7 +807,7 @@ function! viki#GetInterVikiDef(iv, ...) abort "{{{3
         " let ivdef.glob = tlib#file#Join([ivdef.prefix, '*'. ivdef.suffix])
         " TLogVAR ivdef
         if include_files
-            let ivdef.files = split(glob(ivdef.glob), '\n')
+            let ivdef.files = tlib#file#Glob(ivdef.glob)
         endif
     endif
     return ivdef
@@ -1407,14 +1453,13 @@ function! viki#CollectFileWords(table, simpleWikiName) "{{{3
                 let base_dir = expand('%:p:h')
             endif
             " TLogVAR p, base_dir, getcwd(), bufname('%')
-            let files = glob(base_dir .'/*'. p)
+            let files = tlib#file#Glob(base_dir .'/*'. p)
             " TLogVAR files
             if !empty(files)
-                let files_l = split(files, '\n')
-                call filter(files_l, '!isdirectory(v:val) && v:val != expand("%:p")')
-                " TLogVAR files_l
-                if !empty(files_l)
-                    for w in files_l
+                call filter(files, '!isdirectory(v:val) && v:val != expand("%:p")')
+                " TLogVAR files
+                if !empty(files)
+                    for w in files
                         let ww = s:CanonicHyperWord(fnamemodify(w, ":t:r"))
                         " TLogVAR w, ww
                         if !has_key(a:table, ww) && 
@@ -2711,7 +2756,7 @@ function! viki#Browse(name) "{{{3
         if i_type == 'prefix'
             exec s:LetVar('sfx', 'vikiInter'. a:name .'_suffix')
             " TLogVAR i_dest, sfx
-            let files = split(globpath(i_dest, '**'), '\n')
+            let files = tlib#file#Globpath(i_dest, '**')
             if !empty(sfx)
                 call filter(files, 'v:val =~ '''. tlib#rx#Escape(sfx) .'$''')
             endif
@@ -2817,7 +2862,7 @@ function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
         let r  = '^'. viki#InterVikiDest('\(.\{-}\)', i, 1) .'$'
         " TLogVAR f,d,r
         let d  = substitute(d, '\', '/', 'g')
-        let rv = split(glob(d), '\n')
+        let rv = tlib#file#Glob(d)
         " TLogVAR d,rv
         if sfx != ''
             call filter(rv, 'isdirectory(v:val) || ".". fnamemodify(v:val, ":e") == sfx')
@@ -2829,7 +2874,7 @@ function! viki#EditComplete(ArgLead, CmdLine, CursorPos) "{{{3
         " TLogVAR rv
     else
         " TLogDBG 'B'
-        let rv = split(glob(arglead.'*'.sfx), '\n')
+        let rv = tlib#file#Glob(arglead.'*'.sfx)
         " TLogVAR rv
         call map(rv, 's:EditCompleteAgent('. string(i) .', v:val, v:val)')
         " TLogVAR rv
@@ -3204,6 +3249,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
     " TLogVAR args
     let patt = get(args, 'glob', '')
     " TLogVAR patt
+    TLibTrace 'viki', args, patt
     if empty(patt)
         echoerr 'Viki: No glob pattern: '. string(args)
     else
@@ -3219,8 +3265,9 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
         try
             let ls = []
             for pattern in split(patt, '|')
-                let ls += split(glob(pattern), '\n')
+                let ls += tlib#file#Glob(pattern)
             endfor
+            TLibTrace 'viki', len(ls)
             " TLogVAR ls
             let types = get(args, 'types', '')
             if empty(types)
@@ -3607,8 +3654,7 @@ function! viki#Balloon() "{{{3
         if viki#IsSpecial(v_dest) 
             if isdirectory(v_dest)
                 let pattern = tlib#file#Join([v_dest, '*'])
-                let files = glob(pattern)
-                let list = split(files, '\n')
+                let list = tlib#file#Glob(pattern)
                 call map(list, 'fnamemodify(v:val, ":t")')
                 let lines = []
                 if !empty(list)
@@ -3831,51 +3877,15 @@ function! viki#CollectSyntaxRegionsFiletypes() "{{{3
 endf
 
 
-if exists(':TRagDefKind') == 2
-
-    function! viki#Find(arg, ...) abort "{{{3
-        if !exists('g:loaded_trag') || g:loaded_trag < 103
-            throw 'viki#Find: require trag >= 1.3'
+function! viki#FileSources(opts) abort "{{{3
+    let globs = []
+    for def in values(viki#GetInterVikiDefs(0, g:viki#find_intervikis_rx))
+        " TLogVAR def
+        if has_key(def, 'glob')
+            call add(globs, def.glob)
         endif
-        " TLogVAR a:arg, a:000
-        let search_intervikis = a:0 >= 1 ? a:1 : 0
-        call viki#EnsureVikiBuffer()
-        if search_intervikis
-            let globs = []
-            for def in values(viki#GetInterVikiDefs(0, g:viki#find_intervikis_rx))
-                " TLogVAR def
-                if has_key(def, 'glob')
-                    call add(globs, def.glob)
-                endif
-            endfor
-            " TLogVAR globs
-            let items = trag#Grep(a:arg, 1, globs)
-        else
-            let items = trag#Grep(a:arg)
-        endif
-        " let last_run_files = trag#LastRun('files')
-        let grep_defs = trag#LastRun('grep_defs')
-        for grep_def in grep_defs
-            let grep_def1 = copy(grep_def)
-            let grep_def1.rxpos = substitute(grep_def1.rxpos, '\s', '[ _-]', 'g')
-            let grep_def1.rxneg = substitute(grep_def1.rxneg, '\s', '[ _-]', 'g')
-            " TLogVAR grep_def1
-            let qfl = trag#ScanWithGrepDefs(grep_def1, [substitute(grep_def1.ff, '^.\{-}\([^\/]\+\)$', '\1', '')], 1)
-            if !empty(qfl)
-                let items = extend(items, qfl)
-            endif
-            " TLogVAR qfl
-        endfor
-        if len(items) > 0
-            call trag#QuickListMaybe(0)
-        endif
-    endf
-
-else
-
-    function! viki#Find(arg, ...) abort "{{{3
-        echoerr 'viki#Find() requires the trag plugin to be installed'
-    endf
-
-endif
+    endfor
+    " TLogVAR globs
+    return globs
+endf
 

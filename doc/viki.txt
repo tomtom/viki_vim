@@ -884,16 +884,10 @@ Contents~
         tlist_viki_settings ........................ |tlist_viki_settings|
         g:vikiMenuPrefix ........................... |g:vikiMenuPrefix|
         g:vikiMenuLevel ............................ |g:vikiMenuLevel|
-        g:vikiFancyHeadings ........................ |g:vikiFancyHeadings|
         g:vikiMarkInexistent ....................... |g:vikiMarkInexistent|
-        g:vikiHighlightMath ........................ |g:vikiHighlightMath|
         g:vikiNameSuffix ........................... |g:vikiNameSuffix|
-        g:vikiIndex ................................ |g:vikiIndex|
         g:viki_intervikis .......................... |g:viki_intervikis|
         g:vikiSaveHistory .......................... |g:vikiSaveHistory|
-        g:vikiAutoupdateFiles ...................... |g:vikiAutoupdateFiles|
-        g:vikiFoldLevel ............................ |g:vikiFoldLevel|
-        g:vikiIndentedPriorityLists ................ |g:vikiIndentedPriorityLists|
         b:vikiNoSimpleNames ........................ |b:vikiNoSimpleNames|
         b:vikiDisableType .......................... |b:vikiDisableType|
         VikiMakeName ............................... |VikiMakeName()|
@@ -955,12 +949,18 @@ Contents~
         g:vikiBaseDirs ............................. |g:vikiBaseDirs|
         g:vikiMapFunctionality ..................... |g:vikiMapFunctionality|
         g:vikiMapFunctionalityMinor ................ |g:vikiMapFunctionalityMinor|
+        g:viki#highlight_math ...................... |g:viki#highlight_math|
+        g:viki#fancy_headings ...................... |g:viki#fancy_headings|
+        g:vikiIndex ................................ |g:vikiIndex|
+        g:viki#autoupdate_files .................... |g:viki#autoupdate_files|
+        g:viki#fold_level .......................... |g:viki#fold_level|
         g:vikiFoldBodyLevel ........................ |g:vikiFoldBodyLevel|
         g:vikiFolds ................................ |g:vikiFolds|
         g:viki#files_head_rx ....................... |g:viki#files_head_rx|
         g:viki#use_texmath ......................... |g:viki#use_texmath|
         g:viki#code_syntax ......................... |g:viki#code_syntax|
         g:viki#code_syntax_map ..................... |g:viki#code_syntax_map|
+        g:viki#find_intervikis_rx .................. |g:viki#find_intervikis_rx|
         :VikiFindNext .............................. |:VikiFindNext|
         :VikiFindPrev .............................. |:VikiFindPrev|
         :VikiMarkInexistent ........................ |:VikiMarkInexistent|
@@ -984,7 +984,6 @@ Contents~
         :VikiFilesCall ............................. |:VikiFilesCall|
         viki#Mode .................................. |viki#Mode()|
         VikiOpenAsWorkspace ........................ |VikiOpenAsWorkspace()|
-        g:vikiOpenFileWith_ANY ..................... |g:vikiOpenFileWith_ANY|
         VikiOpenSpecialFile ........................ |VikiOpenSpecialFile()|
         g:vikiOpenUrlWith_mailbox .................. |g:vikiOpenUrlWith_mailbox|
         VikiOpenMailbox ............................ |VikiOpenMailbox()|
@@ -1082,19 +1081,13 @@ Contents~
         viki#FilesGetFilename ...................... |viki#FilesGetFilename()|
         viki#FilesGetComment ....................... |viki#FilesGetComment()|
         viki#Balloon ............................... |viki#Balloon()|
-        viki#MatchList ............................. |viki#MatchList()|
-        viki#ListItemTextObject .................... |viki#ListItemTextObject()|
-        viki#SelectListItem ........................ |viki#SelectListItem()|
-        viki#ShiftListItem ......................... |viki#ShiftListItem()|
-        viki#MoveListItem .......................... |viki#MoveListItem()|
         viki#FoldLevel ............................. |viki#FoldLevel()|
         viki#FoldText .............................. |viki#FoldText()|
         viki#UpdateHeadings ........................ |viki#UpdateHeadings()|
         viki#GrepRegionUpdateAll ................... |viki#GrepRegionUpdateAll()|
         viki#GrepRegionUpdate ...................... |viki#GrepRegionUpdate()|
         viki#CollectSyntaxRegionsFiletypes ......... |viki#CollectSyntaxRegionsFiletypes()|
-        viki#Find .................................. |viki#Find()|
-        viki#Find .................................. |viki#Find()|
+        viki#FileSources ........................... |viki#FileSources()|
         viki_anyword#MinorMode ..................... |viki_anyword#MinorMode()|
         viki_anyword#SetupBuffer ................... |viki_anyword#SetupBuffer()|
         viki_anyword#DefineMarkup .................. |viki_anyword#DefineMarkup()|
@@ -1138,8 +1131,6 @@ Contents~
         ][ ......................................... |][|
         ]] ......................................... |]]|
         [] ......................................... |[]|
-        v_<expr> ................................... |v_<expr>|
-        o_ii ....................................... |o_ii|
         :HiLink .................................... |:HiLink|
         :HiLink .................................... |:HiLink|
 
@@ -1160,28 +1151,15 @@ g:vikiMenuPrefix               (default: "Plugin.Viki.")
 g:vikiMenuLevel                (default: 1)
     Make submenus for N letters of the interviki names.
 
-                                                    *g:vikiFancyHeadings*
-g:vikiFancyHeadings            (default: 0)
-    If non-nil, display headings of different levels in different colors
-
                                                     *g:vikiMarkInexistent*
 g:vikiMarkInexistent           (default: 1)
     If non-zero, highligh links to existent or inexistent files in 
     different colours.
 
-                                                    *g:vikiHighlightMath*
-g:vikiHighlightMath            (default: 'latex')
-    If "latex", use the texmathMath |syn-cluster| to highlight 
-    mathematical formulas.
-
                                                     *g:vikiNameSuffix*
 g:vikiNameSuffix               (default: ".viki")
     Default file suffix (including the optional period, e.g. '.viki').
     Can also be buffer-local.
-
-                                                    *g:vikiIndex*
-g:vikiIndex                    (default: 'index')
-    The default filename for an interviki's index name
 
                                                     *g:viki_intervikis*
 g:viki_intervikis              (default: {})
@@ -1191,20 +1169,6 @@ g:viki_intervikis              (default: {})
                                                     *g:vikiSaveHistory*
 g:vikiSaveHistory              (default: index(split(&viminfo, ','), '!') != -1)
     If non-nil, cache back-links information
-
-                                                    *g:vikiAutoupdateFiles*
-g:vikiAutoupdateFiles          (default: 0)
-    If true, automatically update all |viki-files| regions.
-
-                                                    *g:vikiFoldLevel*
-g:vikiFoldLevel                (default: 5)
-    If > 0, set the 'foldlevel' of viki files to this value. (This is 
-    only useful if 'foldlevel' still has the default value of 0.)
-
-                                                    *g:vikiIndentedPriorityLists*
-g:vikiIndentedPriorityLists    (default: 1)
-    If true, priority lists must be indented by at least one 
-    whitespace character.
 
                                                     *b:vikiNoSimpleNames*
 b:vikiNoSimpleNames            (default: 0)
@@ -1273,7 +1237,8 @@ VikiDefine NAME BASE ?SUFFIX
                                                     *:Vikifind*
 :Vikifind[!] KIND PATTERN
     Use |:Trag| to search the current directory or, with the optional [!] 
-    all intervikis. See |:Trag| for the allowed values for KIND.
+    search all intervikis matching |g:viki#find_intervikis_rx|. See 
+    |:Trag| for the allowed values for KIND.
 
     NOTE: This command requires the trag plugin to be installed.
 
@@ -1549,11 +1514,33 @@ g:vikiMapFunctionality         (default: 'ALL')
 g:vikiMapFunctionalityMinor    (default: 'f b p mf mb tF c q e')
     Define which keys to map in minor mode (invoked via :VikiMinorMode)
 
+                                                    *g:viki#highlight_math*
+g:viki#highlight_math          (default: 'latex')
+    If "latex", use the texmathMath |syn-cluster| to highlight 
+    mathematical formulas.
+
+                                                    *g:viki#fancy_headings*
+g:viki#fancy_headings          (default: 0)
+    If non-nil, display headings of different levels in different colors
+
+                                                    *g:vikiIndex*
+g:vikiIndex                    (default: 'index')
+    The default filename for an interviki's index name
+
+                                                    *g:viki#autoupdate_files*
+g:viki#autoupdate_files        (default: 0)
+    If true, automatically update all |viki-files| regions.
+
+                                                    *g:viki#fold_level*
+g:viki#fold_level              (default: 5)
+    If > 0, set the 'foldlevel' of viki files to this value. (This is 
+    only useful if 'foldlevel' still has the default value of 0.)
+
                                                     *g:vikiFoldBodyLevel*
 g:vikiFoldBodyLevel            (default: 6)
     Consider fold levels bigger that this as text body, levels smaller 
     than this as headings
-    This variable is only used if |g:vikiFoldMethodVersion| is 1.
+    This variable is only used if |g:viki#fold_method_version| is 1.
     If set to 0, the "b" mode in |vikiFolds| will set the body level 
     depending on the headings used in the current buffer. Otherwise 
     |b:vikiHeadingMaxLevel| + 1 will be used.
@@ -1570,7 +1557,7 @@ g:vikiFolds                    (default: 'hf')
           |vikiFoldBodyLevel| is set to 0.
         f :: Files regions.
         s :: ???
-    This variable is only used if |g:vikiFoldMethodVersion| is 1.
+    This variable is only used if |g:viki#fold_method_version| is 1.
 
                                                     *g:viki#files_head_rx*
 g:viki#files_head_rx           (default: '^\(\*\s\+\)')
@@ -1597,6 +1584,10 @@ g:viki#code_syntax             (default: [])
 g:viki#code_syntax_map         (default: {})
     A dictionary that maps syntaxes for #Code regions to vim 
     filetypes.
+
+                                                    *g:viki#find_intervikis_rx*
+g:viki#find_intervikis_rx      (default: '.')
+    |:Vikifind| will include only intervikis matching this |regexp|.
 
                                                     *:VikiFindNext*
 :VikiFindNext
@@ -1714,9 +1705,6 @@ viki#Mode(...)
                                                     *VikiOpenAsWorkspace()*
 VikiOpenAsWorkspace(file)
 
-                                                    *g:vikiOpenFileWith_ANY*
-g:vikiOpenFileWith_ANY         (default: "exec 'silent !'. g:netrw_browsex_viewer .' '. shellescape('%{FILE}')")
-
                                                     *VikiOpenSpecialFile()*
 VikiOpenSpecialFile(file)
     Handles filenames that match |vikiSpecialFiles|.
@@ -1726,10 +1714,9 @@ VikiOpenSpecialFile(file)
 
         let g:vikiOpenFileWith_html = '!firefox %{FILE}'
 
-<   The contents of variable g:vikiOpenFileWith_ANY will be used as fallback
-    command. Under Windows, g:vikiOpenFileWith_ANY defaults to "silent !cmd /c 
-    start".
-    All suffixes are translated to lower case.
+<   All suffixes are translated to lower case.
+
+    |tlib#sys#Open()| will be used as fallback.
 
                                                     *g:vikiOpenUrlWith_mailbox*
 g:vikiOpenUrlWith_mailbox      (default: "call VikiOpenMailbox('%{URL}')")
@@ -2128,14 +2115,17 @@ viki#DirListing(lhs, lhb, indent, region)
                          *.txt|*.viki).
         head=NUMBER .... Display the first N lines of the file's content
         list=detail .... Include additional file info
-        list=flat ...... Display a flat list
+        list=flat ...... Display a flat list (implies format=shorten)
         types=f, d ..... Whether to display files (f) and directories (d)
-        filter=REGEXP .. List only those files matching a |regexp|
         exclude=REGEXP . Don't list files matching a |regexp|
         sort=name, time, head ... Sort the list on the files' names, times, 
                          or head lines. If the argument begins with "-", 
                          the list is displayed in reverse order.
-        format=EXPR      Filename format string (see |expand()|)
+        format=EXPR|shorten .. Filename format string (see |expand()|) or 
+                         "shorten" to use |pathshorten()|
+        filter=REGEXP .. List only those filenames matching a |regexp|
+        +rx=REGEXP ..... Include only files whose text matches a |regexp|
+        -rx=REGEXP ..... Exclude files whose text matches a |regexp|
 
     Comments (i.e. text after the file link) are maintained if possible 
     and if list is not "detail".
@@ -2148,56 +2138,6 @@ viki#FilesGetComment(t)
 
                                                     *viki#Balloon()*
 viki#Balloon()
-
-                                                    *viki#MatchList()*
-viki#MatchList(lnum)
-
-                                                    *viki#ListItemTextObject()*
-viki#ListItemTextObject()
-    "                                                     *viki-text-objects* *ii*
-    " Create a new text-object ii that works on a inner list item. Once the 
-    " maps are enabled, users may, e.g., visually select an item in a list 
-    " by typing vii. See |viki#SelectListItem()| for a definition of what is 
-    " considered a list item.
-    " 
-    " The maps are local to the current buffer. Add this line to your 
-    " |vimrc| file in order to enable the ii text-object for all viki 
-    " buffers:>
-    "   au FileType viki call viki#MapListItemTextObject()
-
-                                                    *viki#SelectListItem()*
-viki#SelectListItem(lnum)
-    Visually select the list item at line lnum.
-    A list item also contains all its child items. E.g. in a list like:>
-
-      1. Venenatis diam dignissim dui. Praesent risus.
-      2. Tincidunt facilisis, est nisi pellentesque ligula.
-          a. Adipiscing dui non quam.
-          b. Duis posuere tortor.
-      3. Massa lorem, dignissim at, vehicula et.
-
-    If the cursor is placed on item #2, this function also selects the 
-    items a and b.
-
-
-If the |tinykeymap| plugin is installed, a gl map is created to move 
-around list items.
-
-If you use the tinymode plugin, add the following to lines to your 
-|vimrc| file:
-
-  call tinymode#EnterMap("listitem_move", "gl")
-  call tinymode#ModeMsg("listitem_move", "Move list item: h/j/k/l")
-  call tinymode#Map("listitem_move", "h", "silent call viki#ShiftListItem('<')")
-  call tinymode#Map("listitem_move", "l", "silent call viki#ShiftListItem('>')")
-  call tinymode#Map("listitem_move", "j", "silent call viki#MoveListItem('down')")
-  call tinymode#Map("listitem_move", "k", "silent call viki#MoveListItem('up')")
-
-                                                    *viki#ShiftListItem()*
-viki#ShiftListItem(direction)
-
-                                                    *viki#MoveListItem()*
-viki#MoveListItem(direction)
 
                                                     *viki#FoldLevel()*
 viki#FoldLevel(lnum)
@@ -2217,11 +2157,8 @@ viki#GrepRegionUpdate()
                                                     *viki#CollectSyntaxRegionsFiletypes()*
 viki#CollectSyntaxRegionsFiletypes()
 
-                                                    *viki#Find()*
-viki#Find(arg, ...)
-
-                                                    *viki#Find()*
-viki#Find(arg, ...)
+                                                    *viki#FileSources()*
+viki#FileSources(opts)
 
 
 ========================================================================
@@ -2401,12 +2338,6 @@ b:vikiInverseFold              (default: 0)
 
                                                     *[]*
 [] ... [[
-
-                                                    *v_<expr>*
-v_<expr> ... ii viki#ListItemTextObject()
-
-                                                    *o_ii*
-o_ii ... :normal Vii<cr>
 
 
 ========================================================================

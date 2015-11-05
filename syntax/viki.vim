@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2014-10-29.
-" @Revision: 0.1113
+" @Last Change: 2015-11-03.
+" @Revision: 2.1113
 
 if version < 600
     syntax clear
@@ -108,7 +108,7 @@ syn match vikiComment /^[[:blank:]]*%.*$/ contains=@vikiHyperLinks,vikiMarkers,v
 syn region vikiString start=+^"\|\s"\|[({\[]\zs"\|[^[:alnum:]]\zs"\ze[[:alnum:]]+ end=+"+ contains=@vikiText
 
 let b:vikiHeadingStart = '*'
-if g:vikiFancyHeadings
+if g:viki#fancy_headings
     let hd=escape(b:vikiHeadingStart, '\/')
     exe 'syn region vikiHeading1 start=/\V\^'. hd .'\[[:blank:]]\+/ end=/\n/ contains=@vikiText'
     exe 'syn region vikiHeading2 start=/\V\^'. hd.hd .'\[[:blank:]]\+/ end=/\n/ contains=@vikiText'
@@ -183,7 +183,7 @@ syn region vikiFilesRegion matchgroup=vikiMacroDelim
             \ contains=vikiFiles
 
 
-if g:vikiHighlightMath == 'latex'
+if g:viki#highlight_math == 'latex'
     syn region vikiTexFormula matchgroup=Comment
                 \ start=/\z(\$\$\?\)/ end=/\z1/
                 \ contains=@texmathMath
@@ -306,7 +306,7 @@ if version >= 508 || !exists("did_viki_syntax_inits")
   exe "hi vikiEscape ctermfg=". s:cm2 ."grey guifg=". s:cm2 ."grey"
   hi vikiList term=bold cterm=bold gui=italic,bold ctermfg=Cyan guifg=Cyan
   HiLink vikiDescription vikiList
-  if g:vikiFancyHeadings
+  if g:viki#fancy_headings
       if &background == "light"
           let hdhl="term=bold,underline cterm=bold gui=bold ctermfg=". s:cm1 ."Magenta guifg=".s:cm1."Magenta". s:hdfont
           exe "hi vikiHeading1 ". hdhl ." guibg=#ffff00"

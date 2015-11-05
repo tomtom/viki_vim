@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2015-10-21.
-" @Revision:    2770
+" @Last Change: 2015-11-05.
+" @Revision:    2785
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -24,10 +24,10 @@
 if &cp || exists("g:loaded_viki")
     finish
 endif
-if !exists('g:loaded_tlib') || g:loaded_tlib < 115
+if !exists('g:loaded_tlib') || g:loaded_tlib < 116
     runtime plugin/02tlib.vim
-    if !exists('g:loaded_tlib') || g:loaded_tlib < 115
-        echoerr 'tlib >= 1.15 is required'
+    if !exists('g:loaded_tlib') || g:loaded_tlib < 116
+        echoerr 'tlib >= 1.16 is required'
         finish
     endif
 endif
@@ -50,32 +50,16 @@ if !exists('g:vikiMenuLevel')
     let g:vikiMenuLevel = 1 "{{{2
 endif
 
-if !exists("g:vikiFancyHeadings")
-    " If non-nil, display headings of different levels in different colors
-    let g:vikiFancyHeadings = 0 "{{{2
-endif
-
 if !exists("g:vikiMarkInexistent")
     " If non-zero, highligh links to existent or inexistent files in 
     " different colours.
     let g:vikiMarkInexistent = 1 "{{{2
 endif
 
-if !exists("g:vikiHighlightMath")
-    " If "latex", use the texmathMath |syn-cluster| to highlight 
-    " mathematical formulas.
-    let g:vikiHighlightMath = 'latex' "{{{2
-endif
-
 if !exists("g:vikiNameSuffix")
     " Default file suffix (including the optional period, e.g. '.viki').
     " Can also be buffer-local.
     let g:vikiNameSuffix = ".viki" "{{{2
-endif
-
-if !exists("g:vikiIndex")
-    " The default filename for an interviki's index name
-    let g:vikiIndex = 'index' "{{{2
 endif
 
 if !exists('g:viki_intervikis')
@@ -88,36 +72,6 @@ if !exists("g:vikiSaveHistory")
     " If non-nil, cache back-links information
     let g:vikiSaveHistory = index(split(&viminfo, ','), '!') != -1 "{{{2
 endif
-
-if !exists('g:vikiAutoupdateFiles')
-    " If true, automatically update all |viki-files| regions.
-    let g:vikiAutoupdateFiles = 0   "{{{2
-endif
-
-if !exists('g:vikiFoldLevel')
-    " If > 0, set the 'foldlevel' of viki files to this value. (This is 
-    " only useful if 'foldlevel' still has the default value of 0.)
-    let g:vikiFoldLevel = 5   "{{{2
-endif
-
-if !exists('g:vikiIndentedPriorityLists')
-    " If true, priority lists must be indented by at least one 
-    " whitespace character.
-    let g:vikiIndentedPriorityLists = 1   "{{{2
-endif
-
-if !exists("g:vikiFoldMethodVersion")
-    " :nodoc:
-    " Choose folding method version
-    " Viki supports several methods (1..7) for defining folds. If you 
-    " find that text entry is slowed down it is probably due to the 
-    " chosen fold method. You could try to use another method (see 
-    " ../ftplugin/viki.vim for alternative methods) or check out this 
-    " vim tip:
-    " http://vim.wikia.com/wiki/Keep_folds_closed_while_inserting_text
-    let g:vikiFoldMethodVersion = 8 "{{{2
-endif
-
 
 " -1 ... open all links in a new windows
 " -2 ... open all links in a new windows but split vertically
@@ -169,15 +123,6 @@ function! VikiDefine(name, prefix, ...) "{{{3
     let g:vikiInter{a:name}          = a:prefix
     let g:vikiInter{a:name}_suffix   = a:0 >= 1 && a:1 != '*' ? a:1 : g:vikiNameSuffix
     let index = a:0 >= 2 && a:2 != '' ? a:2 : ''
-    " TLogVAR index
-    " if empty(index)
-    "     let index0 = g:vikiIndex . g:vikiInter{a:name}_suffix
-    "     let findex = fnamemodify(g:vikiInter{a:name} .'/'. index0, ':p')
-    "     if filereadable(findex)
-    "         let index = index0
-    "     endif
-    "     " TLogVAR index, index0, findex
-    " endif
     if !empty(index)
         let vname = VikiMakeName(a:name, index, 0)
         let g:vikiInter{a:name}_index = index
@@ -254,12 +199,12 @@ command! VIKI :call viki#HomePage()
 " |:Trag| for the allowed values for KIND.
 "
 " NOTE: This command requires the trag plugin to be installed.
-command! -nargs=1 -bang Vikifind call viki#Find(<q-args>, !empty('<bang>'))
+command! -bar -bang -nargs=+ -complete=customlist,trag#CComplete Vikifind if exists(':Trag') == 2 | Trag<bang> --filenames --file_sources=*viki#FileSources <args> | else | echom ':Vikifind requires the trag_vim plugin to be installed!' | endif
+
 
 
 if !empty('g:vikiNameSuffix') && exists('#filetypedetect')
     exec 'autocmd filetypedetect BufRead,BufNewFile *'. g:vikiNameSuffix .' if empty(&ft) | setf viki | endif'
-    let g:ft_ignore_pat = '\('. g:ft_ignore_pat .'\|'. tlib#rx#Escape(g:vikiNameSuffix) .'$\)'
 endif
 
 augroup viki
