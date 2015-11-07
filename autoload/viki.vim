@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-11-05.
-" @Revision:    1619
+" @Last Change: 2015-11-07.
+" @Revision:    1620
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -3249,7 +3249,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
     " TLogVAR args
     let patt = get(args, 'glob', '')
     " TLogVAR patt
-    TLibTrace 'viki', args, patt
+    Tlibtrace 'viki', args, patt
     if empty(patt)
         echoerr 'Viki: No glob pattern: '. string(args)
     else
@@ -3267,7 +3267,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
             for pattern in split(patt, '|')
                 let ls += tlib#file#Glob(pattern)
             endfor
-            TLibTrace 'viki', len(ls)
+            Tlibtrace 'viki', len(ls)
             " TLogVAR ls
             let types = get(args, 'types', '')
             if empty(types)
