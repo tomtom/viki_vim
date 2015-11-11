@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-11-07.
-" @Revision:    1620
+" @Last Change: 2015-11-10.
+" @Revision:    1634
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -417,6 +417,11 @@ endif
 if !exists('g:viki#autoupdate_files')
     " If true, automatically update all |viki-files| regions.
     let g:viki#autoupdate_files = 0   "{{{2
+endif
+
+
+if !exists('g:viki#files_head_encs')
+    let g:viki#files_head_encs = ['utf-8', 'latin1']   "{{{2
 endif
 
 
@@ -3450,10 +3455,18 @@ function! s:GetHead(file, head) "{{{3
     let lines = map(lines, 'substitute(v:val, g:viki#files_head_rx, "", "g")')
     let head_text = join(lines, '|')
     let head_text = substitute(head_text, "[[:cntrl:]]", "", "g")
-    if &l:fenc != &l:enc && has('iconv')
-        let head_text = iconv(head_text, &l:fenc, &l:enc)
-        " TLogVAR head_text
-    endif
+    " if has('iconv')
+    "     for enc in g:viki#files_head_encs
+    "         if enc != &enc
+    "             let head_text1 = iconv(head_text, enc, &enc)
+    "             if head_text1 != head_text
+    "                 " TLogVAR enc, &enc, head_text, head_text1
+    "                 let head_text = head_text1
+    "                 break
+    "             endif
+    "         endif
+    "     endfor
+    " endif
     return head_text
 endf
 
