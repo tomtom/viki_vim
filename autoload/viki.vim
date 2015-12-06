@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-11-24.
-" @Revision:    1636
+" @Last Change: 2015-12-06.
+" @Revision:    1639
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -3292,7 +3292,7 @@ function! viki#DirListing(lhs, lhb, indent, region) "{{{3
             let flat = index(list, 'flat') != -1
             let filter = get(args, 'filter', '')
             if !empty(filter)
-                call filter(ls, 'v:val =~ filter')
+                call filter(ls, 's:IsDir(v:val) || v:val =~ filter')
             endif
             let exclude = get(args, 'exclude', '')
             if !empty(exclude)
