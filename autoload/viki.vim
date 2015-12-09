@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2015-12-06.
-" @Revision:    1639
+" @Last Change: 2015-12-07.
+" @Revision:    1643
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
@@ -1662,7 +1662,7 @@ endf
 
 " Check if the key maps should support a specified functionality
 function! viki#MapFunctionality(mf, key)
-    return a:mf == 'ALL' || (a:mf =~# '\<'. a:key .'\>')
+    return a:mf ==# 'ALL' || (a:mf =~# '\<'. a:key .'\>')
 endf
 
 
@@ -1993,6 +1993,7 @@ function! s:EditLocalFile(cmd, fname, fi, li, co, anchor) "{{{3
     endif
     call s:SetBackRef(a:fi, a:li, a:co)
     if g:vikiPromote && (!exists('b:vikiEnabled') || !b:vikiEnable)
+        TLogVAR &filetype
         call viki#DispatchOnFamily('MinorMode', vf, 1)
     endif
     call viki#DispatchOnFamily('FindAnchor', vf, a:anchor)
