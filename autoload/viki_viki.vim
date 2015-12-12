@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-09-03.
-" @Last Change: 2015-12-07.
-" @Revision:    19.0.233
+" @Last Change: 2015-12-11.
+" @Revision:    20.0.233
 
 
 if !exists('g:viki_viki#conceal_extended_link_markup')
@@ -304,7 +304,7 @@ function! viki_viki#MapKeys(state) "{{{3
     else
         let mf = g:vikiMapFunctionality
     endif
-    TLogVAR a:state, mf
+    " TLogVAR a:state, mf
 
     " if !hasmapto('viki#MaybeFollowLink')
         if viki#MapFunctionality(mf, 'c')
