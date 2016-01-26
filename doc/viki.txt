@@ -953,6 +953,7 @@ Contents~
         g:viki#fancy_headings ...................... |g:viki#fancy_headings|
         g:vikiIndex ................................ |g:vikiIndex|
         g:viki#autoupdate_files .................... |g:viki#autoupdate_files|
+        g:viki#files_head_encs ..................... |g:viki#files_head_encs|
         g:viki#fold_level .......................... |g:viki#fold_level|
         g:vikiFoldBodyLevel ........................ |g:vikiFoldBodyLevel|
         g:vikiFolds ................................ |g:vikiFolds|
@@ -1530,6 +1531,9 @@ g:vikiIndex                    (default: 'index')
                                                     *g:viki#autoupdate_files*
 g:viki#autoupdate_files        (default: 0)
     If true, automatically update all |viki-files| regions.
+
+                                                    *g:viki#files_head_encs*
+g:viki#files_head_encs         (default: ['utf-8', 'latin1'])
 
                                                     *g:viki#fold_level*
 g:viki#fold_level              (default: 5)
