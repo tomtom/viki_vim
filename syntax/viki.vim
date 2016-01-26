@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2015-11-03.
-" @Revision: 2.1113
+" @Last Change: 2016-01-19.
+" @Revision: 4.1113
 
 if version < 600
     syntax clear
@@ -57,6 +57,7 @@ if has('conceal') && &enc == 'utf-8'
                 \ ['ArrowTildeL', '<~\+', '↜'],
                 \ ['ArrowTildeR', '~\+>', '↝'],
                 \ ['Ellipsis', '...', '…'],
+                \ ['Circumflex', '\^\%({}\)\?', '^'],
                 \ ]
         
         exec 'syn match vikiSymbol'. s:name .' /\V'. s:chars .'/ conceal cchar='. s:cchar
