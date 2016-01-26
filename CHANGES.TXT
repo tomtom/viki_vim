@@ -719,3 +719,28 @@ version: "4.08"
   - syn cluster vikiPriorityListGen
   MD5 checksum: 059e1b085b663c1d2d498756fbba39f6
 
+version: "4.09"
+  - viki#fileword_suffixes: Also search for files with theses suffixes in |viki#CollectFileWords()|.
+  - Don't use :HiLink
+  - NEW :Vikifind command
+  - Vikifind: add matches for file basename only
+  - viki#Find(): When matching file names, allow use of [ _-] as whitespace; require trag >= 1.3
+  - viki#GetInterVikiDef(): optional argument: include_files
+  - VikiAnchor_rx(): use "\n"
+  - viki_viki#SetupBuffer(): Setup &path
+  - remove _tplugin.vim
+  - Improved viki#DirListing()
+  - Moved g:vikiOpenFileWith_ANY related code to tlib_vim
+  - Moved tinykeymap-related code to listitem_vim
+  - Require tlib >= 1.15
+  - Improve :Vikifind etc.
+  - g:vikiOpenUrlWith_ANY: FIX xdg string
+  - various minor changes
+  - s/TLibTrace/Tlibtrace/g
+  - s:GetHead: disable iconv
+  - viki#DirListing(): "filter" doesn't exclude dirs
+  - FIX maps in "major mode"
+  - Disable debug message
+  - syntax/*.vim: More conceal definitions
+  MD5 checksum: 4921508fcf82aac578f7740d28ed151d
+
