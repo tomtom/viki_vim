@@ -5,9 +5,9 @@
     "maintainer" : "Tom Link <micathom at gmail com>",
     "repository" : {"type": "git", "url": "git://github.com/tomtom/viki_vim.git"},
     "dependencies" : {
+    "setsyntax": {"type": "git", "url": "git://github.com/tomtom/setsyntax_vim.git"},
     "tlib": {"type": "git", "url": "git://github.com/tomtom/tlib_vim.git"},
-    "hookcursormoved": {"type": "git", "url": "git://github.com/tomtom/hookcursormoved_vim.git"},
-    "setsyntax": {"type": "git", "url": "git://github.com/tomtom/setsyntax_vim.git"}
+    "hookcursormoved": {"type": "git", "url": "git://github.com/tomtom/hookcursormoved_vim.git"}
   },
-    "description" : "A personal wiki for Vim"
+    "description" : "A personal wiki for vim"
 }
