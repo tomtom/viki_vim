@@ -1094,7 +1094,6 @@ Contents~
         viki_anyword#DefineMarkup .................. |viki_anyword#DefineMarkup()|
         viki_anyword#DefineHighlighting ............ |viki_anyword#DefineHighlighting()|
         :VikiHiLink ................................ |:VikiHiLink|
-        :VikiHiLink ................................ |:VikiHiLink|
         viki_anyword#Find .......................... |viki_anyword#Find()|
         viki_latex#SetupBuffer ..................... |viki_latex#SetupBuffer()|
         viki_latex#CheckFilename ................... |viki_latex#CheckFilename()|
@@ -1132,7 +1131,6 @@ Contents~
         ][ ......................................... |][|
         ]] ......................................... |]]|
         [] ......................................... |[]|
-        :HiLink .................................... |:HiLink|
         :HiLink .................................... |:HiLink|
 
 
@@ -2181,8 +2179,6 @@ viki_anyword#DefineMarkup(state)
                                                     *viki_anyword#DefineHighlighting()*
 viki_anyword#DefineHighlighting(state, ...)
 
-                                                    *:VikiHiLink*
-:VikiHiLink
 
                                                     *:VikiHiLink*
 :VikiHiLink
@@ -2347,8 +2343,6 @@ b:vikiInverseFold              (default: 0)
 ========================================================================
 syntax/viki.vim~
 
-                                                    *:HiLink*
-:HiLink
 
                                                     *:HiLink*
 :HiLink
