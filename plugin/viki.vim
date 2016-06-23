@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2015-11-05.
-" @Revision:    2785
+" @Last Change: 2016-03-02.
+" @Revision:    2786
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -71,6 +71,12 @@ endif
 if !exists("g:vikiSaveHistory")
     " If non-nil, cache back-links information
     let g:vikiSaveHistory = index(split(&viminfo, ','), '!') != -1 "{{{2
+endif
+
+if !exists('g:vikiIndentedPriorityLists')
+    " If true, priority lists must be indented by at least one 
+    " whitespace character.
+    let g:vikiIndentedPriorityLists = 1   "{{{2
 endif
 
 " -1 ... open all links in a new windows
