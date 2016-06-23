@@ -2,8 +2,8 @@
 " @Author:      Tom Link (mailto:micathom AT gmail com?subject=vim-vikiAnyWord)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     04-Apr-2005.
-" @Last Change: 2010-01-03.
-" @Revision:    0.39
+" @Last Change: 2016-06-23.
+" @Revision:    1.39
 
 " call tlog#Log('Load: '. expand('<sfile>')) " vimtlib-sfile
 
@@ -75,8 +75,10 @@ function! viki_anyword#DefineHighlighting(state, ...) "{{{3
     let dontSetup = a:0 > 0 ? a:1 : ''
     call viki_viki#DefineHighlighting(a:state)
     if version < 508
+        " :nodoc:
         command! -nargs=+ VikiHiLink hi link <args>
     else
+        " :nodoc:
         command! -nargs=+ VikiHiLink hi def link <args>
     endif
     exec 'VikiHiLink '. b:vikiInexistentHighlight .' Normal'

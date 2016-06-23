@@ -277,8 +277,10 @@ syntax sync minlines=2
 if version >= 508 || !exists("did_viki_syntax_inits")
   if version < 508
       let did_viki_syntax_inits = 1
+      " :nodoc:
       command! -nargs=+ HiLink hi link <args>
   else
+      " :nodoc:
       command! -nargs=+ HiLink hi def link <args>
   endif
   

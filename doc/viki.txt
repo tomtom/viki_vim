@@ -888,6 +888,7 @@ Contents~
         g:vikiNameSuffix ........................... |g:vikiNameSuffix|
         g:viki_intervikis .......................... |g:viki_intervikis|
         g:vikiSaveHistory .......................... |g:vikiSaveHistory|
+        g:vikiIndentedPriorityLists ................ |g:vikiIndentedPriorityLists|
         b:vikiNoSimpleNames ........................ |b:vikiNoSimpleNames|
         b:vikiDisableType .......................... |b:vikiDisableType|
         VikiMakeName ............................... |VikiMakeName()|
@@ -1093,8 +1094,6 @@ Contents~
         viki_anyword#SetupBuffer ................... |viki_anyword#SetupBuffer()|
         viki_anyword#DefineMarkup .................. |viki_anyword#DefineMarkup()|
         viki_anyword#DefineHighlighting ............ |viki_anyword#DefineHighlighting()|
-        :VikiHiLink ................................ |:VikiHiLink|
-        :VikiHiLink ................................ |:VikiHiLink|
         viki_anyword#Find .......................... |viki_anyword#Find()|
         viki_latex#SetupBuffer ..................... |viki_latex#SetupBuffer()|
         viki_latex#CheckFilename ................... |viki_latex#CheckFilename()|
@@ -1132,8 +1131,6 @@ Contents~
         ][ ......................................... |][|
         ]] ......................................... |]]|
         [] ......................................... |[]|
-        :HiLink .................................... |:HiLink|
-        :HiLink .................................... |:HiLink|
 
 
 ========================================================================
@@ -1170,6 +1167,11 @@ g:viki_intervikis              (default: {})
                                                     *g:vikiSaveHistory*
 g:vikiSaveHistory              (default: index(split(&viminfo, ','), '!') != -1)
     If non-nil, cache back-links information
+
+                                                    *g:vikiIndentedPriorityLists*
+g:vikiIndentedPriorityLists    (default: 1)
+    If true, priority lists must be indented by at least one 
+    whitespace character.
 
                                                     *b:vikiNoSimpleNames*
 b:vikiNoSimpleNames            (default: 0)
@@ -2181,12 +2183,6 @@ viki_anyword#DefineMarkup(state)
                                                     *viki_anyword#DefineHighlighting()*
 viki_anyword#DefineHighlighting(state, ...)
 
-                                                    *:VikiHiLink*
-:VikiHiLink
-
-                                                    *:VikiHiLink*
-:VikiHiLink
-
                                                     *viki_anyword#Find()*
 viki_anyword#Find(flag, ...)
 
@@ -2342,16 +2338,6 @@ b:vikiInverseFold              (default: 0)
 
                                                     *[]*
 [] ... [[
-
-
-========================================================================
-syntax/viki.vim~
-
-                                                    *:HiLink*
-:HiLink
-
-                                                    *:HiLink*
-:HiLink
 
 
 ========================================================================
