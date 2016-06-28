@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2016-01-19.
-" @Revision: 4.1113
+" @Last Change: 2016-06-23.
+" @Revision: 10.1113
 
 if version < 600
     syntax clear
@@ -35,10 +35,10 @@ syn match vikiSemiParagraph /^\s\+$/
 syn match vikiEscape /\\/ contained containedin=vikiEscapedChar
 syn match vikiEscapedChar /\\\_./ contains=vikiEscape,vikiChar
 
-" exe 'syn match vikiAnchor /^\('. escape(b:vikiCommentStart, '\/.*^$~[]') .'\)\?[[:blank:]]*#'. b:vikiAnchorNameRx .'/'
+" exe 'syn match vikiAnchor /^\%('. escape(b:vikiCommentStart, '\/.*^$~[]') .'\)\?[[:blank:]]*#'. b:vikiAnchorNameRx .'/'
 exe 'syn match vikiAnchor /^[[:blank:]]*%\?[[:blank:]]*#'. b:vikiAnchorNameRx .'.*/'
-" syn match vikiMarkers /\(\([#?!+]\)\2\{2,2}\)/
-syn match vikiMarkers /\V\(###\|???\|!!!\|+++\)/
+" syn match vikiMarkers /\%(\%([#?!+]\)\2\{2,2}\)/
+syn match vikiMarkers /\V\%(###\|???\|!!!\|+++\)/
 
 if has('conceal') && &enc == 'utf-8'
     let s:sym_cluster = []
@@ -63,37 +63,37 @@ if has('conceal') && &enc == 'utf-8'
         exec 'syn match vikiSymbol'. s:name .' /\V'. s:chars .'/ conceal cchar='. s:cchar
         call add(s:sym_cluster, 'vikiSymbol'. s:name)
     endfor
-    syn match vikiSymbolExtra /\V\(&\(#\d\+\|\w\+\);\)/
+    syn match vikiSymbolExtra /\V\%(&\%(#\d\+\|\w\+\);\)/
     exec 'syn cluster vikiSymbols contains=vikiSymbolExtra,'. join(s:sym_cluster, ',')
     unlet s:name s:chars s:cchar s:sym_cluster
 else
-    " syn match vikiSymbols /\(--\|!=\|==\+\|\~\~\+\|<-\+>\|<=\+>\|<\~\+>\|<-\+\|-\+>\|<=\+\|=\+>\|<\~\+\|\~\+>\|\.\.\.\)/
-    syn match vikiSymbols /\V\(--\|!=\|==\+\|~~\+\|<-\+>\|<=\+>\|<~\+>\|<-\+\|-\+>\|<=\+\|=\+>\|<~\+\|~\+>\|...\|&\(#\d\+\|\w\+\);\)/
+    " syn match vikiSymbols /\%(--\|!=\|==\+\|\~\~\+\|<-\+>\|<=\+>\|<\~\+>\|<-\+\|-\+>\|<=\+\|=\+>\|<\~\+\|\~\+>\|\.\.\.\)/
+    syn match vikiSymbols /\V\%(--\|!=\|==\+\|~~\+\|<-\+>\|<=\+>\|<~\+>\|<-\+\|-\+>\|<=\+\|=\+>\|<~\+\|~\+>\|...\|&\%(#\d\+\|\w\+\);\)/
     syn cluster vikiSymbols contains=vikiSymbols
 endif
 
 syn cluster vikiHyperLinks contains=vikiLink,vikiExtendedLink,vikiURL,vikiInexistentLink
 
 if b:vikiTextstylesVer == 1
-    syn match vikiBold /\(^\|\W\zs\)\*\(\\\*\|\w\)\{-1,}\*/
-    syn region vikiContinousBold start=/\(^\|\W\zs\)\*\*[^ 	*]/ end=/\*\*\|\n\{2,}/ skip=/\\\n/ contains=@Spell
-    syn match vikiUnderline /\(^\|\W\zs\)_\(\\_\|[^_\s]\)\{-1,}_/
-    syn region vikiContinousUnderline start=/\(^\|\W\zs\)__[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\\n/ contains=@Spell
-    syn match vikiTypewriter /\(^\|\W\zs\)=\(\\=\|\w\)\{-1,}=/
-    syn region vikiContinousTypewriter start=/\(^\|\W\zs\)==[^ 	=]/ end=/==\|\n\{2,}/ skip=/\\\n/ contains=@Spell
-    syn match vikiColor /\(^\|\W\zs\)'\(\\\*\|\w\)\{-1,}'/
-    syn region vikiContinousColor start=/\(^\|\W\zs\)''[^      _]/ end=/''\|\n\{2,}/ skip=/\\\n/ contains=@Spell
+    syn match vikiBold /\%(^\|\W\zs\)\*\%(\\\*\|\w\)\{-1,}\*/
+    syn region vikiContinousBold start=/\%(^\|\W\zs\)\*\*[^ 	*]/ end=/\*\*\|\n\{2,}/ skip=/\\\n/ contains=@Spell
+    syn match vikiUnderline /\%(^\|\W\zs\)_\%(\\_\|[^_\s]\)\{-1,}_/
+    syn region vikiContinousUnderline start=/\%(^\|\W\zs\)__[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\\n/ contains=@Spell
+    syn match vikiTypewriter /\%(^\|\W\zs\)=\%(\\=\|\w\)\{-1,}=/
+    syn region vikiContinousTypewriter start=/\%(^\|\W\zs\)==[^ 	=]/ end=/==\|\n\{2,}/ skip=/\\\n/ contains=@Spell
+    syn match vikiColor /\%(^\|\W\zs\)'\%(\\\*\|\w\)\{-1,}'/
+    syn region vikiContinousColor start=/\%(^\|\W\zs\)''[^      _]/ end=/''\|\n\{2,}/ skip=/\\\n/ contains=@Spell
     syn region vikiExample start=/^>\s*$/ end=/^<\s*$/ fold
     syn cluster vikiTextstyles contains=vikiBold,vikiContinousBold,vikiTypewriter,vikiContinousTypewriter,vikiUnderline,vikiContinousUnderline,vikiEscapedChar,vikiColor,vikiContinousColor
 else
     if has('conceal')
-        syn region vikiBold matchgroup=NonText start=/\(^\|\W\zs\)__\ze[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar,@Spell
+        syn region vikiBold matchgroup=NonText start=/\%(^\|\W\zs\)__\ze[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar,@Spell
                     \ concealends
-        syn region vikiTypewriter matchgroup=NonText start=/\(^\|[^\w`]\zs\)''\ze[^ 	']/ end=/''\|\n\{2,}/ skip=/\\'\|\\\n/ contains=vikiEscapedChar,@Spell
+        syn region vikiTypewriter matchgroup=NonText start=/\%(^\|[^\w`]\zs\)''\ze[^ 	']/ end=/''\|\n\{2,}/ skip=/\\'\|\\\n/ contains=vikiEscapedChar,@Spell
                     \ concealends
     else
-        syn region vikiBold start=/\(^\|\W\zs\)__\ze[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar,@Spell
-        syn region vikiTypewriter start=/\(^\|[^\w`]\zs\)''\ze[^ 	']/ end=/''\|\n\{2,}/ skip=/\\'\|\\\n/ contains=vikiEscapedChar,@Spell
+        syn region vikiBold start=/\%(^\|\W\zs\)__\ze[^ 	_]/ end=/__\|\n\{2,}/ skip=/\\_\|\\\n/ contains=vikiEscapedChar,@Spell
+        syn region vikiTypewriter start=/\%(^\|[^\w`]\zs\)''\ze[^ 	']/ end=/''\|\n\{2,}/ skip=/\\'\|\\\n/ contains=vikiEscapedChar,@Spell
     endif
     syn cluster vikiTextstyles contains=vikiBold,vikiTypewriter,vikiEscapedChar
 endif
@@ -122,10 +122,10 @@ else
 endif
 
 syn match vikiTableRowSep /||\?/ contained containedin=vikiTableRow,vikiTableHead
-syn region vikiTableHead start=/^[[:blank:]]*|| / skip=/\\\n/ end=/\(^\| \)||[[:blank:]]*$/
+syn region vikiTableHead start=/^[[:blank:]]*|| / skip=/\\\n/ end=/\%(^\| \)||[[:blank:]]*$/
             \ transparent keepend
             " \ contains=ALLBUT,vikiTableRow,vikiTableHead 
-syn region vikiTableRow  start=/^[[:blank:]]*| / skip=/\\\n/ end=/\(^\| \)|[[:blank:]]*$/
+syn region vikiTableRow  start=/^[[:blank:]]*| / skip=/\\\n/ end=/\%(^\| \)|[[:blank:]]*$/
             \ transparent keepend
             " \ contains=ALLBUT,vikiTableRow,vikiTableHead
 
@@ -170,13 +170,13 @@ syn region vikiRegionAlt matchgroup=vikiMacroDelim
             \ end=/^[[:blank:]]*\z1\([[:blank:]].*\)\?$/ 
             \ contains=@vikiText,vikiRegionNames
 
-syn match vikiCommand /^\C[[:blank:]]*#\([A-Z]\{2,}\)\>\(\\\n\|.\)*/
+syn match vikiCommand /^\C[[:blank:]]*#\%([A-Z]\{2,}\)\>\%(\\\n\|.\)*/
             \ contains=vikiCommandNames
 
-" syn match vikiFilesMarkers /\[\[\([^\/]\+\/\)*\|\]!\]/ contained containedin=vikiFiles
+" syn match vikiFilesMarkers /\[\[\%([^\/]\+\/\)*\|\]!\]/ contained containedin=vikiFiles
 " syn match vikiFilesIndicators /{.\{-}}/ contained containedin=vikiFiles
 syn match vikiFilesIndicators /^\s*[`_+|\\-]\+\s/ contained containedin=vikiFiles
-syn match vikiFiles /^\(\s*[`_+|\\-]\+\s\+\)\?\[\[.\{-}\]!\].*$/
+syn match vikiFiles /^\%(\s*[`_+|\\-]\+\s\+\)\?\[\[.\{-}\]!\].*$/
             \ contained containedin=vikiFilesRegion contains=vikiExtendedLink,vikiFilesIndicators
 syn region vikiFilesRegion matchgroup=vikiMacroDelim
             \ start=/^[[:blank:]]*#Files\>\(\\\n\|.\)\{-}<<\z(.*\)$/ 
@@ -226,29 +226,29 @@ if &ft == 'viki'
 endif
 
 
-syn match vikiList /^[[:blank:]]\+\([-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\)\ze[[:blank:]]/
-syn match vikiDescription /^[[:blank:]]\+\(\\\n\|.\)\{-1,}[[:blank:]]::\ze[[:blank:]]/ contains=@vikiHyperLinks,vikiEscapedChar,vikiComment
+syn match vikiList /^[[:blank:]]\+\%([-+*#?@]\|[0-9#]\+\.\|[a-zA-Z?]\.\)\ze[[:blank:]]/
+syn match vikiDescription /^[[:blank:]]\+\%(\\\n\|.\)\{-1,}[[:blank:]]::\ze[[:blank:]]/ contains=@vikiHyperLinks,vikiEscapedChar,vikiComment
 
-syn match vikiPriorityListTodo0 /#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
-syn match vikiPriorityListTodoA /#\(T: \+.\{-}A.\{-}:\|\d*A\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
-syn match vikiPriorityListTodoB /#\(T: \+.\{-}B.\{-}:\|\d*B\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
-syn match vikiPriorityListTodoC /#\(T: \+.\{-}C.\{-}:\|\d*C\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
-syn match vikiPriorityListTodoD /#\(T: \+.\{-}D.\{-}:\|\d*D\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
-syn match vikiPriorityListTodoE /#\(T: \+.\{-}E.\{-}:\|\d*E\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
-syn match vikiPriorityListTodoF /#\(T: \+.\{-}F.\{-}:\|\d*F\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
+syn match vikiPriorityListTodo0 /#\%(T: \+.\{-}\u.\{-}:\|\d*\u\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
+syn match vikiPriorityListTodoA /#\%(T: \+.\{-}A.\{-}:\|\d*A\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
+syn match vikiPriorityListTodoB /#\%(T: \+.\{-}B.\{-}:\|\d*B\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
+syn match vikiPriorityListTodoC /#\%(T: \+.\{-}C.\{-}:\|\d*C\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
+syn match vikiPriorityListTodoD /#\%(T: \+.\{-}D.\{-}:\|\d*D\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
+syn match vikiPriorityListTodoE /#\%(T: \+.\{-}E.\{-}:\|\d*E\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
+syn match vikiPriorityListTodoF /#\%(T: \+.\{-}F.\{-}:\|\d*F\d*\)/ contained containedin=vikiPriorityListTodoGen nextgroup=vikiProgress
 
 syn cluster vikiPriorityListTodo contains=vikiPriorityListTodoA,vikiPriorityListTodoB,vikiPriorityListTodoC,vikiPriorityListTodoD,vikiPriorityListTodoE,vikiPriorityListTodoF,vikiPriorityListTodo0
 
-let s:progress = '\(_\|[0-9]\+%\|\d\{4}-\d\{2}-\d\{2}\(\.\.\d\{4}-\d\{2}-\d\{2}\)\?\)'
+let s:progress = '\%(_\|[0-9]\+%\|\d\{4}-\d\{2}-\d\{2}\%(\.\.\d\{4}-\d\{2}-\d\{2}\)\?\)'
 exec 'syn match vikiProgress /\s\+'. s:progress .'/ contained containedin=vikiPriorityListTodoGen'
 
 if has('conceal')
     syn match vikiTagPrefix /\s\zs:/ contained containedin=vikiTag conceal
     syn match vikiContactPrefix /\s\zs@/ contained containedin=vikiContact conceal
-    syn match vikiTag /\(\s\(:\(\d\{4}-\d\{2}-\d\{2}\|[^[:punct:][:space:]]\+\)\+\)\+\)\+/ contained containedin=vikiPriorityListTodoGen contains=vikiTagPrefix
+    syn match vikiTag /\%(\s\%(:\%(\d\{4}-\d\{2}-\d\{2}\|[^[:punct:][:space:]]\+\)\+\)\+\)\+/ contained containedin=vikiPriorityListTodoGen contains=vikiTagPrefix
     syn match vikiContact /\s@[^[:punct:][:space:]]\+/ contained containedin=vikiPriorityListTodoGen contains=vikiContactPrefix
 else
-    syn match vikiTag /\(\s\+\(:\(\d\{4}-\d\{2}-\d\{2}\|[^[:punct:][:space:]]\+\)\+\)\+\)\+/ contained containedin=vikiPriorityListTodoGen
+    syn match vikiTag /\%(\s\+\%(:\%(\d\{4}-\d\{2}-\d\{2}\|[^[:punct:][:space:]]\+\)\+\)\+\)\+/ contained containedin=vikiPriorityListTodoGen
     syn match vikiContact /\s\+\zs@[^[:punct:][:space:]]\+/ contained containedin=vikiPriorityListTodoGen
 endif
 
@@ -256,8 +256,8 @@ endif
 
 let s:plquant = tlib#var#Get('vikiIndentedPriorityLists', 'wbg') ? '\+' : '*'
 
-exec 'syn match vikiPriorityListTodoGen /^[[:blank:]]'. s:plquant .'\zs#\(T: \+.\{-}\u.\{-}:\|\d*\u\d*\(\s\+'. s:progress .'\)\?\)\s.*$/ contains=vikiContact,vikiTag,@vikiPriorityListTodo,@vikiText'
-exec 'syn match vikiPriorityListDoneGen /^[[:blank:]]'. s:plquant .'\zs#\(T: \+x\([0-9%-]\+\)\?.\{-}\u.\{-}:\|\(T: \+\)\?\d*\u\d* \+x'. s:progress .'\?\):\? .*/'
+exec 'syn match vikiPriorityListTodoGen /^[[:blank:]]'. s:plquant .'\zs#\%(T: \+.\{-}\u.\{-}:\|\d*\u\d*\%(\s\+'. s:progress .'\)\?\)\s.*$/ contains=vikiContact,vikiTag,@vikiPriorityListTodo,@vikiText'
+exec 'syn match vikiPriorityListDoneGen /^[[:blank:]]'. s:plquant .'\zs#\%(T: \+x\%([0-9%-]\+\)\?.\{-}\u.\{-}:\|\%(T: \+\)\?\d*\u\d* \+x'. s:progress .'\?\):\? .*/'
 exec 'syn match vikiPriorityListDoneX /^[[:blank:]]'. s:plquant .'\zs#[X-Z]\d\?\s.*/'
 
 unlet s:plquant
