@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2016-06-23.
-" @Revision: 10.1113
+" @Last Change: 2017-03-09.
+" @Revision: 19.1113
 
 if version < 600
     syntax clear
@@ -106,7 +106,8 @@ syn match vikiComment /^[[:blank:]]*%.*$/ contains=@vikiHyperLinks,vikiMarkers,v
 
 " syn region vikiString start=+^[[:blank:]]\+"\|"+ end=+"[.?!]\?[[:blank:]]\+$\|"+ contains=@vikiText
 " syn region vikiString start=+^"\|\s"\|[({\[]\zs"+ end=+"+ contains=@vikiText
-syn region vikiString start=+^"\|\s"\|[({\[]\zs"\|[^[:alnum:]]\zs"\ze[[:alnum:]]+ end=+"+ contains=@vikiText
+" syn region vikiString start=+\%(^"\|\_s\zs"\|[({\[]\zs"\|[^[:alnum:]]\zs"\ze[[:alnum:]]\)+ end=+"+ contains=@vikiText
+syn match vikiString /\%(^\|[[:blank:]({\[]\)\zs"[^"]*"/ contains=@vikiText
 
 let b:vikiHeadingStart = '*'
 if g:viki#fancy_headings
