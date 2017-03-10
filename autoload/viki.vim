@@ -3,8 +3,16 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2016-02-02.
-" @Revision:    1644
+" @Last Change: 2017-02-15.
+" @Revision:    1645
+
+if !exists('g:loaded_tlib') || g:loaded_tlib < 116
+    runtime plugin/02tlib.vim
+    if !exists('g:loaded_tlib') || g:loaded_tlib < 116
+        echoerr 'tlib >= 1.16 is required'
+        finish
+    endif
+endif
 
 
 exec 'runtime! autoload/viki/enc_'. substitute(&enc, '[\/<>*+&:?]', '_', 'g') .'.vim'
