@@ -2,12 +2,12 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2017-03-09.
-" @Revision: 19.1113
+" @Last Change: 2017-03-19.
+" @Revision: 20.1113
 
 if version < 600
     syntax clear
-elseif exists("b:current_syntax")
+elseif exists('b:current_syntax')
     finish
 endif
 scriptencoding utf-8
@@ -185,7 +185,7 @@ syn region vikiFilesRegion matchgroup=vikiMacroDelim
             \ contains=vikiFiles
 
 
-if g:viki#highlight_math == 'latex'
+if g:viki#highlight_math ==# 'latex'
     syn region vikiTexFormula matchgroup=Comment
                 \ start=/\z(\$\$\?\)/ end=/\z1/
                 \ contains=@texmathMath

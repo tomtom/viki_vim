@@ -3,14 +3,14 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-11-15.
-" @Last Change: 2016-02-02.
-" @Revision:    21.0.76
+" @Last Change: 2017-03-19.
+" @Revision:    24.0.76
 
 " Use only as embedded syntax to be included from other syntax files.
 
 if version < 600
     syntax clear
-elseif exists("b:current_syntax")
+elseif exists('b:current_syntax')
     finish
 endif
 scriptencoding utf-8
@@ -33,7 +33,7 @@ syn region texmathArgDelimiters matchgroup=Delimiter
             \ contained contains=@texmathMath containedin=texmath
 
 
-if has('conceal') && &enc == 'utf-8'
+if has('conceal') && &enc ==# 'utf-8'
     if &conceallevel == 0
         setlocal conceallevel=2
     endif
@@ -42,9 +42,9 @@ if has('conceal') && &enc == 'utf-8'
     endif
 
     if !exists('g:did_tex_syntax_inits')
-        let s:tex_conceal = exists("g:tex_conceal") ? g:tex_conceal : 'admgs'
+        let s:tex_conceal = exists('g:tex_conceal') ? g:tex_conceal : 'admgs'
 
-        if s:tex_conceal =~ 'm'
+        if s:tex_conceal =~# 'm'
             " Copied from $VIMRUNTIME/syntax/tex.vim
             " Math Symbols {{{2
             " (many of these symbols were contributed by Björn Winckler)
@@ -290,7 +290,7 @@ if has('conceal') && &enc == 'utf-8'
             unlet texmath s:texMathList
 
             " Copied from $VIMRUNTIME/syntax/tex.vim
-            if &ambw == "double"
+            if &ambw ==# 'double'
                 syn match texMathSymbol '\\gg\>'			contained containedin=texmath conceal cchar=≫
                 syn match texMathSymbol '\\ll\>'			contained containedin=texmath conceal cchar=≪
             else
@@ -299,7 +299,7 @@ if has('conceal') && &enc == 'utf-8'
             endif
         endif
 
-        if s:tex_conceal =~ 'g'
+        if s:tex_conceal =~# 'g'
             " Copied from $VIMRUNTIME/syntax/tex.vim
             fun! s:Greek(group,pat,cchar)
                 exe 'syn match' a:group '/'. escape(a:pat, '/') .'\%({}\|\s\|$\)\?/ contained containedin=texmath conceal cchar='.a:cchar
