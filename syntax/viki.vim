@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     30-Dez-2003.
-" @Last Change: 2017-03-19.
-" @Revision: 20.1113
+" @Last Change: 2017-03-24.
+" @Revision: 21.1113
 
 if version < 600
     syntax clear
@@ -40,7 +40,7 @@ exe 'syn match vikiAnchor /^[[:blank:]]*%\?[[:blank:]]*#'. b:vikiAnchorNameRx .'
 " syn match vikiMarkers /\%(\%([#?!+]\)\2\{2,2}\)/
 syn match vikiMarkers /\V\%(###\|???\|!!!\|+++\)/
 
-if has('conceal') && &enc == 'utf-8'
+if has('conceal') && &encoding ==# 'utf-8'
     let s:sym_cluster = []
     for [s:name, s:chars, s:cchar] in [
                 \ ['Dash', '--', '—'],
@@ -204,7 +204,7 @@ syn region vikiTexRegion matchgroup=vikiMacroDelim
             \ contains=@texmathMath
 
 
-if &ft == 'viki'
+if &filetype ==# 'viki'
     let s:is_keyword = &l:iskeyword
     for s:filetype in viki#CollectSyntaxRegionsFiletypes()
         unlet! b:current_syntax
@@ -218,7 +218,7 @@ if &ft == 'viki'
                     \ 'end=/^[[:blank:]]*\z1\([[:blank:]].*\)\?$/'
                     \ 'contains=@vikiCode_'. s:filetype
         " Workaround based on vimviki Issue 115
-        if s:filetype =~ 'perl'
+        if s:filetype =~# 'perl'
             syntax clear perlFunctionName
         endif
     endfor
@@ -275,7 +275,7 @@ syntax sync minlines=2
 " Define the default highlighting.
 " For version 5.7 and earlier: only when not done already
 " For version 5.8 and later: only when an item doesn't have highlighting yet
-if version >= 508 || !exists("did_viki_syntax_inits")
+if version >= 508 || !exists('did_viki_syntax_inits')
   if version < 508
       let did_viki_syntax_inits = 1
       " :nodoc:
@@ -285,51 +285,51 @@ if version >= 508 || !exists("did_viki_syntax_inits")
       command! -nargs=+ HiLink hi def link <args>
   endif
   
-  if &background == "light"
-      let s:cm1="Dark"
-      let s:cm2="Light"
+  if &background ==# 'light'
+      let s:cm1 = 'Dark'
+      let s:cm2 = 'Light'
   else
-      let s:cm1="Light"
-      let s:cm2="Dark"
+      let s:cm1 = 'Light'
+      let s:cm2 = 'Dark'
   endif
 
-  if exists("g:vikiHeadingFont")
-      let s:hdfont = " font=". g:vikiHeadingFont
+  if exists('g:vikiHeadingFont')
+      let s:hdfont = ' font='. g:vikiHeadingFont
   else
-      let s:hdfont = ""
+      let s:hdfont = ''
   endif
   
-  if exists("g:vikiTypewriterFont")
-      let s:twfont = " font=". g:vikiTypewriterFont
+  if exists('g:vikiTypewriterFont')
+      let s:twfont = ' font='. g:vikiTypewriterFont
   else
-      let s:twfont = ""
+      let s:twfont = ''
   endif
 
   HiLink vikiSemiParagraph NonText
   HiLink vikiEscapedChars Normal
-  exe "hi vikiEscape ctermfg=". s:cm2 ."grey guifg=". s:cm2 ."grey"
+  exe 'hi vikiEscape ctermfg='. s:cm2 .'grey guifg='. s:cm2 .'grey'
   hi vikiList term=bold cterm=bold gui=italic,bold ctermfg=Cyan guifg=Cyan
   HiLink vikiDescription vikiList
   if g:viki#fancy_headings
-      if &background == "light"
-          let hdhl="term=bold,underline cterm=bold gui=bold ctermfg=". s:cm1 ."Magenta guifg=".s:cm1."Magenta". s:hdfont
-          exe "hi vikiHeading1 ". hdhl ." guibg=#ffff00"
-          exe "hi vikiHeading2 ". hdhl ." guibg=#ffff30"
-          exe "hi vikiHeading3 ". hdhl ." guibg=#ffff60"
-          exe "hi vikiHeading4 ". hdhl ." guibg=#ffff90"
-          exe "hi vikiHeading5 ". hdhl ." guibg=#ffffb0"
-          exe "hi vikiHeading6 ". hdhl ." guibg=#ffffe0"
+      if &background ==# 'light'
+          let hdhl='term=bold,underline cterm=bold gui=bold ctermfg='. s:cm1 .'Magenta guifg='.s:cm1.'Magenta'. s:hdfont
+          exe 'hi vikiHeading1 '. hdhl .' guibg=#ffff00'
+          exe 'hi vikiHeading2 '. hdhl .' guibg=#ffff30'
+          exe 'hi vikiHeading3 '. hdhl .' guibg=#ffff60'
+          exe 'hi vikiHeading4 '. hdhl .' guibg=#ffff90'
+          exe 'hi vikiHeading5 '. hdhl .' guibg=#ffffb0'
+          exe 'hi vikiHeading6 '. hdhl .' guibg=#ffffe0'
       else
-          let hdhl="term=bold,underline cterm=bold gui=bold ctermfg=DarkMagenta guifg=DarkMagenta". s:hdfont
-          exe "hi vikiHeading1 ". hdhl ." guibg=#ffff00"
-          exe "hi vikiHeading2 ". hdhl ." guibg=#aadd00"
-          exe "hi vikiHeading3 ". hdhl ." guibg=#88aa00"
-          exe "hi vikiHeading4 ". hdhl ." guibg=#558800"
-          exe "hi vikiHeading5 ". hdhl ." guibg=#225500"
-          exe "hi vikiHeading6 ". hdhl ." guibg=#002200"
+          let hdhl = 'term=bold,underline cterm=bold gui=bold ctermfg=DarkMagenta guifg=DarkMagenta'. s:hdfont
+          exe 'hi vikiHeading1 '. hdhl .' guibg=#ffff00'
+          exe 'hi vikiHeading2 '. hdhl .' guibg=#aadd00'
+          exe 'hi vikiHeading3 '. hdhl .' guibg=#88aa00'
+          exe 'hi vikiHeading4 '. hdhl .' guibg=#558800'
+          exe 'hi vikiHeading5 '. hdhl .' guibg=#225500'
+          exe 'hi vikiHeading6 '. hdhl .' guibg=#002200'
       endif
   else
-      exe "hi vikiHeading term=bold,underline cterm=bold gui=bold ctermfg=". s:cm1 ."Magenta guifg=".s:cm1."Magenta". s:hdfont
+      exe 'hi vikiHeading term=bold,underline cterm=bold gui=bold ctermfg='. s:cm1 .'Magenta guifg='.s:cm1.'Magenta'. s:hdfont
   endif
   
   let vikiPriorityListTodo = ' term=bold,underline cterm=bold gui=bold guifg=Black ctermfg=Black '
@@ -364,9 +364,9 @@ if version >= 508 || !exists("did_viki_syntax_inits")
   HiLink vikiPriorityListDoneGen Comment
   HiLink vikiPriorityListDoneX Comment
   
-  exe "hi vikiTableRowSep term=bold cterm=bold gui=bold ctermbg=". s:cm2 ."Grey guibg=". s:cm2 ."Grey"
+  exe 'hi vikiTableRowSep term=bold cterm=bold gui=bold ctermbg='. s:cm2 .'Grey guibg='. s:cm2 .'Grey'
   
-  exe "hi vikiSymbols term=bold cterm=bold gui=bold ctermfg=". s:cm1 ."Red guifg=". s:cm1 ."Red"
+  exe 'hi vikiSymbols term=bold cterm=bold gui=bold ctermfg='. s:cm1 .'Red guifg='. s:cm1 .'Red'
 
   hi vikiMarkers term=bold cterm=bold gui=bold ctermfg=DarkRed guifg=DarkRed ctermbg=yellow guibg=yellow
   hi vikiAnchor term=italic cterm=italic gui=italic ctermfg=grey guifg=grey
@@ -376,7 +376,7 @@ if version >= 508 || !exists("did_viki_syntax_inits")
   if b:vikiTextstylesVer == 1
       hi vikiContinousBold term=bold cterm=bold gui=bold
       hi vikiContinousUnderline term=underline cterm=underline gui=underline
-      exe "hi vikiContinousTypewriter term=underline ctermfg=". s:cm1 ."Grey guifg=". s:cm1 ."Grey". s:twfont
+      exe 'hi vikiContinousTypewriter term=underline ctermfg='. s:cm1 .'Grey guifg='. s:cm1 .'Grey'. s:twfont
       HiLink vikiBold vikiContinousBold
       HiLink vikiUnderline vikiContinousUnderline 
       HiLink vikiTypewriter vikiContinousTypewriter
@@ -386,7 +386,7 @@ if version >= 508 || !exists("did_viki_syntax_inits")
   else
       " hi vikiBold term=italic,bold cterm=italic,bold gui=italic,bold
       hi vikiBold term=bold,underline cterm=bold,underline gui=bold
-      exe "hi vikiTypewriter term=underline ctermfg=". s:cm1 ."Grey guifg=". s:cm1 ."Grey". s:twfont
+      exe 'hi vikiTypewriter term=underline ctermfg='. s:cm1 .'Grey guifg='. s:cm1 .'Grey'. s:twfont
   endif
 
   HiLink vikiMacroHead Statement

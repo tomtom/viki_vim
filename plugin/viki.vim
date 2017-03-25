@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2017-02-15.
-" @Revision:    2787
+" @Last Change: 2017-03-24.
+" @Revision:    2791
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -133,9 +133,9 @@ function! VikiDefine(name, prefix, ...) "{{{3
     if exists(':'+ a:name) != 2
         exec 'command! -bang -nargs=? -complete=customlist,viki#EditComplete '. a:name .' call viki#Edit(empty(<q-args>) ? '. string(vname) .' : viki#InterEditArg('. string(a:name) .', <q-args>), !empty("<bang>"))'
     else
-        echom "Viki: Command already exists. Cannot define a command for "+ a:name
+        echom 'Viki: Command already exists. Cannot define a command for '+ a:name
     endif
-    if g:vikiMenuPrefix != ''
+    if !empty(g:vikiMenuPrefix)
         if g:vikiMenuLevel > 0
             let name = [ a:name[0 : g:vikiMenuLevel - 1] .'&'. a:name[g:vikiMenuLevel : -1] ]
             let weight = []
@@ -171,7 +171,7 @@ command! -nargs=+ VikiDefine call VikiDefine(<f-args>)
 " NOTE: Be aware that we cannot highlight a reference if the text is embedded 
 " in syntax group that doesn't allow inclusion of arbitrary syntax elemtents.
 command! -nargs=? -bar VikiMinorMode call viki#MinorMode(empty(<q-args>) && exists('b:vikiFamily') ? b:vikiFamily : <q-args>)
-command! -nargs=? -bar VikiMinorModeMaybe echom "Deprecated command: VikiMinorModeMaybe" | VikiMinorMode <q-args>
+command! -nargs=? -bar VikiMinorModeMaybe echom 'Deprecated command: VikiMinorModeMaybe' | VikiMinorMode <q-args>
 command! VikiMinorModeViki call viki_viki#MinorMode(1)
 command! VikiMinorModeLaTeX call viki_latex#MinorMode(1)
 command! VikiMinorModeAnyWord call viki_anyword#MinorMode(1)
@@ -208,17 +208,17 @@ endif
 
 augroup viki
     au!
-    autocmd BufEnter * if exists("b:vikiEnabled") && b:vikiEnabled == 1 | call viki#MinorModeReset() | endif
-    autocmd BufEnter * if exists("b:vikiEnabled") && b:vikiEnabled && exists("b:vikiCheckInexistent") && b:vikiCheckInexistent > 0 | call viki#CheckInexistent() | endif
-    autocmd BufLeave * if &filetype == 'viki' | let b:vikiCheckInexistent = line(".") | endif
-    autocmd BufWritePost,BufUnload * if &filetype == 'viki' | call viki#SaveCache() | endif
+    autocmd BufEnter * if exists('b:vikiEnabled') && b:vikiEnabled == 1 | call viki#MinorModeReset() | endif
+    autocmd BufEnter * if exists('b:vikiEnabled') && b:vikiEnabled && exists('b:vikiCheckInexistent') && b:vikiCheckInexistent > 0 | call viki#CheckInexistent() | endif
+    autocmd BufLeave * if &filetype ==# 'viki' | let b:vikiCheckInexistent = line('.') | endif
+    autocmd BufWritePost,BufUnload * if &filetype ==# 'viki' | call viki#SaveCache() | endif
     autocmd VimLeavePre * let g:viki#quit = 1
     if g:vikiSaveHistory
         autocmd VimEnter * if exists('VIKIBACKREFS_STRING') | exec 'let g:VIKIBACKREFS = '. VIKIBACKREFS_STRING | unlet VIKIBACKREFS_STRING | endif
         autocmd VimLeavePre * let VIKIBACKREFS_STRING = string(g:VIKIBACKREFS)
     endif
     " As viki uses its own styles, we have to reset &filetype.
-    autocmd ColorScheme * if &filetype == 'viki' | set filetype=viki | endif
+    autocmd ColorScheme * if &filetype ==# 'viki' | set filetype=viki | endif
 augroup END
 
 
