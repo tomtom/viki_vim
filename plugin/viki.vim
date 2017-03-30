@@ -2,8 +2,8 @@
 " @Author:      Tom Link (micathom AT gmail com?subject=vim)
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     08-Dec-2003.
-" @Last Change: 2017-03-24.
-" @Revision:    2791
+" @Last Change: 2017-03-30.
+" @Revision:    2792
 "
 " GetLatestVimScripts: 861 1 viki.vim
 "
@@ -100,9 +100,9 @@ let g:vikiInterVikiNames  = []
 function! VikiMakeName(iviki, name, ...) "{{{3
     let quote = a:0 >= 1 ? a:1 : 1
     let name  = a:name
-    if quote && name !~ '\C'. viki#GetSimpleRx4SimpleWikiName()
-        let name = '[-'. name .'-]'
-    endif
+    " if quote && name !~ '\C'. viki#GetSimpleRx4SimpleWikiName()
+    "     let name = '[-'. name .'-]'
+    " endif
     if a:iviki != ''
         let name = a:iviki .'::'. name
     endif
