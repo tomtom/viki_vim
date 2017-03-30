@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2017-03-24.
-" @Revision:    1661
+" @Last Change: 2017-03-29.
+" @Revision:    1663
 
 if !exists('g:loaded_tlib') || g:loaded_tlib < 116
     runtime plugin/02tlib.vim
@@ -257,6 +257,10 @@ if !exists('g:vikiCacheInexistent')
     " re-use using |tlib#cache#Filename()|. You might want to delete old 
     " files from the |g:tlib_cache| directory from time to time.
     let g:vikiCacheInexistent = 0 "{{{2
+endif
+
+if !exists('g:viki#only_use_memory_cache')
+    let g:viki#only_use_memory_cache = 1   "{{{2
 endif
 
 if !exists('g:vikiMapInexistent')
@@ -1320,7 +1324,7 @@ function! viki#MarkInexistentInitial() "{{{3
         Tlibtrace 'viki', cfile
         if getftime(cfile) < getftime(expand('%:p'))
         elseif !empty(cfile)
-            let cvals = tlib#cache#Get(cfile)
+            let cvals = tlib#cache#Get(cfile, [], {'in_memory': g:viki#only_use_memory_cache})
             Tlibtrace 'viki', cvals
             if !empty(cvals)
                 for [key, value] in items(cvals)
@@ -1348,7 +1352,7 @@ function! viki#SaveCache(...) "{{{3
             call s:CValsSet(cvals, 'vikiNamesOk')
             call s:CValsSet(cvals, 'vikiInexistentHighlight')
             call s:CValsSet(cvals, 'vikiMarkInexistent')
-            call tlib#cache#Save(cfile, cvals)
+            call tlib#cache#Save(cfile, cvals, {'in_memory': g:viki#only_use_memory_cache})
         endif
     endif
 endf
@@ -3814,7 +3818,7 @@ function! viki#UpdateHeadings() "{{{3
     " if !exists('b:viki_headings') || b:viki_headings != viki_headings
     "     let b:viki_headings = viki_headings
     " endif
-    Tlibtrace 'viki', len(viki_headings)
+    Tlibtrace 'viki', len(b:viki_headings)
 endf
 
 
