@@ -1,6 +1,9 @@
 *viki.txt*          A personal wiki for vim
                     Author: Tom Link, micathom at gmail com
 
+NOTE: This plugin is superseded by the vikibase_vim plugin (see 
+https://github.com/tomtom/vikibase_vim).
+
 This plugin adds wiki-like hypertext capabilities to Vim. You can use viki as 
 a "minor" mode (i.e., as an add-on to any other mode) or as a full-fledged 
 wiki mode. There is also an add-on plugin for "wikifying" latex documents by 
