@@ -3,8 +3,8 @@
 " @Website:     http://www.vim.org/account/profile.php?user_id=4037
 " @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 " @Created:     2007-03-25.
-" @Last Change: 2017-03-29.
-" @Revision:    1663
+" @Last Change: 2017-10-14.
+" @Revision:    1664
 
 if !exists('g:loaded_tlib') || g:loaded_tlib < 116
     runtime plugin/02tlib.vim
@@ -3079,7 +3079,7 @@ endf
 
 function! viki#ExecExternal(cmd) "{{{3
     Tlibtrace 'viki', a:cmd
-    let @+ = a:cmd
+    " let @+ = a:cmd
     exec a:cmd
     if !has("gui_running")
         " Scrambled window with vim
